@@ -19,6 +19,15 @@ func (b *BrokenLamp) IsLighted() bool {
 }
 
 func (b *BrokenLamp) Switch() {
+	if b.hopelessly() {
+		return
+	}
+
+	if b.working() {
+		b.lamp.Switch()
+		return
+	}
+
 	b.counter++
 	switch {
 	case b.counter == b.attempts:
@@ -27,4 +36,12 @@ func (b *BrokenLamp) Switch() {
 		b.lamp.Switch()
 		b.counter = 1
 	}
+}
+
+func (b *BrokenLamp) hopelessly() bool {
+	return b.attempts == 0
+}
+
+func (b *BrokenLamp) working() bool {
+	return b.attempts == 1
 }

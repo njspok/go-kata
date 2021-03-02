@@ -24,8 +24,7 @@ func (m *Man) LightOn(lamp lamper) error {
 		return nil
 	}
 
-	lamp.Switch()
-	if lamp.IsLighted() {
+	if m.tryLightOn(lamp) {
 		return nil
 	}
 
@@ -34,8 +33,7 @@ func (m *Man) LightOn(lamp lamper) error {
 	}
 
 	for i := uint(0); i < m.patience; i++ {
-		lamp.Switch()
-		if lamp.IsLighted() {
+		if m.tryLightOn(lamp) {
 			return nil
 		}
 	}
@@ -45,4 +43,9 @@ func (m *Man) LightOn(lamp lamper) error {
 
 func (m *Man) impatient() bool {
 	return m.patience == 0
+}
+
+func (m *Man) tryLightOn(lamp lamper) bool {
+	lamp.Switch()
+	return lamp.IsLighted()
 }

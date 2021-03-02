@@ -42,4 +42,22 @@ func TestBrokenLamp(t *testing.T) {
 			require.True(t, lamp.IsLighted())
 		}
 	})
+	t.Run("hopelessly", func(t *testing.T) {
+		lamp := NewBrokenLamp(0)
+		require.False(t, lamp.IsLighted())
+		lamp.Switch()
+		require.False(t, lamp.IsLighted())
+	})
+	t.Run("working", func(t *testing.T) {
+		lamp := NewBrokenLamp(1)
+		require.False(t, lamp.IsLighted())
+
+		for i := 0; i < 10; i++ {
+			lamp.Switch()
+			require.True(t, lamp.IsLighted())
+
+			lamp.Switch()
+			require.False(t, lamp.IsLighted())
+		}
+	})
 }
