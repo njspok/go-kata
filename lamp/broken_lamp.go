@@ -31,8 +31,10 @@ func (b *BrokenLamp) Switch() {
 	b.counter++
 	switch {
 	case b.counter == b.attempts:
+		// turn on
 		b.lamp.Switch()
 	case b.counter > b.attempts:
+		// turn off
 		b.lamp.Switch()
 		b.counter = 1
 	}
