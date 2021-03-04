@@ -27,11 +27,14 @@ func (a *ATM) Total() Sum {
 }
 
 func (a *ATM) Cache() Cache {
+	if a.cache.Empty() {
+		return nil
+	}
 	return a.cache
 }
 
 func (a *ATM) Give(sum Sum) (Cache, error) {
-	if a.Total() < sum {
+	if !a.enoughCache(sum) {
 		return nil, ErrNotEnoughCoins
 	}
 
@@ -70,6 +73,10 @@ func (a *ATM) withdrawCoins(c Cache) {
 	for coin, count := range c {
 		a.cache[coin] -= count
 	}
+}
+
+func (a *ATM) enoughCache(sum Sum) bool {
+	return a.Total() >= sum
 }
 
 func iterateDescending(cache Cache, f func(coin Coin, count Count)) {

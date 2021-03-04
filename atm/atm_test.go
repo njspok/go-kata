@@ -138,27 +138,36 @@ func TestATM(t *testing.T) {
 		}
 	})
 	t.Run("cache", func(t *testing.T) {
-		atm := NewATM()
-		atm.Load(Cache{
-			1:  9,
-			2:  3,
-			5:  7,
-			10: 11,
+		t.Run("some little", func(t *testing.T) {
+			atm := NewATM()
+			atm.Load(Cache{
+				1:  9,
+				2:  3,
+				5:  7,
+				10: 11,
+			})
+			_, err := atm.Give(28)
+			require.NoError(t, err)
+			remains := atm.Cache()
+			require.Equal(t, Cache{
+				1:  8,
+				2:  2,
+				5:  6,
+				10: 9,
+			}, remains)
 		})
-		cache, err := atm.Give(28)
-		require.NoError(t, err)
-		require.Equal(t, Cache{
-			10: 2,
-			5:  1,
-			2:  1,
-			1:  1,
-		}, cache)
-		remains := atm.Cache()
-		require.Equal(t, Cache{
-			1:  8,
-			2:  2,
-			5:  6,
-			10: 9,
-		}, remains)
+		t.Run("all", func(t *testing.T) {
+			atm := NewATM()
+			atm.Load(Cache{
+				1:  9,
+				2:  3,
+				5:  7,
+				10: 11,
+			})
+			_, err := atm.Give(160)
+			require.NoError(t, err)
+			remains := atm.Cache()
+			require.Nil(t, remains)
+		})
 	})
 }
