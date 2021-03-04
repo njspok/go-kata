@@ -108,6 +108,23 @@ func TestATM(t *testing.T) {
 				},
 				err: ErrNotEnoughCoins,
 			},
+			{
+				name: "give all coins",
+				load: Cache{
+					1:  3,
+					2:  5,
+					5:  2,
+					10: 1,
+				},
+				sum: 33,
+				result: Cache{
+					10: 1,
+					5:  2,
+					2:  5,
+					1:  3,
+				},
+				err: nil,
+			},
 		}
 
 		for _, f := range fixtures {

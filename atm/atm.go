@@ -31,41 +31,28 @@ func (a *ATM) Cache() Cache {
 }
 
 func (a *ATM) Give(sum uint) (Cache, error) {
-	// check total
 	if a.Total() < sum {
 		return nil, ErrNotEnoughCoins
 	}
 
-	var keys []uint
-	for k, _ := range a.cache {
-		keys = append(keys, k)
-	}
-
-	sort.Slice(keys, func(i, j int) bool {
-		return keys[i] > keys[j]
-	})
-
 	originalSum := sum
 	result := make(Cache)
-	for _, coin := range keys {
+	iterateDescending(a.cache, func(coin, count uint) {
 		for {
 			if sum < coin {
-				break
+				return
 			}
 
 			if a.cache[coin] <= result[coin] {
-				break
+				return
 			}
 
 			sum -= coin
 			result[coin]++
 		}
-	}
+	})
 
-	// extract coins from atm
-	for coin, count := range result {
-		a.cache[coin] -= count
-	}
+	a.withdrawCoins(result)
 
 	if originalSum > result.Total() {
 		return result, ErrNotEnoughCoins
@@ -77,6 +64,12 @@ func (a *ATM) Give(sum uint) (Cache, error) {
 func (a *ATM) Load(cache Cache) {
 	a.cache = cache
 
+}
+
+func (a *ATM) withdrawCoins(c Cache) {
+	for coin, count := range c {
+		a.cache[coin] -= count
+	}
 }
 
 func iterateDescending(cache Cache, f func(coin, count uint)) {
