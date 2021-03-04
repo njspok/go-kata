@@ -17,7 +17,7 @@ type ATM struct {
 	cache Cache
 }
 
-func (a *ATM) Put(coin uint) error {
+func (a *ATM) Put(coin Coin) error {
 	a.cache[coin]++
 	return nil
 }
@@ -37,9 +37,9 @@ func (a *ATM) Give(sum uint) (Cache, error) {
 
 	originalSum := sum
 	result := make(Cache)
-	iterateDescending(a.cache, func(coin, count uint) {
+	iterateDescending(a.cache, func(coin Coin, count uint) {
 		for {
-			if sum < coin {
+			if sum < uint(coin) {
 				return
 			}
 
@@ -47,7 +47,7 @@ func (a *ATM) Give(sum uint) (Cache, error) {
 				return
 			}
 
-			sum -= coin
+			sum -= uint(coin)
 			result[coin]++
 		}
 	})
@@ -72,8 +72,8 @@ func (a *ATM) withdrawCoins(c Cache) {
 	}
 }
 
-func iterateDescending(cache Cache, f func(coin, count uint)) {
-	var keys []uint
+func iterateDescending(cache Cache, f func(coin Coin, count uint)) {
+	var keys []Coin
 	for k, _ := range cache {
 		keys = append(keys, k)
 	}
