@@ -2,12 +2,20 @@ package atm
 
 type Coin uint
 
-type Cache map[Coin]uint
+func (c Coin) ToSum() Sum {
+	return Sum(c)
+}
 
-func (c Cache) Total() uint {
-	var sum uint
+type Count uint
+
+type Sum uint
+
+type Cache map[Coin]Count
+
+func (c Cache) Total() Sum {
+	var total uint
 	for coin, count := range c {
-		sum += uint(coin) * count
+		total += uint(coin) * uint(count)
 	}
-	return sum
+	return Sum(total)
 }

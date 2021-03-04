@@ -17,19 +17,19 @@ func TestATM(t *testing.T) {
 
 		err := atm.Put(1)
 		require.NoError(t, err)
-		require.Equal(t, uint(1), atm.Total())
+		require.Equal(t, Sum(1), atm.Total())
 
 		err = atm.Put(2)
 		require.NoError(t, err)
-		require.Equal(t, uint(3), atm.Total())
+		require.Equal(t, Sum(3), atm.Total())
 
 		err = atm.Put(5)
 		require.NoError(t, err)
-		require.Equal(t, uint(8), atm.Total())
+		require.Equal(t, Sum(8), atm.Total())
 
 		err = atm.Put(10)
 		require.NoError(t, err)
-		require.Equal(t, uint(18), atm.Total())
+		require.Equal(t, Sum(18), atm.Total())
 
 		stat := atm.Cache()
 		require.Equal(
@@ -47,7 +47,7 @@ func TestATM(t *testing.T) {
 		fixtures := []struct {
 			name   string
 			load   Cache
-			sum    uint
+			sum    Sum
 			result Cache
 			err    error
 		}{

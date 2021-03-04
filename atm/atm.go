@@ -22,7 +22,7 @@ func (a *ATM) Put(coin Coin) error {
 	return nil
 }
 
-func (a *ATM) Total() uint {
+func (a *ATM) Total() Sum {
 	return a.cache.Total()
 }
 
@@ -30,16 +30,16 @@ func (a *ATM) Cache() Cache {
 	return a.cache
 }
 
-func (a *ATM) Give(sum uint) (Cache, error) {
+func (a *ATM) Give(sum Sum) (Cache, error) {
 	if a.Total() < sum {
 		return nil, ErrNotEnoughCoins
 	}
 
 	originalSum := sum
 	result := make(Cache)
-	iterateDescending(a.cache, func(coin Coin, count uint) {
+	iterateDescending(a.cache, func(coin Coin, count Count) {
 		for {
-			if sum < uint(coin) {
+			if sum < coin.ToSum() {
 				return
 			}
 
@@ -47,7 +47,7 @@ func (a *ATM) Give(sum uint) (Cache, error) {
 				return
 			}
 
-			sum -= uint(coin)
+			sum -= coin.ToSum()
 			result[coin]++
 		}
 	})
@@ -72,7 +72,7 @@ func (a *ATM) withdrawCoins(c Cache) {
 	}
 }
 
-func iterateDescending(cache Cache, f func(coin Coin, count uint)) {
+func iterateDescending(cache Cache, f func(coin Coin, count Count)) {
 	var keys []Coin
 	for k, _ := range cache {
 		keys = append(keys, k)
