@@ -31,10 +31,10 @@ func TestATM(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint(18), atm.Total())
 
-		stat := atm.Stat()
+		stat := atm.Cache()
 		require.Equal(
 			t,
-			Stat{
+			Cache{
 				1:  1,
 				2:  1,
 				5:  1,
@@ -44,9 +44,104 @@ func TestATM(t *testing.T) {
 		)
 	})
 	t.Run("give coins", func(t *testing.T) {
-		// todo
+		fixtures := []struct {
+			name   string
+			load   Cache
+			sum    uint
+			result Cache
+			err    error
+		}{
+			{
+				name: "give success 1",
+				load: Cache{
+					1:  3,
+					2:  1,
+					5:  1,
+					10: 2,
+				},
+				sum: 19,
+				result: Cache{
+					10: 1,
+					5:  1,
+					2:  1,
+					1:  2,
+				},
+				err: nil,
+			},
+			{
+				name: "give success 2",
+				load: Cache{
+					1:  3,
+					2:  1,
+					5:  1,
+					10: 2,
+				},
+				sum: 20,
+				result: Cache{
+					10: 2,
+				},
+				err: nil,
+			},
+			{
+				name: "try give more than in atm",
+				load: Cache{
+					1:  3,
+					2:  1,
+					5:  1,
+					10: 2,
+				},
+				sum:    100,
+				result: nil,
+				err:    ErrNotEnoughCoins,
+			},
+			{
+				name: "no match coins",
+				load: Cache{
+					2:  1,
+					5:  1,
+					10: 2,
+				},
+				sum: 26,
+				result: Cache{
+					10: 2,
+					5:  1,
+				},
+				err: ErrNotEnoughCoins,
+			},
+		}
+
+		for _, f := range fixtures {
+			t.Run(f.name, func(t *testing.T) {
+				atm := NewATM()
+				atm.Load(f.load)
+				result, err := atm.Give(f.sum)
+				require.ErrorIs(t, err, f.err)
+				require.Equal(t, f.result, result)
+			})
+		}
 	})
-	t.Run("cant give coins", func(t *testing.T) {
-		// todo
+	t.Run("cache", func(t *testing.T) {
+		atm := NewATM()
+		atm.Load(Cache{
+			1:  9,
+			2:  3,
+			5:  7,
+			10: 11,
+		})
+		cache, err := atm.Give(28)
+		require.NoError(t, err)
+		require.Equal(t, Cache{
+			10: 2,
+			5:  1,
+			2:  1,
+			1:  1,
+		}, cache)
+		remains := atm.Cache()
+		require.Equal(t, Cache{
+			1:  8,
+			2:  2,
+			5:  6,
+			10: 9,
+		}, remains)
 	})
 }
