@@ -21,12 +21,14 @@ func NewStat() *Stat {
 type Status string
 
 const (
-	OpenedStatus     Status = "opened"
-	StrikeStatus     Status = "strike"
-	SpareStatus      Status = "spare"
+	OpenedStatus Status = "opened"
+	StrikeStatus Status = "strike"
+	SpareStatus  Status = "spare"
+
 	FirstRollStatus  Status = "first"
 	SecondRollStatus Status = "second"
 	ThirdRollStatus  Status = "third"
+	FinalStatus      Status = "final"
 )
 
 type Frame struct {
@@ -48,9 +50,7 @@ type FinalFrame struct {
 }
 
 func (f FinalFrame) IsComplete() bool {
-	return f.Status == OpenedStatus ||
-		f.Status == StrikeStatus ||
-		f.Status == SpareStatus
+	return f.Status == FinalStatus
 }
 
 type Stat struct {
