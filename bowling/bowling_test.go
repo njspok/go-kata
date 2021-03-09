@@ -279,6 +279,130 @@ func TestBowling(t *testing.T) {
 					},
 				},
 			},
+			{
+				name: "all strikes",
+				frames: frames{
+					{
+						number: 1,
+						rolls:  []uint{10},
+						total:  10,
+						statFrame: Frame{
+							Number: 1,
+							First:  10,
+							Second: 0,
+							Score:  10,
+							Status: StrikeStatus,
+						},
+					},
+					{
+						number: 2,
+						rolls:  []uint{10},
+						total:  20,
+						statFrame: Frame{
+							Number: 2,
+							First:  10,
+							Second: 0,
+							Score:  20,
+							Status: StrikeStatus,
+						},
+					},
+					{
+						number: 3,
+						rolls:  []uint{10},
+						total:  30,
+						statFrame: Frame{
+							Number: 3,
+							First:  10,
+							Second: 0,
+							Score:  30,
+							Status: StrikeStatus,
+						},
+					},
+					{
+						number: 4,
+						rolls:  []uint{10},
+						total:  40,
+						statFrame: Frame{
+							Number: 4,
+							First:  10,
+							Second: 0,
+							Score:  40,
+							Status: StrikeStatus,
+						},
+					},
+					{
+						number: 5,
+						rolls:  []uint{10},
+						total:  50,
+						statFrame: Frame{
+							Number: 5,
+							First:  10,
+							Second: 0,
+							Score:  50,
+							Status: StrikeStatus,
+						},
+					},
+					{
+						number: 6,
+						rolls:  []uint{10},
+						total:  60,
+						statFrame: Frame{
+							Number: 6,
+							First:  10,
+							Second: 0,
+							Score:  60,
+							Status: StrikeStatus,
+						},
+					},
+					{
+						number: 7,
+						rolls:  []uint{10},
+						total:  70,
+						statFrame: Frame{
+							Number: 7,
+							First:  10,
+							Second: 0,
+							Score:  70,
+							Status: StrikeStatus,
+						},
+					},
+					{
+						number: 8,
+						rolls:  []uint{10},
+						total:  80,
+						statFrame: Frame{
+							Number: 8,
+							First:  10,
+							Second: 0,
+							Score:  80,
+							Status: StrikeStatus,
+						},
+					},
+					{
+						number: 9,
+						rolls:  []uint{10},
+						total:  90,
+						statFrame: Frame{
+							Number: 9,
+							First:  10,
+							Second: 0,
+							Score:  90,
+							Status: StrikeStatus,
+						},
+					},
+				},
+				final: final{
+					rolls: []uint{10, 10, 10},
+					total: 120,
+					statFrame: FinalFrame{
+						First:  10,
+						Second: 10,
+						Third:  10,
+						Score:  120,
+						Status: FinalStatus,
+					},
+				},
+			},
 		}
 
 		for _, fixture := range fixtures {
