@@ -33,7 +33,9 @@ func (b *Bowling) Roll(count uint) error {
 	if b.currentFrameNumber == 10 {
 		frame := b.frames.FinalFrame()
 		frame.Roll(count)
-		frame.Score = b.total
+		if frame.IsComplete() {
+			frame.Score = b.total
+		}
 	} else {
 		frame := b.frames.Frame(b.currentFrameNumber)
 		frame.Roll(count)
