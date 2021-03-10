@@ -403,6 +403,130 @@ func TestBowling(t *testing.T) {
 					},
 				},
 			},
+			{
+				name: "zero",
+				frames: frames{
+					{
+						number: 1,
+						rolls:  []uint{0, 0},
+						total:  0,
+						statFrame: Frame{
+							Number: 1,
+							First:  0,
+							Second: 0,
+							Score:  0,
+							Status: OpenedStatus,
+						},
+					},
+					{
+						number: 2,
+						rolls:  []uint{0, 0},
+						total:  0,
+						statFrame: Frame{
+							Number: 2,
+							First:  0,
+							Second: 0,
+							Score:  0,
+							Status: OpenedStatus,
+						},
+					},
+					{
+						number: 3,
+						rolls:  []uint{0, 0},
+						total:  0,
+						statFrame: Frame{
+							Number: 3,
+							First:  0,
+							Second: 0,
+							Score:  0,
+							Status: OpenedStatus,
+						},
+					},
+					{
+						number: 4,
+						rolls:  []uint{0, 0},
+						total:  0,
+						statFrame: Frame{
+							Number: 4,
+							First:  0,
+							Second: 0,
+							Score:  0,
+							Status: OpenedStatus,
+						},
+					},
+					{
+						number: 5,
+						rolls:  []uint{0, 0},
+						total:  0,
+						statFrame: Frame{
+							Number: 5,
+							First:  0,
+							Second: 0,
+							Score:  0,
+							Status: OpenedStatus,
+						},
+					},
+					{
+						number: 6,
+						rolls:  []uint{0, 0},
+						total:  0,
+						statFrame: Frame{
+							Number: 6,
+							First:  0,
+							Second: 0,
+							Score:  0,
+							Status: OpenedStatus,
+						},
+					},
+					{
+						number: 7,
+						rolls:  []uint{0, 0},
+						total:  0,
+						statFrame: Frame{
+							Number: 7,
+							First:  0,
+							Second: 0,
+							Score:  0,
+							Status: OpenedStatus,
+						},
+					},
+					{
+						number: 8,
+						rolls:  []uint{0, 0},
+						total:  0,
+						statFrame: Frame{
+							Number: 8,
+							First:  0,
+							Second: 0,
+							Score:  0,
+							Status: OpenedStatus,
+						},
+					},
+					{
+						number: 9,
+						rolls:  []uint{0, 0},
+						total:  0,
+						statFrame: Frame{
+							Number: 9,
+							First:  0,
+							Second: 0,
+							Score:  0,
+							Status: OpenedStatus,
+						},
+					},
+				},
+				final: final{
+					rolls: []uint{0, 0},
+					total: 0,
+					statFrame: FinalFrame{
+						First:  0,
+						Second: 0,
+						Third:  0,
+						Score:  0,
+						Status: FinalStatus,
+					},
+				},
+			},
 		}
 
 		for _, fixture := range fixtures {
@@ -433,9 +557,6 @@ func TestBowling(t *testing.T) {
 				require.Equal(t, stat, game.Stat())
 			})
 		}
-		//t.Run("all strikes", func(t *testing.T) {
-		//	// todo
-		//})
 		//t.Run("all spares", func(t *testing.T) {
 		//	// todo
 		//})
