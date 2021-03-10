@@ -40,8 +40,8 @@ func (b *Bowling) Roll(count uint) error {
 		frame := b.frames.Frame(b.currentFrameNumber)
 		frame.Roll(count)
 		if frame.IsComplete() {
-			b.currentFrameNumber++
 			frame.Score = b.total
+			b.currentFrameNumber++
 		}
 	}
 
