@@ -12,42 +12,7 @@ func NewStat() *Stat {
 	}
 }
 
-type Status string
-
-const (
-	OpenedStatus Status = "opened"
-	StrikeStatus Status = "strike"
-	SpareStatus  Status = "spare"
-
-	FirstRollStatus  Status = "first"
-	SecondRollStatus Status = "second"
-	ThirdRollStatus  Status = "third"
-	FinalStatus      Status = "final"
-)
-
 type Frames []Frame
-
-func NewFinalFrame() FinalFrame {
-	return FinalFrame{
-		First:  0,
-		Second: 0,
-		Third:  0,
-		Score:  0,
-		Status: FirstRollStatus,
-	}
-}
-
-type FinalFrame struct {
-	First  uint
-	Second uint
-	Third  uint
-	Score  uint
-	Status Status
-}
-
-func (f FinalFrame) IsComplete() bool {
-	return f.Status == FinalStatus
-}
 
 type Stat struct {
 	frames Frames
