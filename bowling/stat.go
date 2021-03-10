@@ -1,20 +1,14 @@
 package bowling
 
 func NewStat() *Stat {
-	frames := make(Frames, 9)
+	var frames Frames
 	for i := 0; i < 9; i++ {
-		frames[i].Number = uint(i) + 1
-		frames[i].Status = FirstRollStatus
+		frames = append(frames, NewFrame(uint(i)+1))
 	}
 
 	return &Stat{
 		frames: frames,
-		final: FinalFrame{
-			First:  0,
-			Second: 0,
-			Third:  0,
-			Status: FirstRollStatus,
-		},
+		final:  NewFinalFrame(),
 	}
 }
 
@@ -31,15 +25,17 @@ const (
 	FinalStatus      Status = "final"
 )
 
-type Frame struct {
-	Number uint
-	First  uint
-	Second uint
-	Score  uint
-	Status Status
-}
-
 type Frames []Frame
+
+func NewFinalFrame() FinalFrame {
+	return FinalFrame{
+		First:  0,
+		Second: 0,
+		Third:  0,
+		Score:  0,
+		Status: FirstRollStatus,
+	}
+}
 
 type FinalFrame struct {
 	First  uint

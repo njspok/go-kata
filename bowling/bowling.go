@@ -54,27 +54,11 @@ func (b *Bowling) Roll(count uint) error {
 		frame.Score = b.total
 	} else {
 		frame := b.frames.Frame(b.currentFrameNumber)
-		switch frame.Status {
-		case FirstRollStatus:
-			frame.First = count
-			if count == 10 {
-				frame.Status = StrikeStatus
-				b.currentFrameNumber++
-			} else {
-				frame.Status = SecondRollStatus
-			}
-		case SecondRollStatus:
-			frame.Second = count
-			if (frame.First + frame.Second) == 10 {
-				frame.Status = SpareStatus
-			} else {
-				frame.Status = OpenedStatus
-			}
-
+		frame.Roll(count)
+		if frame.IsComplete() {
 			b.currentFrameNumber++
+			frame.Score = b.total
 		}
-
-		frame.Score = b.total
 	}
 
 	return nil
