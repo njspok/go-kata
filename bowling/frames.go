@@ -28,6 +28,7 @@ func (fs *Frames) Frame(number uint) Framer {
 }
 
 func (fs *Frames) SetFinalFrame(f Framer) {
+	// todo little lie
 	fs.SetFrame(f)
 }
 

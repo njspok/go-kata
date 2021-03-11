@@ -20,7 +20,7 @@ type Framer interface {
 }
 
 type Bowling struct {
-	total              uint
+	total              uint // todo who count total?
 	currentFrameNumber uint
 	frames             *Frames
 	// todo save bonuses

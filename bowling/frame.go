@@ -10,6 +10,7 @@ func NewFrame(number uint) *Frame {
 	}
 }
 
+// todo count score?
 type Frame struct {
 	number uint
 	First  uint
