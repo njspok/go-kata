@@ -17,13 +17,13 @@ func TestBowling(t *testing.T) {
 			number    uint
 			rolls     []uint
 			total     uint
-			statFrame Frame
+			statFrame *Frame
 		}
 
 		type final struct {
 			rolls     []uint
 			total     uint
-			statFrame FinalFrame
+			statFrame *FinalFrame
 		}
 
 		fixtures := []struct {
@@ -38,8 +38,8 @@ func TestBowling(t *testing.T) {
 						number: 1,
 						rolls:  []uint{1, 2},
 						total:  3,
-						statFrame: Frame{
-							Number: 1,
+						statFrame: &Frame{
+							number: 1,
 							First:  1,
 							Second: 2,
 							Score:  3,
@@ -50,8 +50,8 @@ func TestBowling(t *testing.T) {
 						number: 2,
 						rolls:  []uint{3, 2},
 						total:  uint(8),
-						statFrame: Frame{
-							Number: 2,
+						statFrame: &Frame{
+							number: 2,
 							First:  3,
 							Second: 2,
 							Score:  8,
@@ -62,8 +62,8 @@ func TestBowling(t *testing.T) {
 						number: 3,
 						rolls:  []uint{3, 4},
 						total:  uint(15),
-						statFrame: Frame{
-							Number: 3,
+						statFrame: &Frame{
+							number: 3,
 							First:  3,
 							Second: 4,
 							Score:  15,
@@ -74,8 +74,8 @@ func TestBowling(t *testing.T) {
 						number: 4,
 						rolls:  []uint{5, 1},
 						total:  uint(21),
-						statFrame: Frame{
-							Number: 4,
+						statFrame: &Frame{
+							number: 4,
 							First:  5,
 							Second: 1,
 							Score:  21,
@@ -86,8 +86,8 @@ func TestBowling(t *testing.T) {
 						number: 5,
 						rolls:  []uint{3, 4},
 						total:  uint(28),
-						statFrame: Frame{
-							Number: 5,
+						statFrame: &Frame{
+							number: 5,
 							First:  3,
 							Second: 4,
 							Score:  28,
@@ -98,8 +98,8 @@ func TestBowling(t *testing.T) {
 						number: 6,
 						rolls:  []uint{5, 0},
 						total:  uint(33),
-						statFrame: Frame{
-							Number: 6,
+						statFrame: &Frame{
+							number: 6,
 							First:  5,
 							Second: 0,
 							Score:  33,
@@ -110,8 +110,8 @@ func TestBowling(t *testing.T) {
 						number: 7,
 						rolls:  []uint{2, 3},
 						total:  uint(38),
-						statFrame: Frame{
-							Number: 7,
+						statFrame: &Frame{
+							number: 7,
 							First:  2,
 							Second: 3,
 							Score:  38,
@@ -122,8 +122,8 @@ func TestBowling(t *testing.T) {
 						number: 8,
 						rolls:  []uint{4, 3},
 						total:  uint(45),
-						statFrame: Frame{
-							Number: 8,
+						statFrame: &Frame{
+							number: 8,
 							First:  4,
 							Second: 3,
 							Score:  45,
@@ -134,8 +134,8 @@ func TestBowling(t *testing.T) {
 						number: 9,
 						rolls:  []uint{2, 2},
 						total:  uint(49),
-						statFrame: Frame{
-							Number: 9,
+						statFrame: &Frame{
+							number: 9,
 							First:  2,
 							Second: 2,
 							Score:  49,
@@ -146,7 +146,8 @@ func TestBowling(t *testing.T) {
 				final: final{
 					rolls: []uint{7, 2},
 					total: 58,
-					statFrame: FinalFrame{
+					statFrame: &FinalFrame{
+						number: 10,
 						First:  7,
 						Second: 2,
 						Third:  0,
@@ -162,8 +163,8 @@ func TestBowling(t *testing.T) {
 						number: 1,
 						rolls:  []uint{10},
 						total:  10,
-						statFrame: Frame{
-							Number: 1,
+						statFrame: &Frame{
+							number: 1,
 							First:  10,
 							Second: 0,
 							Score:  10,
@@ -174,8 +175,8 @@ func TestBowling(t *testing.T) {
 						number: 2,
 						rolls:  []uint{10},
 						total:  20,
-						statFrame: Frame{
-							Number: 2,
+						statFrame: &Frame{
+							number: 2,
 							First:  10,
 							Second: 0,
 							Score:  20,
@@ -186,8 +187,8 @@ func TestBowling(t *testing.T) {
 						number: 3,
 						rolls:  []uint{6, 4},
 						total:  30,
-						statFrame: Frame{
-							Number: 3,
+						statFrame: &Frame{
+							number: 3,
 							First:  6,
 							Second: 4,
 							Score:  30,
@@ -198,8 +199,8 @@ func TestBowling(t *testing.T) {
 						number: 4,
 						rolls:  []uint{0, 0},
 						total:  30,
-						statFrame: Frame{
-							Number: 4,
+						statFrame: &Frame{
+							number: 4,
 							First:  0,
 							Second: 0,
 							Score:  30,
@@ -210,8 +211,8 @@ func TestBowling(t *testing.T) {
 						number: 5,
 						rolls:  []uint{5, 4},
 						total:  39,
-						statFrame: Frame{
-							Number: 5,
+						statFrame: &Frame{
+							number: 5,
 							First:  5,
 							Second: 4,
 							Score:  39,
@@ -222,8 +223,8 @@ func TestBowling(t *testing.T) {
 						number: 6,
 						rolls:  []uint{2, 1},
 						total:  42,
-						statFrame: Frame{
-							Number: 6,
+						statFrame: &Frame{
+							number: 6,
 							First:  2,
 							Second: 1,
 							Score:  42,
@@ -234,8 +235,8 @@ func TestBowling(t *testing.T) {
 						number: 7,
 						rolls:  []uint{9, 1},
 						total:  52,
-						statFrame: Frame{
-							Number: 7,
+						statFrame: &Frame{
+							number: 7,
 							First:  9,
 							Second: 1,
 							Score:  52,
@@ -246,8 +247,8 @@ func TestBowling(t *testing.T) {
 						number: 8,
 						rolls:  []uint{10},
 						total:  62,
-						statFrame: Frame{
-							Number: 8,
+						statFrame: &Frame{
+							number: 8,
 							First:  10,
 							Second: 0,
 							Score:  62,
@@ -258,8 +259,8 @@ func TestBowling(t *testing.T) {
 						number: 9,
 						rolls:  []uint{3, 5},
 						total:  70,
-						statFrame: Frame{
-							Number: 9,
+						statFrame: &Frame{
+							number: 9,
 							First:  3,
 							Second: 5,
 							Score:  70,
@@ -270,7 +271,8 @@ func TestBowling(t *testing.T) {
 				final: final{
 					rolls: []uint{9, 1, 10},
 					total: 90,
-					statFrame: FinalFrame{
+					statFrame: &FinalFrame{
+						number: 10,
 						First:  9,
 						Second: 1,
 						Third:  10,
@@ -286,8 +288,8 @@ func TestBowling(t *testing.T) {
 						number: 1,
 						rolls:  []uint{10},
 						total:  10,
-						statFrame: Frame{
-							Number: 1,
+						statFrame: &Frame{
+							number: 1,
 							First:  10,
 							Second: 0,
 							Score:  10,
@@ -298,8 +300,8 @@ func TestBowling(t *testing.T) {
 						number: 2,
 						rolls:  []uint{10},
 						total:  20,
-						statFrame: Frame{
-							Number: 2,
+						statFrame: &Frame{
+							number: 2,
 							First:  10,
 							Second: 0,
 							Score:  20,
@@ -310,8 +312,8 @@ func TestBowling(t *testing.T) {
 						number: 3,
 						rolls:  []uint{10},
 						total:  30,
-						statFrame: Frame{
-							Number: 3,
+						statFrame: &Frame{
+							number: 3,
 							First:  10,
 							Second: 0,
 							Score:  30,
@@ -322,8 +324,8 @@ func TestBowling(t *testing.T) {
 						number: 4,
 						rolls:  []uint{10},
 						total:  40,
-						statFrame: Frame{
-							Number: 4,
+						statFrame: &Frame{
+							number: 4,
 							First:  10,
 							Second: 0,
 							Score:  40,
@@ -334,8 +336,8 @@ func TestBowling(t *testing.T) {
 						number: 5,
 						rolls:  []uint{10},
 						total:  50,
-						statFrame: Frame{
-							Number: 5,
+						statFrame: &Frame{
+							number: 5,
 							First:  10,
 							Second: 0,
 							Score:  50,
@@ -346,8 +348,8 @@ func TestBowling(t *testing.T) {
 						number: 6,
 						rolls:  []uint{10},
 						total:  60,
-						statFrame: Frame{
-							Number: 6,
+						statFrame: &Frame{
+							number: 6,
 							First:  10,
 							Second: 0,
 							Score:  60,
@@ -358,8 +360,8 @@ func TestBowling(t *testing.T) {
 						number: 7,
 						rolls:  []uint{10},
 						total:  70,
-						statFrame: Frame{
-							Number: 7,
+						statFrame: &Frame{
+							number: 7,
 							First:  10,
 							Second: 0,
 							Score:  70,
@@ -370,8 +372,8 @@ func TestBowling(t *testing.T) {
 						number: 8,
 						rolls:  []uint{10},
 						total:  80,
-						statFrame: Frame{
-							Number: 8,
+						statFrame: &Frame{
+							number: 8,
 							First:  10,
 							Second: 0,
 							Score:  80,
@@ -382,8 +384,8 @@ func TestBowling(t *testing.T) {
 						number: 9,
 						rolls:  []uint{10},
 						total:  90,
-						statFrame: Frame{
-							Number: 9,
+						statFrame: &Frame{
+							number: 9,
 							First:  10,
 							Second: 0,
 							Score:  90,
@@ -394,7 +396,8 @@ func TestBowling(t *testing.T) {
 				final: final{
 					rolls: []uint{10, 10, 10},
 					total: 120,
-					statFrame: FinalFrame{
+					statFrame: &FinalFrame{
+						number: 10,
 						First:  10,
 						Second: 10,
 						Third:  10,
@@ -410,8 +413,8 @@ func TestBowling(t *testing.T) {
 						number: 1,
 						rolls:  []uint{0, 0},
 						total:  0,
-						statFrame: Frame{
-							Number: 1,
+						statFrame: &Frame{
+							number: 1,
 							First:  0,
 							Second: 0,
 							Score:  0,
@@ -422,8 +425,8 @@ func TestBowling(t *testing.T) {
 						number: 2,
 						rolls:  []uint{0, 0},
 						total:  0,
-						statFrame: Frame{
-							Number: 2,
+						statFrame: &Frame{
+							number: 2,
 							First:  0,
 							Second: 0,
 							Score:  0,
@@ -434,8 +437,8 @@ func TestBowling(t *testing.T) {
 						number: 3,
 						rolls:  []uint{0, 0},
 						total:  0,
-						statFrame: Frame{
-							Number: 3,
+						statFrame: &Frame{
+							number: 3,
 							First:  0,
 							Second: 0,
 							Score:  0,
@@ -446,8 +449,8 @@ func TestBowling(t *testing.T) {
 						number: 4,
 						rolls:  []uint{0, 0},
 						total:  0,
-						statFrame: Frame{
-							Number: 4,
+						statFrame: &Frame{
+							number: 4,
 							First:  0,
 							Second: 0,
 							Score:  0,
@@ -458,8 +461,8 @@ func TestBowling(t *testing.T) {
 						number: 5,
 						rolls:  []uint{0, 0},
 						total:  0,
-						statFrame: Frame{
-							Number: 5,
+						statFrame: &Frame{
+							number: 5,
 							First:  0,
 							Second: 0,
 							Score:  0,
@@ -470,8 +473,8 @@ func TestBowling(t *testing.T) {
 						number: 6,
 						rolls:  []uint{0, 0},
 						total:  0,
-						statFrame: Frame{
-							Number: 6,
+						statFrame: &Frame{
+							number: 6,
 							First:  0,
 							Second: 0,
 							Score:  0,
@@ -482,8 +485,8 @@ func TestBowling(t *testing.T) {
 						number: 7,
 						rolls:  []uint{0, 0},
 						total:  0,
-						statFrame: Frame{
-							Number: 7,
+						statFrame: &Frame{
+							number: 7,
 							First:  0,
 							Second: 0,
 							Score:  0,
@@ -494,8 +497,8 @@ func TestBowling(t *testing.T) {
 						number: 8,
 						rolls:  []uint{0, 0},
 						total:  0,
-						statFrame: Frame{
-							Number: 8,
+						statFrame: &Frame{
+							number: 8,
 							First:  0,
 							Second: 0,
 							Score:  0,
@@ -506,8 +509,8 @@ func TestBowling(t *testing.T) {
 						number: 9,
 						rolls:  []uint{0, 0},
 						total:  0,
-						statFrame: Frame{
-							Number: 9,
+						statFrame: &Frame{
+							number: 9,
 							First:  0,
 							Second: 0,
 							Score:  0,
@@ -518,7 +521,8 @@ func TestBowling(t *testing.T) {
 				final: final{
 					rolls: []uint{0, 0},
 					total: 0,
-					statFrame: FinalFrame{
+					statFrame: &FinalFrame{
+						number: 10,
 						First:  0,
 						Second: 0,
 						Third:  0,
@@ -532,9 +536,9 @@ func TestBowling(t *testing.T) {
 		for _, fixture := range fixtures {
 			t.Run(fixture.name, func(t *testing.T) {
 				game := NewBowling()
-				stat := NewStat()
+				frames := NewFrames()
 				require.Zero(t, game.Total())
-				require.Equal(t, stat, game.Stat())
+				require.Equal(t, frames, game.Frames())
 
 				for _, frame := range fixture.frames {
 					t.Run(fmt.Sprintf("frame %v", frame.number), func(t *testing.T) {
@@ -542,8 +546,8 @@ func TestBowling(t *testing.T) {
 							game.Roll(r)
 						}
 						require.Equal(t, frame.total, game.Total())
-						stat.SetFrame(frame.statFrame)
-						require.Equal(t, stat, game.Stat())
+						frames.SetFrame(frame.statFrame)
+						require.Equal(t, frames, game.Frames())
 					})
 				}
 
@@ -553,8 +557,8 @@ func TestBowling(t *testing.T) {
 				}
 				require.Equal(t, fixture.final.total, game.Total())
 				require.True(t, game.IsFinished())
-				stat.SetFinalFrame(fixture.final.statFrame)
-				require.Equal(t, stat, game.Stat())
+				frames.SetFinalFrame(fixture.final.statFrame)
+				require.Equal(t, frames, game.Frames())
 			})
 		}
 		//t.Run("all spares", func(t *testing.T) {

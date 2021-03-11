@@ -1,8 +1,8 @@
 package bowling
 
-func NewFrame(number uint) Frame {
-	return Frame{
-		Number: number,
+func NewFrame(number uint) *Frame {
+	return &Frame{
+		number: number,
 		First:  0,
 		Second: 0,
 		Score:  0,
@@ -11,7 +11,7 @@ func NewFrame(number uint) Frame {
 }
 
 type Frame struct {
-	Number uint
+	number uint
 	First  uint
 	Second uint
 	Score  uint
@@ -43,6 +43,14 @@ func (f *Frame) IsComplete() bool {
 	return f.Status == OpenedStatus ||
 		f.Status == StrikeStatus ||
 		f.Status == SpareStatus
+}
+
+func (f *Frame) SetScore(v uint) {
+	f.Score = v
+}
+
+func (f *Frame) Number() uint {
+	return f.number
 }
 
 func (f *Frame) isStrike() bool {

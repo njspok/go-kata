@@ -8,14 +8,21 @@ func NewBowling() *Bowling {
 	return &Bowling{
 		total:              0,
 		currentFrameNumber: 1,
-		frames:             NewStat(),
+		frames:             NewFrames(),
 	}
+}
+
+type Framer interface {
+	Number() uint
+	Roll(count uint)
+	IsComplete() bool
+	SetScore(v uint)
 }
 
 type Bowling struct {
 	total              uint
 	currentFrameNumber uint
-	frames             *Stat // todo rename
+	frames             *Frames
 	// todo save bonuses
 }
 
@@ -30,19 +37,11 @@ func (b *Bowling) Roll(count uint) error {
 
 	b.total += count
 
-	if b.currentFrameNumber == 10 {
-		frame := b.frames.FinalFrame()
-		frame.Roll(count)
-		if frame.IsComplete() {
-			frame.Score = b.total
-		}
-	} else {
-		frame := b.frames.Frame(b.currentFrameNumber)
-		frame.Roll(count)
-		if frame.IsComplete() {
-			frame.Score = b.total
-			b.currentFrameNumber++
-		}
+	frame := b.frames.Frame(b.currentFrameNumber)
+	frame.Roll(count)
+	if frame.IsComplete() {
+		frame.SetScore(b.total)
+		b.currentFrameNumber++
 	}
 
 	return nil
@@ -52,6 +51,6 @@ func (b *Bowling) IsFinished() bool {
 	return b.frames.FinalFrame().IsComplete()
 }
 
-func (b *Bowling) Stat() *Stat {
+func (b *Bowling) Frames() *Frames {
 	return b.frames
 }

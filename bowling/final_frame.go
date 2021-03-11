@@ -1,7 +1,8 @@
 package bowling
 
-func NewFinalFrame() FinalFrame {
-	return FinalFrame{
+func NewFinalFrame() *FinalFrame {
+	return &FinalFrame{
+		number: 10,
 		First:  0,
 		Second: 0,
 		Third:  0,
@@ -11,6 +12,7 @@ func NewFinalFrame() FinalFrame {
 }
 
 type FinalFrame struct {
+	number uint
 	First  uint
 	Second uint
 	Third  uint
@@ -43,6 +45,14 @@ func (f *FinalFrame) Roll(count uint) {
 
 func (f *FinalFrame) IsComplete() bool {
 	return f.Status == FinalStatus
+}
+
+func (f *FinalFrame) SetScore(v uint) {
+	f.Score = v
+}
+
+func (f *FinalFrame) Number() uint {
+	return f.number
 }
 
 func (f *FinalFrame) isFirstStrike() bool {
