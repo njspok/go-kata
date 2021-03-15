@@ -2,38 +2,40 @@ package bowling
 
 func NewFrame(number uint) *Frame {
 	return &Frame{
-		number: number,
-		First:  0,
-		Second: 0,
-		Score:  0,
-		Status: FirstRollStatus,
+		number:  number,
+		first:   0,
+		second:  0,
+		score:   0,
+		status:  FirstRollStatus,
+		bonuses: 0,
 	}
 }
 
 // todo count score?
 type Frame struct {
-	number uint
-	First  uint
-	Second uint
-	Score  uint
-	Status Status
+	number  uint
+	first   uint
+	second  uint
+	score   uint
+	status  Status
+	bonuses uint
 }
 
 func (f *Frame) Roll(count uint) {
-	switch f.Status {
+	switch f.status {
 	case FirstRollStatus:
-		f.First = count
+		f.first = count
 		if f.isStrike() {
-			f.Status = StrikeStatus
+			f.status = StrikeStatus
 		} else {
-			f.Status = SecondRollStatus
+			f.status = SecondRollStatus
 		}
 	case SecondRollStatus:
-		f.Second = count
+		f.second = count
 		if f.isSpare() {
-			f.Status = SpareStatus
+			f.status = SpareStatus
 		} else {
-			f.Status = OpenedStatus
+			f.status = OpenedStatus
 		}
 	default:
 		return
@@ -41,23 +43,43 @@ func (f *Frame) Roll(count uint) {
 }
 
 func (f *Frame) IsComplete() bool {
-	return f.Status == OpenedStatus ||
-		f.Status == StrikeStatus ||
-		f.Status == SpareStatus
+	return f.status == OpenedStatus ||
+		f.status == StrikeStatus ||
+		f.status == SpareStatus
 }
 
 func (f *Frame) SetScore(v uint) {
-	f.Score = v
+	f.score = v
+}
+
+func (f *Frame) Bonuses() uint {
+	return f.bonuses
 }
 
 func (f *Frame) Number() uint {
 	return f.number
 }
 
+func (f *Frame) First() uint {
+	return f.first
+}
+
+func (f *Frame) Second() uint {
+	return f.second
+}
+
+func (f *Frame) Score() uint {
+	return f.score
+}
+
+func (f *Frame) Status() Status {
+	return f.status
+}
+
 func (f *Frame) isStrike() bool {
-	return f.First == 10
+	return f.first == 10
 }
 
 func (f *Frame) isSpare() bool {
-	return (f.First + f.Second) == 10
+	return (f.first + f.second) == 10
 }

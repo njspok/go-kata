@@ -2,63 +2,89 @@ package bowling
 
 func NewFinalFrame() *FinalFrame {
 	return &FinalFrame{
-		number: 10,
-		First:  0,
-		Second: 0,
-		Third:  0,
-		Score:  0,
-		Status: FirstRollStatus,
+		number:  10,
+		fist:    0,
+		second:  0,
+		third:   0,
+		score:   0,
+		status:  FirstRollStatus,
+		bonuses: 0,
 	}
 }
 
 type FinalFrame struct {
-	number uint
-	First  uint
-	Second uint
-	Third  uint
-	Score  uint
-	Status Status
+	number  uint
+	fist    uint
+	second  uint
+	third   uint
+	score   uint
+	status  Status
+	bonuses uint
 }
 
 func (f *FinalFrame) Roll(count uint) {
-	switch f.Status {
+	switch f.status {
 	case FirstRollStatus:
-		f.First = count
-		f.Status = SecondRollStatus
+		f.fist = count
+		f.status = SecondRollStatus
 	case SecondRollStatus:
-		f.Second = count
+		f.second = count
 		switch {
 		case f.isFirstStrike():
-			f.Status = ThirdRollStatus
+			f.status = ThirdRollStatus
 		case f.isSpare():
-			f.Status = ThirdRollStatus
+			f.status = ThirdRollStatus
 		default:
-			f.Status = FinalStatus
+			f.status = FinalStatus
 		}
 	case ThirdRollStatus:
-		f.Third = count
-		f.Status = FinalStatus
+		f.third = count
+		f.status = FinalStatus
 	default:
 		return
 	}
 }
 
 func (f *FinalFrame) IsComplete() bool {
-	return f.Status == FinalStatus
+	return f.status == FinalStatus
 }
 
 func (f *FinalFrame) SetScore(v uint) {
-	f.Score = v
+	f.score = v
 }
 
 func (f *FinalFrame) Number() uint {
 	return f.number
 }
 
+func (f *FinalFrame) Bonuses() uint {
+	return f.bonuses
+}
+
+func (f *FinalFrame) First() uint {
+	return f.fist
+}
+
+func (f *FinalFrame) Second() uint {
+	return f.second
+}
+
+func (f *FinalFrame) Third() uint {
+	return f.third
+}
+
+func (f *FinalFrame) Score() uint {
+	return f.score
+}
+
+func (f *FinalFrame) Status() Status {
+	return f.status
+}
+
 func (f *FinalFrame) isFirstStrike() bool {
-	return f.First == 10
+	return f.fist == 10
 }
 
 func (f *FinalFrame) isSpare() bool {
-	return (f.First + f.Second) == 10
+	return (f.fist + f.second) == 10
 }
