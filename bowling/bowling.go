@@ -8,7 +8,7 @@ func NewBowling() *Bowling {
 	return &Bowling{
 		total:              0,
 		currentFrameNumber: 1,
-		frames:             NewFrames(),
+		frames:             newClassicFrames(),
 	}
 }
 
@@ -53,4 +53,17 @@ func (b *Bowling) IsFinished() bool {
 
 func (b *Bowling) Frames() *Frames {
 	return b.frames
+}
+
+func newClassicFrames() *Frames {
+	f := NewFrames()
+
+	for i := 0; i < 9; i++ {
+		f.Add(NewFrame(uint(i) + 1))
+	}
+
+	// 10 final frame
+	f.Add(NewFinalFrame())
+
+	return f
 }

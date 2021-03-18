@@ -9,11 +9,7 @@ import (
 func TestNewFrames(t *testing.T) {
 	t.Run("create", func(t *testing.T) {
 		frames := NewFrames()
-
-		require.Len(t, frames.frames, 10)
-
-		for i := uint(1); i <= 10; i++ {
-			require.Equal(t, i, frames.Frame(i).Number())
-		}
+		require.Zero(t, frames.Len())
 	})
+	// todo need tests
 }

@@ -1,21 +1,15 @@
 package bowling
 
 func NewFrames() *Frames {
-	var frames []Framer
-	for i := 0; i < 9; i++ {
-		frames = append(frames, NewFrame(uint(i)+1))
-	}
-
-	// 10 final frame
-	frames = append(frames, NewFinalFrame())
-
-	return &Frames{
-		frames: frames,
-	}
+	return &Frames{}
 }
 
 type Frames struct {
 	frames []Framer
+}
+
+func (fs *Frames) Add(f Framer) {
+	fs.frames = append(fs.frames, f)
 }
 
 func (fs *Frames) SetFrame(f Framer) {
@@ -33,7 +27,7 @@ func (fs *Frames) SetFinalFrame(f Framer) {
 }
 
 func (fs *Frames) FinalFrame() Framer {
-	return fs.Frame(10)
+	return fs.Frame(uint(fs.Len()))
 }
 
 func (fs *Frames) Len() int {
