@@ -5,11 +5,20 @@ import "errors"
 var ErrGameFinished = errors.New("game finished")
 
 func NewBowling() *Bowling {
-	return &Bowling{
-		total:              0,
-		currentFrameNumber: 1,
-		frames:             newClassicFrames(),
+	frames := newClassicFrames()
+	iterator := NewIterator(frames)
+	scorer := NewScorer()
+
+	bowling := &Bowling{
+		scorer:   scorer,
+		frames:   frames,
+		iterator: iterator,
 	}
+
+	iterator.SetOnComplete(scorer.Earn)
+	iterator.SetOnRoll(scorer.Roll)
+
+	return bowling
 }
 
 type Framer interface {
@@ -20,14 +29,14 @@ type Framer interface {
 }
 
 type Bowling struct {
-	total              uint // todo who count total?
-	currentFrameNumber uint
-	frames             *Frames
+	scorer   *Scorer
+	frames   *Frames
+	iterator *Iterator
 	// todo save bonuses
 }
 
 func (b *Bowling) Total() uint {
-	return b.total
+	return b.scorer.Total()
 }
 
 func (b *Bowling) Roll(count uint) error {
@@ -35,14 +44,7 @@ func (b *Bowling) Roll(count uint) error {
 		return ErrGameFinished
 	}
 
-	b.total += count
-
-	frame := b.frames.Frame(b.currentFrameNumber)
-	frame.Roll(count)
-	if frame.IsComplete() {
-		frame.SetScore(b.total)
-		b.currentFrameNumber++
-	}
+	b.iterator.Roll(count)
 
 	return nil
 }
