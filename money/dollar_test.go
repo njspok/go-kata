@@ -9,7 +9,9 @@ import (
 func TestDollar(t *testing.T) {
 	t.Run("times", func(t *testing.T) {
 		five := NewDollar(5)
-		five.Times(2)
-		require.Equal(t, uint(10), five.Amount())
+		product := five.Times(2)
+		require.Equal(t, uint(10), product.Amount())
+		product = five.Times(3)
+		require.Equal(t, uint(15), product.Amount())
 	})
 }
