@@ -2,7 +2,7 @@ package money
 
 func NewFrank(v uint) *Frank {
 	return &Frank{
-		NewMoney(v),
+		NewMoney(v, "CHF"),
 	}
 }
 
