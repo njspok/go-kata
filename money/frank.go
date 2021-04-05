@@ -1,11 +1,6 @@
 package money
 
-func NewFrank(v uint) *Frank {
-	return &Frank{
-		NewMoney(v, "CHF"),
-	}
-}
+func NewFrank(v uint) *Money {
+	return NewMoney(v, "CHF")
 
-type Frank struct {
-	*Money
 }
