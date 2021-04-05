@@ -27,9 +27,9 @@ func TestMoney(t *testing.T) {
 	})
 	t.Run("plus", func(t *testing.T) {
 		money := NewMoney(12, "USD")
-		expr := money.Plus(money)
+		sum := money.Plus(money)
 		bank := NewBank()
-		reduced := bank.Reduce(expr, "USD")
+		reduced := bank.Reduce(sum, "USD")
 		require.True(t, NewMoney(24, "USD").Equals(reduced))
 	})
 }
