@@ -32,3 +32,18 @@ func (d *Money) Equals(o interface{}) bool {
 	return (d.Amount() == money.Amount()) &&
 		(d.Currency() == money.Currency())
 }
+
+func (d *Money) Plus(money *Money) IExpression {
+	// todo stub
+	return NewMoney(d.Amount()+money.Amount(), d.currency)
+}
+
+type IExpression interface{}
+
+func NewDollar(v uint) *Money {
+	return NewMoney(v, "USD")
+}
+
+func NewFrank(v uint) *Money {
+	return NewMoney(v, "CHF")
+}

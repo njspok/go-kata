@@ -25,4 +25,27 @@ func TestMoney(t *testing.T) {
 		require.True(t, NewMoney(10, "USD").Equals(five.Times(2)))
 		require.True(t, NewMoney(15, "USD").Equals(five.Times(3)))
 	})
+	t.Run("plus", func(t *testing.T) {
+		money := NewMoney(12, "USD")
+		expr := money.Plus(money)
+		bank := NewBank()
+		reduced := bank.Reduce(expr, "USD")
+		require.True(t, NewMoney(24, "USD").Equals(reduced))
+	})
+}
+
+func TestDollar(t *testing.T) {
+	t.Run("create", func(t *testing.T) {
+		dollar := NewDollar(11)
+		require.Equal(t, uint(11), dollar.Amount())
+		require.Equal(t, "USD", dollar.Currency())
+	})
+}
+
+func TestFrank(t *testing.T) {
+	t.Run("create", func(t *testing.T) {
+		frank := NewFrank(11)
+		require.Equal(t, uint(11), frank.Amount())
+		require.Equal(t, "CHF", frank.Currency())
+	})
 }
