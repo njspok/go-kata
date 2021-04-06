@@ -7,6 +7,14 @@ func NewBank() *Bank {
 type Bank struct{}
 
 func (b *Bank) Reduce(expr IExpression, currency string) *Money {
-	// todo stub
-	return NewMoney(24, "USD")
+	switch expr.(type) {
+	case *Sum:
+		sum := expr.(*Sum)
+		return sum.Reduce(currency)
+	case *Money:
+		money := expr.(*Money)
+		return money.Reduce(currency)
+	}
+
+	panic("unknown type expr")
 }
