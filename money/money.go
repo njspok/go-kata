@@ -16,7 +16,7 @@ func NewFrank(v uint) *Money {
 }
 
 type IExpression interface {
-	Reduce(currency string) *Money
+	Reduce(bank *Bank, to string) *Money
 }
 
 type Money struct {
@@ -45,6 +45,7 @@ func (m *Money) Plus(money *Money) IExpression {
 	return NewSum(m, money)
 }
 
-func (m *Money) Reduce(currency string) *Money {
-	return NewMoney(m.amount, currency)
+func (m *Money) Reduce(bank *Bank, to string) *Money {
+	rate := bank.Rate(m.currency, to)
+	return NewMoney(m.Amount()/rate, to)
 }

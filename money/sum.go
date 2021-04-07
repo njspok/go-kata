@@ -12,7 +12,7 @@ type Sum struct {
 	addend *Money
 }
 
-func (s *Sum) Reduce(currency string) *Money {
+func (s *Sum) Reduce(bank *Bank, currency string) *Money {
 	total := s.augend.Amount() + s.addend.Amount()
 	return NewMoney(total, currency)
 }
