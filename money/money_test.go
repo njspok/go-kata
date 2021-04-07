@@ -45,6 +45,14 @@ func TestMoney(t *testing.T) {
 		reduced := bank.Reduce(money, "USD")
 		require.True(t, NewMoney(5, "USD").Equals(reduced))
 	})
+	t.Run("plus different currency", func(t *testing.T) {
+		bucks := NewMoney(5, "USD")
+		frank := NewMoney(10, "CHF")
+		bank := NewBank()
+		bank.AddRate("CHF", "USD", 2)
+		reduced := bank.Reduce(bucks.Plus(frank), "USD")
+		require.True(t, NewMoney(10, "USD").Equals(reduced))
+	})
 }
 
 func TestDollar(t *testing.T) {

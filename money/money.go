@@ -17,6 +17,8 @@ func NewFrank(v uint) *Money {
 
 type IExpression interface {
 	Reduce(bank *Bank, to string) *Money
+	Plus(IExpression) IExpression
+	Times(uint) IExpression
 }
 
 type Money struct {
@@ -24,7 +26,7 @@ type Money struct {
 	currency string
 }
 
-func (m *Money) Times(v uint) *Money {
+func (m *Money) Times(v uint) IExpression {
 	return NewMoney(m.amount*v, m.currency)
 }
 
@@ -36,13 +38,18 @@ func (m *Money) Currency() string {
 	return m.currency
 }
 
-func (m *Money) Equals(money *Money) bool {
-	return (m.Amount() == money.Amount()) &&
-		(m.Currency() == money.Currency())
+func (m *Money) Equals(money interface{}) bool {
+	m2, ok := money.(*Money)
+	if !ok {
+		panic("cant compare objects")
+	}
+
+	return (m.Amount() == m2.Amount()) &&
+		(m.Currency() == m2.Currency())
 }
 
-func (m *Money) Plus(money *Money) IExpression {
-	return NewSum(m, money)
+func (m *Money) Plus(addend IExpression) IExpression {
+	return NewSum(m, addend)
 }
 
 func (m *Money) Reduce(bank *Bank, to string) *Money {
