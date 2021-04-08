@@ -17,10 +17,10 @@ func (s *Sum) Reduce(bank *Bank, to string) *Money {
 	return NewMoney(total, to)
 }
 
-func (s *Sum) Plus(IExpression) IExpression {
-	return nil
+func (s *Sum) Plus(addend IExpression) IExpression {
+	return NewSum(s, addend)
 }
 
-func (s *Sum) Times(uint2 uint) IExpression {
-	return nil
+func (s *Sum) Times(multiply uint) IExpression {
+	return NewSum(s.augend.Times(multiply), s.addend.Times(multiply))
 }

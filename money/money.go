@@ -15,12 +15,6 @@ func NewFrank(v uint) *Money {
 	return NewMoney(v, "CHF")
 }
 
-type IExpression interface {
-	Reduce(bank *Bank, to string) *Money
-	Plus(IExpression) IExpression
-	Times(uint) IExpression
-}
-
 type Money struct {
 	amount   uint
 	currency string
