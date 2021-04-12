@@ -9,9 +9,9 @@ import (
 func TestWasRun(t *testing.T) {
 	t.Run("exist", func(t *testing.T) {
 		test := NewWasRun("TestMethod", t)
-		require.False(t, test.wasRun)
+		require.Zero(t, test.log)
 		test.Run()
-		require.True(t, test.wasRun)
+		require.Equal(t, []string{"SetUp", "TestMethod"}, test.log)
 	})
 	t.Run("not exist", func(t *testing.T) {
 		require.PanicsWithValue(

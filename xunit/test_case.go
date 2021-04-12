@@ -37,10 +37,18 @@ func (tc *TestCase) Run() {
 	method.Call([]reflect.Value{})
 }
 
-func (t *TestCase) False(run bool) {
-	require.False(t.t, run)
+func (tc *TestCase) False(run bool) {
+	require.False(tc.t, run)
 }
 
-func (t *TestCase) True(run bool) {
-	require.True(t.t, run)
+func (tc *TestCase) True(run bool) {
+	require.True(tc.t, run)
+}
+
+func (tc *TestCase) Equals(expected, actual interface{}) {
+	require.Equal(tc.t, expected, actual)
+}
+
+func (tc *TestCase) Zero(value interface{}) {
+	require.Zero(tc.t, value)
 }

@@ -3,25 +3,20 @@ package xunit
 import "testing"
 
 func NewWasRun(name string, t *testing.T) *WasRun {
-	wr := &WasRun{
-		wasRun:   false,
-		wasSetUp: false,
-	}
+	wr := &WasRun{}
 	wr.TestCase = NewTestCase(name, wr, t)
 	return wr
 }
 
 type WasRun struct {
 	*TestCase
-	wasRun   bool
-	wasSetUp bool
+	log []string
 }
 
 func (wr *WasRun) TestMethod() {
-	wr.wasRun = true
+	wr.log = append(wr.log, "TestMethod")
 }
 
 func (wr *WasRun) SetUp() {
-	wr.wasRun = false
-	wr.wasSetUp = true
+	wr.log = append(wr.log, "SetUp")
 }

@@ -19,17 +19,11 @@ func (t *TestCaseTest) SetUp() {
 	t.obj = NewWasRun("TestMethod", nil)
 }
 
-func (t *TestCaseTest) TestRunning() {
+func (t *TestCaseTest) TestTemplateMethod() {
 	t.obj.Run()
-	t.True(t.obj.wasRun)
-}
-
-func (t *TestCaseTest) TestSetUp() {
-	t.obj.Run()
-	t.True(t.obj.wasSetUp)
+	t.Equals([]string{"SetUp", "TestMethod"}, t.obj.log)
 }
 
 func TestTestCaseTest(t *testing.T) {
-	NewTestCaseTest("TestRunning", t).Run()
-	NewTestCaseTest("TestSetUp", t).Run()
+	NewTestCaseTest("TestTemplateMethod", t).Run()
 }
