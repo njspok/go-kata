@@ -4,17 +4,24 @@ import "testing"
 
 func NewWasRun(name string, t *testing.T) *WasRun {
 	wr := &WasRun{
-		wasRun: false,
+		wasRun:   false,
+		wasSetUp: false,
 	}
 	wr.TestCase = NewTestCase(name, wr, t)
 	return wr
 }
 
 type WasRun struct {
-	wasRun bool
 	*TestCase
+	wasRun   bool
+	wasSetUp bool
 }
 
-func (r *WasRun) TestMethod() {
-	r.wasRun = true
+func (wr *WasRun) TestMethod() {
+	wr.wasRun = true
+}
+
+func (wr *WasRun) SetUp() {
+	wr.wasRun = false
+	wr.wasSetUp = true
 }

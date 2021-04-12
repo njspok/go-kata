@@ -26,6 +26,10 @@ type TestCase struct {
 }
 
 func (tc *TestCase) Run() {
+	if setUp, ok := tc.testable.(interface{ SetUp() }); ok {
+		setUp.SetUp()
+	}
+
 	method := reflect.ValueOf(tc.testable).MethodByName(tc.name)
 	if (method == reflect.Value{}) {
 		panic("method not found")
