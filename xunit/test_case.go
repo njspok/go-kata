@@ -26,15 +26,9 @@ type TestCase struct {
 }
 
 func (tc *TestCase) Run() {
-	if setUp, ok := tc.testable.(interface{ SetUp() }); ok {
-		setUp.SetUp()
-	}
-
-	method := reflect.ValueOf(tc.testable).MethodByName(tc.name)
-	if (method == reflect.Value{}) {
-		panic("method not found")
-	}
-	method.Call([]reflect.Value{})
+	defer tc.runTearDown()
+	tc.runSetUp()
+	tc.run()
 }
 
 func (tc *TestCase) False(run bool) {
@@ -51,4 +45,29 @@ func (tc *TestCase) Equals(expected, actual interface{}) {
 
 func (tc *TestCase) Zero(value interface{}) {
 	require.Zero(tc.t, value)
+}
+
+func (tc *TestCase) Panic(value interface{}, f func()) {
+	require.PanicsWithValue(tc.t, value, f)
+}
+
+func (tc *TestCase) runSetUp() {
+	if up, ok := tc.testable.(interface{ SetUp() }); ok {
+		up.SetUp()
+	}
+}
+
+func (tc *TestCase) run() {
+	method := reflect.ValueOf(tc.testable).MethodByName(tc.name)
+	if (method == reflect.Value{}) {
+		panic("method not found")
+	}
+
+	method.Call([]reflect.Value{})
+}
+
+func (tc *TestCase) runTearDown() {
+	if down, ok := tc.testable.(interface{ TearDown() }); ok {
+		down.TearDown()
+	}
 }

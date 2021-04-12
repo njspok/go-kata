@@ -13,10 +13,18 @@ type WasRun struct {
 	log []string
 }
 
+func (wr *WasRun) PanicMethod() {
+	panic("PanicMethod")
+}
+
 func (wr *WasRun) TestMethod() {
 	wr.log = append(wr.log, "TestMethod")
 }
 
 func (wr *WasRun) SetUp() {
 	wr.log = append(wr.log, "SetUp")
+}
+
+func (wr *WasRun) TearDown() {
+	wr.log = append(wr.log, "TearDown")
 }
