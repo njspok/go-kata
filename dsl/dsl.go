@@ -15,7 +15,14 @@ type PlanetNode struct {
 	Mass        uint
 }
 
+func Clean() {
+	Root = &SolarNode{}
+	Current = Root
+}
+
 func SolarSystem(name string, f func()) {
+	Clean()
+
 	if _, ok := Current.(*SolarNode); !ok {
 		panic("Invalid call order")
 	}
