@@ -1,5 +1,10 @@
 package dsl
 
+import (
+	"fmt"
+	"reflect"
+)
+
 var Root = &SolarNode{}
 var Current interface{} = Root
 
@@ -10,6 +15,13 @@ type SolarNode struct {
 }
 
 type PlanetNode struct {
+	Name        string
+	Description string
+	Mass        uint
+	Satellites  []*SatelliteNode
+}
+
+type SatelliteNode struct {
 	Name        string
 	Description string
 	Mass        uint
@@ -32,22 +44,26 @@ func SolarSystem(name string, f func()) {
 }
 
 func Description(d string) {
-	switch e := Current.(type) {
+	switch n := Current.(type) {
 	case *SolarNode:
-		e.Description = d
+		n.Description = d
 	case *PlanetNode:
-		e.Description = d
+		n.Description = d
+	case *SatelliteNode:
+		n.Description = d
 	default:
-		panic("Node have not attribute Description")
+		NodeWithoutAttribute(n, "Description")
 	}
 }
 
 func Mass(m uint) {
-	switch e := Current.(type) {
+	switch n := Current.(type) {
 	case *PlanetNode:
-		e.Mass = m
+		n.Mass = m
+	case *SatelliteNode:
+		n.Mass = m
 	default:
-		panic("Node have not attribute Mass")
+		NodeWithoutAttribute(n, "Mass")
 	}
 }
 
@@ -60,4 +76,26 @@ func Planet(name string, f func()) {
 	Root.Planets = append(Root.Planets, p)
 	Current = p
 	f()
+}
+
+func Satellite(name string, f func()) {
+	s := &SatelliteNode{Name: name}
+
+	switch n := Current.(type) {
+	case *PlanetNode:
+		n.Satellites = append(n.Satellites, s)
+		Current = s
+	default:
+		NodeWithoutAttribute(n, "Satellite")
+	}
+
+	f()
+}
+
+func NodeWithoutAttribute(n interface{}, attr string) {
+	panic(fmt.Sprintf(
+		"Node %s have not attribute %s",
+		reflect.TypeOf(n).String(),
+		attr,
+	))
 }
