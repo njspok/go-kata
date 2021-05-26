@@ -5,8 +5,12 @@ import (
 	"reflect"
 )
 
-var Root = &SolarNode{}
-var Current interface{} = Root
+var (
+	Root         = &SolarNode{}
+	Current Node = Root
+)
+
+type Node interface{}
 
 type SolarNode struct {
 	Name        string
@@ -76,12 +80,12 @@ func Planet(name string, f func()) {
 	p := &PlanetNode{Name: name}
 	Root.Planets = append(Root.Planets, p)
 
-	Prev := Current
+	prev := Current
 	Current = p
 
 	f()
 
-	Current = Prev
+	Current = prev
 }
 
 func Satellite(name string, f func()) {
@@ -90,12 +94,12 @@ func Satellite(name string, f func()) {
 		s := &SatelliteNode{Name: name}
 		n.Satellites = append(n.Satellites, s)
 
-		Prev := Current
+		prev := Current
 		Current = s
 
 		f()
 
-		Current = Prev
+		Current = prev
 	default:
 		NodeWithoutAttribute(n, "Satellite")
 	}
