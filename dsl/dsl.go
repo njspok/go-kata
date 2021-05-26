@@ -40,6 +40,7 @@ func SolarSystem(name string, f func()) {
 	}
 
 	Root.Name = name
+
 	f()
 }
 
@@ -74,22 +75,30 @@ func Name(n string) {
 func Planet(name string, f func()) {
 	p := &PlanetNode{Name: name}
 	Root.Planets = append(Root.Planets, p)
+
+	Prev := Current
 	Current = p
+
 	f()
+
+	Current = Prev
 }
 
 func Satellite(name string, f func()) {
-	s := &SatelliteNode{Name: name}
-
 	switch n := Current.(type) {
 	case *PlanetNode:
+		s := &SatelliteNode{Name: name}
 		n.Satellites = append(n.Satellites, s)
+
+		Prev := Current
 		Current = s
+
+		f()
+
+		Current = Prev
 	default:
 		NodeWithoutAttribute(n, "Satellite")
 	}
-
-	f()
 }
 
 func NodeWithoutAttribute(n interface{}, attr string) {

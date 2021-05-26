@@ -102,6 +102,16 @@ func TestDSL(t *testing.T) {
 			Planet("Mars", func() {
 				Description("This my feature planet.")
 				Mass(8888)
+
+				Satellite("Deimos", func() {
+					Description("Rock")
+					Mass(222)
+				})
+
+				Satellite("Phobos", func() {
+					Description("Dead")
+					Mass(121)
+				})
 			})
 		})
 
@@ -124,6 +134,18 @@ func TestDSL(t *testing.T) {
 			Name:        "Mars",
 			Description: "This my feature planet.",
 			Mass:        8888,
+			Satellites: []*SatelliteNode{
+				{
+					Name:        "Deimos",
+					Description: "Rock",
+					Mass:        222,
+				},
+				{
+					Name:        "Phobos",
+					Description: "Dead",
+					Mass:        121,
+				},
+			},
 		})
 	})
 }
