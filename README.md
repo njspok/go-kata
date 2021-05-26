@@ -9,6 +9,7 @@
 - [Лампа](lamp/)
 - [Весы](libra/README.md)
 - [Деньги](money/README.md)
+- [DSL](dsl/README.md)
 
 # Путь TDD
 
