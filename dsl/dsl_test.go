@@ -7,6 +7,16 @@ import (
 )
 
 func TestDSL(t *testing.T) {
+	t.Run("panic", func(t *testing.T) {
+		require.PanicsWithValue(t,
+			"Node *dsl.SolarNode have not attribute Mass",
+			func() {
+				SolarSystem("Sun", func() {
+					Mass(111111)
+				})
+			},
+		)
+	})
 	t.Run("solar without name", func(t *testing.T) {
 		require := require.New(t)
 

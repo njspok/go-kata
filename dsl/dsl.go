@@ -8,7 +8,7 @@ func SolarSystem(name string, f func()) {
 		n.Name = name
 		next(n, f)
 	default:
-		nodeWithoutAttributePanic(n, "SolarSystem")
+		nodeWithoutAttributePanic(Current, "SolarSystem")
 	}
 }
 
@@ -16,7 +16,7 @@ func Description(d string) {
 	n, ok := Current.(interface{ SetDescription(string) })
 
 	if !ok {
-		nodeWithoutAttributePanic(n, "Description")
+		nodeWithoutAttributePanic(Current, "Description")
 	}
 
 	n.SetDescription(d)
@@ -26,7 +26,7 @@ func Mass(m uint) {
 	n, ok := Current.(interface{ SetMass(uint) })
 
 	if !ok {
-		nodeWithoutAttributePanic(n, "Mass")
+		nodeWithoutAttributePanic(Current, "Mass")
 	}
 
 	n.SetMass(m)
@@ -36,7 +36,7 @@ func Name(name string) {
 	n, ok := Current.(interface{ SetName(string) })
 
 	if !ok {
-		nodeWithoutAttributePanic(n, "Name")
+		nodeWithoutAttributePanic(Current, "Name")
 	}
 
 	n.SetName(name)
@@ -46,7 +46,7 @@ func Planet(name string, f func()) {
 	n, ok := Current.(interface{ AddPlanet(*PlanetNode) })
 
 	if !ok {
-		nodeWithoutAttributePanic(n, "Planets")
+		nodeWithoutAttributePanic(Current, "Planets")
 	}
 
 	p := &PlanetNode{Name: name}
@@ -58,7 +58,7 @@ func Satellite(name string, f func()) {
 	n, ok := Current.(interface{ AddSatellite(*SatelliteNode) })
 
 	if !ok {
-		nodeWithoutAttributePanic(n, "Satellites")
+		nodeWithoutAttributePanic(Current, "Satellites")
 	}
 
 	p := &SatelliteNode{Name: name}
