@@ -79,7 +79,7 @@ func nodeWithoutAttributePanic(node Node, attr string) {
 	))
 }
 
-func process(node Node, f func()) {
+func next(node Node, f func()) {
 	prev := Current
 	Current = node
 	f()

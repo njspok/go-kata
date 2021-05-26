@@ -6,7 +6,7 @@ func SolarSystem(name string, f func()) {
 	switch n := Current.(type) {
 	case *SolarNode:
 		n.Name = name
-		process(n, f)
+		next(n, f)
 	default:
 		nodeWithoutAttributePanic(n, "SolarSystem")
 	}
@@ -51,7 +51,7 @@ func Planet(name string, f func()) {
 
 	p := &PlanetNode{Name: name}
 	n.AddPlanet(p)
-	process(p, f)
+	next(p, f)
 }
 
 func Satellite(name string, f func()) {
@@ -63,5 +63,5 @@ func Satellite(name string, f func()) {
 
 	p := &SatelliteNode{Name: name}
 	n.AddSatellite(p)
-	process(p, f)
+	next(p, f)
 }
