@@ -39,13 +39,13 @@ func Clean() {
 func SolarSystem(name string, f func()) {
 	Clean()
 
-	if _, ok := Current.(*SolarNode); !ok {
-		panic("Invalid call order")
+	switch n := Current.(type) {
+	case *SolarNode:
+		n.Name = name
+		process(n, f)
+	default:
+		NodeWithoutAttribute(n, "SolarSystem")
 	}
-
-	Root.Name = name
-
-	f()
 }
 
 func Description(d string) {
@@ -72,20 +72,28 @@ func Mass(m uint) {
 	}
 }
 
-func Name(n string) {
-	Root.Name = n
+func Name(name string) {
+	switch n := Current.(type) {
+	case *SolarNode:
+		n.Name = name
+	case *PlanetNode:
+		n.Name = name
+	case *SatelliteNode:
+		n.Name = name
+	default:
+		NodeWithoutAttribute(n, "Name")
+	}
 }
 
 func Planet(name string, f func()) {
-	p := &PlanetNode{Name: name}
-	Root.Planets = append(Root.Planets, p)
-
-	prev := Current
-	Current = p
-
-	f()
-
-	Current = prev
+	switch n := Current.(type) {
+	case *SolarNode:
+		p := &PlanetNode{Name: name}
+		n.Planets = append(Root.Planets, p)
+		process(p, f)
+	default:
+		NodeWithoutAttribute(n, "Planets")
+	}
 }
 
 func Satellite(name string, f func()) {
@@ -93,22 +101,23 @@ func Satellite(name string, f func()) {
 	case *PlanetNode:
 		s := &SatelliteNode{Name: name}
 		n.Satellites = append(n.Satellites, s)
-
-		prev := Current
-		Current = s
-
-		f()
-
-		Current = prev
+		process(s, f)
 	default:
-		NodeWithoutAttribute(n, "Satellite")
+		NodeWithoutAttribute(n, "Satellites")
 	}
 }
 
-func NodeWithoutAttribute(n interface{}, attr string) {
+func NodeWithoutAttribute(node Node, attr string) {
 	panic(fmt.Sprintf(
 		"Node %s have not attribute %s",
-		reflect.TypeOf(n).String(),
+		reflect.TypeOf(node).String(),
 		attr,
 	))
+}
+
+func process(node Node, f func()) {
+	prev := Current
+	Current = node
+	f()
+	Current = prev
 }
