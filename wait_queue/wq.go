@@ -4,59 +4,61 @@ import "sync"
 
 type Result interface{}
 
-func NewWaitQueue() *WaitQueue {
-	return &WaitQueue{
-		list: make(map[string]*Task),
+func NewTask(do func() Result) *Task {
+	return &Task{
+		do: do,
 	}
+}
+
+type Task struct {
+	wg     sync.WaitGroup
+	do     func() Result
+	Result Result
+}
+
+func (t *Task) Run() {
+	t.wg.Add(1)
+
+	go func() {
+		t.Result = t.do()
+		t.wg.Done()
+	}()
+}
+
+func (t *Task) Wait() {
+	t.wg.Wait()
+}
+
+func NewWaitQueue() *WaitQueue {
+	return &WaitQueue{}
 }
 
 type WaitQueue struct {
 	mu   sync.Mutex
-	list map[string]*Task
-}
-
-func RunTask(do func() Result) *Task {
-	task := &Task{}
-	task.Add(1)
-
-	go func() {
-		task.Result = do()
-		task.Done()
-	}()
-
-	return task
-}
-
-type Task struct {
-	sync.WaitGroup
-
-	subs   sync.WaitGroup
-	Result Result
+	list sync.Map
 }
 
 func (q *WaitQueue) Run(name string, do func() Result) Result {
-	q.mu.Lock()
+	newTask := NewTask(do)
+	v, loaded := q.list.LoadOrStore(name, newTask)
+	task := v.(*Task)
 
-	if task, ok := q.list[name]; ok {
-		task.subs.Add(1)
-		q.mu.Unlock()
-
+	if loaded {
 		task.Wait()
-		task.subs.Done()
-
 		return task.Result
 	}
 
-	task := RunTask(do)
-	q.list[name] = task
-	q.mu.Unlock()
-
+	task.Run()
 	task.Wait()
-
-	q.mu.Lock()
-	task.subs.Wait()
-	delete(q.list, name)
-	q.mu.Unlock()
-
+	q.list.Delete(name)
 	return task.Result
+}
+
+func (q *WaitQueue) Load(name string) *Task {
+	v, _ := q.list.Load(name)
+	if v == nil {
+		return nil
+	}
+
+	return v.(*Task)
 }

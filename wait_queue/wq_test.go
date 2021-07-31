@@ -70,5 +70,6 @@ func TestWaitQueue(t *testing.T) {
 		}
 
 		require.Equal(t, int32(1), counter)
+		require.Nil(t, queue.Load("first"))
 	})
 }
