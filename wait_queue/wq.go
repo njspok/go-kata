@@ -5,9 +5,11 @@ import "sync"
 type Result interface{}
 
 func NewTask(do func() Result) *Task {
-	return &Task{
+	t := &Task{
 		do: do,
 	}
+	t.wg.Add(1)
+	return t
 }
 
 type Task struct {
@@ -17,8 +19,6 @@ type Task struct {
 }
 
 func (t *Task) Run() {
-	t.wg.Add(1)
-
 	go func() {
 		t.Result = t.do()
 		t.wg.Done()
