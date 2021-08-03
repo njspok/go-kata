@@ -4,6 +4,8 @@ import "sync"
 
 type Result interface{}
 
+type Action func() Result
+
 func NewWaitQueue() *WaitQueue {
 	return &WaitQueue{}
 }
@@ -13,7 +15,7 @@ type WaitQueue struct {
 	list sync.Map
 }
 
-func (q *WaitQueue) Run(name string, do func() Result) Result {
+func (q *WaitQueue) Run(name string, do Action) Result {
 	newTask := NewTask(do)
 	v, loaded := q.list.LoadOrStore(name, newTask)
 	task := v.(*Task)

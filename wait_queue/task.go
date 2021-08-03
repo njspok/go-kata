@@ -2,7 +2,7 @@ package wait_queue
 
 import "sync"
 
-func NewTask(do func() Result) *Task {
+func NewTask(do Action) *Task {
 	t := &Task{
 		do: do,
 	}
@@ -12,7 +12,7 @@ func NewTask(do func() Result) *Task {
 
 type Task struct {
 	wg     sync.WaitGroup
-	do     func() Result
+	do     Action
 	Result Result
 }
 
