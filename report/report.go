@@ -2,12 +2,12 @@ package report
 
 func NewReport() *Report {
 	return &Report{
-		rows: make(map[string]*Row),
+		rows: make(Rows),
 	}
 }
 
 type Report struct {
-	rows map[string]*Row
+	rows Rows
 }
 
 func (r *Report) Sum() int {
@@ -22,7 +22,7 @@ func (r *Report) Append(row *Row) {
 	r.rows[row.Name] = row
 }
 
-func (r *Report) Rows() map[string]*Row {
+func (r *Report) Rows() Rows {
 	return r.rows
 }
 
@@ -50,3 +50,5 @@ type Row struct {
 }
 
 type View func(*Report) string
+
+type Rows map[string]*Row
