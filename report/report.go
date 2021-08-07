@@ -31,6 +31,9 @@ func (r *Report) Count() int {
 }
 
 func (r *Report) Print(v View) string {
+	if v == nil {
+		return ""
+	}
 	return v(r)
 }
 

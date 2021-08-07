@@ -19,7 +19,7 @@ func defaultView(r *Report, item, report, sep string) string {
 	return fmt.Sprintf(report, r.Sum(), items)
 }
 
-func xmlView(r *Report) string {
+func XmlView(r *Report) string {
 	return defaultView(
 		r,
 		"<item><name>%v</name><price>%v</price></item>",
@@ -28,11 +28,15 @@ func xmlView(r *Report) string {
 	)
 }
 
-func jsonView(r *Report) string {
+func JsonView(r *Report) string {
 	return defaultView(
 		r,
 		"%v: %v",
 		"{sum: %v, items: {%v}}",
 		", ",
 	)
+}
+
+func TotalView(r *Report) string {
+	return fmt.Sprintf("total: %v", r.Sum())
 }
