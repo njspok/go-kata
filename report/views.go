@@ -7,6 +7,10 @@ import (
 )
 
 func defaultView(r *Report, item, report, sep string) string {
+	if r == nil {
+		return ""
+	}
+
 	var elements []string
 	for name, row := range r.Rows() {
 		elements = append(elements, fmt.Sprintf(item, name, row.Price))
@@ -38,5 +42,8 @@ func JsonView(r *Report) string {
 }
 
 func TotalView(r *Report) string {
+	if r == nil {
+		return ""
+	}
 	return fmt.Sprintf("total: %v", r.Sum())
 }

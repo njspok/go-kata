@@ -8,6 +8,8 @@ import (
 )
 
 func TestTotalView(t *testing.T) {
+	require.Empty(t, TotalView(nil))
+
 	rep := NewReport()
 	require.Equal(t, "total: 0", TotalView(rep))
 
@@ -22,6 +24,8 @@ func TestTotalView(t *testing.T) {
 }
 
 func TestJsonView(t *testing.T) {
+	require.Empty(t, JsonView(nil))
+
 	rep := NewReport()
 	require.Equal(t, "{sum: 0, items: {}}", JsonView(rep))
 
@@ -36,6 +40,8 @@ func TestJsonView(t *testing.T) {
 }
 
 func TestXmlView(t *testing.T) {
+	require.Empty(t, XmlView(nil))
+
 	rep := NewReport()
 	require.Equal(t, strings.Join([]string{
 		"<report>",
