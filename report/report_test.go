@@ -34,16 +34,16 @@ func TestReport(t *testing.T) {
 	})
 	t.Run("json", func(t *testing.T) {
 		rep := NewReport()
-		require.Equal(t, "{sum: 0, items: {}}", rep.PrintJson())
+		require.Equal(t, "{sum: 0, items: {}}", rep.Print(jsonView))
 
 		rep.Append(NewRow("drive", 1111))
-		require.Equal(t, "{sum: 1111, items: {drive: 1111}}", rep.PrintJson())
+		require.Equal(t, "{sum: 1111, items: {drive: 1111}}", rep.Print(jsonView))
 
 		rep.Append(NewRow("whells", 999))
-		require.Equal(t, "{sum: 2110, items: {drive: 1111, whells: 999}}", rep.PrintJson())
+		require.Equal(t, "{sum: 2110, items: {drive: 1111, whells: 999}}", rep.Print(jsonView))
 
 		rep.Append(NewRow("body", 10000))
-		require.Equal(t, "{sum: 12110, items: {body: 10000, drive: 1111, whells: 999}}", rep.PrintJson())
+		require.Equal(t, "{sum: 12110, items: {body: 10000, drive: 1111, whells: 999}}", rep.Print(jsonView))
 	})
 	t.Run("xml", func(t *testing.T) {
 		rep := NewReport()
@@ -52,7 +52,7 @@ func TestReport(t *testing.T) {
 			"<sum>0</sum>",
 			"<items></items>",
 			"</report>",
-		}, ""), rep.PrintXml())
+		}, ""), rep.Print(xmlView))
 
 		rep.Append(NewRow("driver", 1111))
 		require.Equal(t, strings.Join([]string{
@@ -62,7 +62,7 @@ func TestReport(t *testing.T) {
 			"<item><name>driver</name><price>1111</price></item>",
 			"</items>",
 			"</report>",
-		}, ""), rep.PrintXml())
+		}, ""), rep.Print(xmlView))
 
 		rep.Append(NewRow("whells", 999))
 		require.Equal(t, strings.Join([]string{
@@ -73,7 +73,7 @@ func TestReport(t *testing.T) {
 			"<item><name>whells</name><price>999</price></item>",
 			"</items>",
 			"</report>",
-		}, ""), rep.PrintXml())
+		}, ""), rep.Print(xmlView))
 
 		rep.Append(NewRow("body", 10000))
 		require.Equal(t, strings.Join([]string{
@@ -85,6 +85,6 @@ func TestReport(t *testing.T) {
 			"<item><name>whells</name><price>999</price></item>",
 			"</items>",
 			"</report>",
-		}, ""), rep.PrintXml())
+		}, ""), rep.Print(xmlView))
 	})
 }
