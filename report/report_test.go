@@ -12,6 +12,7 @@ func TestReport(t *testing.T) {
 		rep := NewReport()
 		require.Equal(t, 0, rep.Sum())
 		require.Equal(t, 0, rep.Count())
+		require.Empty(t, rep.Rows())
 	})
 	t.Run("append rows", func(t *testing.T) {
 		rep := NewReport()
