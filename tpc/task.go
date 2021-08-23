@@ -4,10 +4,14 @@ type TaskID int
 
 func NewTask(id TaskID) *Task {
 	return &Task{
-		ID: id,
+		id: id,
 	}
 }
 
 type Task struct {
-	ID TaskID
+	id TaskID
+}
+
+func (t *Task) ID() TaskID {
+	return t.id
 }

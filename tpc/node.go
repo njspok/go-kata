@@ -26,8 +26,8 @@ func (n *Node) ID() NodeID {
 	return n.id
 }
 
-func (n *Node) Prepare(task *Task) error {
-	n.log = append(n.log, fmt.Sprintf("prepare %v", task.ID))
+func (n *Node) Prepare(task TaskI) error {
+	n.log = append(n.log, fmt.Sprintf("prepare %v", task.ID()))
 	return nil
 }
 

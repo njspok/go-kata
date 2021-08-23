@@ -9,8 +9,12 @@ var (
 
 type NodeI interface {
 	ID() NodeID
-	Prepare(*Task) error
+	Prepare(TaskI) error
 	Commit(TaskID) error
+}
+
+type TaskI interface {
+	ID() TaskID
 }
 
 func NewTransactionManager() *TransactionManager {
@@ -23,7 +27,7 @@ type TransactionManager struct {
 	nodes map[NodeID]NodeI
 }
 
-func (m *TransactionManager) Run(task *Task) error {
+func (m *TransactionManager) Run(task TaskI) error {
 	if m.withoutNodes() {
 		return ErrNodesNotExist
 	}
@@ -33,7 +37,7 @@ func (m *TransactionManager) Run(task *Task) error {
 		_ = node.Prepare(task)
 
 		// todo process errors
-		_ = node.Commit(task.ID)
+		_ = node.Commit(task.ID())
 	}
 
 	return nil
