@@ -31,7 +31,7 @@ func TestTransactionManager_Run(t *testing.T) {
 			// check
 
 			status := node.TaskStatus(task.ID())
-			require.Equal(t, CommittedStatus, status)
+			require.Equal(t, CommittedSuccessStatus, status)
 
 			log := node.Log()
 			require.Equal(t, []string{
@@ -59,8 +59,8 @@ func TestTransactionManager_Run(t *testing.T) {
 
 			// check
 
-			//status := node.TaskStatus(task.ID())
-			//require.Equal(t, PrepareFailedStatus, status)
+			status := node.TaskStatus(task.ID())
+			require.Equal(t, PrepareFailedStatus, status)
 
 			log := node.Log()
 			require.Equal(t, []string{
@@ -100,21 +100,21 @@ func TestTransactionManager_Run(t *testing.T) {
 			// check
 
 			// check node
-			require.Equal(t, CommittedStatus, node100.TaskStatus(task.ID()))
+			require.Equal(t, CommittedSuccessStatus, node100.TaskStatus(task.ID()))
 			require.Equal(t, []string{
 				"prepare 1",
 				"commit 1",
 			}, node100.Log())
 
 			// check node
-			require.Equal(t, CommittedStatus, node200.TaskStatus(task.ID()))
+			require.Equal(t, CommittedSuccessStatus, node200.TaskStatus(task.ID()))
 			require.Equal(t, []string{
 				"prepare 1",
 				"commit 1",
 			}, node200.Log())
 
 			// check node 1
-			require.Equal(t, CommittedStatus, node300.TaskStatus(task.ID()))
+			require.Equal(t, CommittedSuccessStatus, node300.TaskStatus(task.ID()))
 			require.Equal(t, []string{
 				"prepare 1",
 				"commit 1",
