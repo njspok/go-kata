@@ -1,6 +1,7 @@
 package two_phase_commit
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -42,12 +43,13 @@ func TestTransactionManager_Run(t *testing.T) {
 		})
 		t.Run("prepare failed", func(t *testing.T) {
 			var err error
+			ErrSomeNodePrepareError := errors.New("some node prepare error")
 
 			manager := NewTransactionManager()
 
 			// new broken node
 			node := NewNode(100)
-			node.SetPrepareErr(ErrNodePrepareFailed)
+			node.SetPrepareErr(ErrSomeNodePrepareError)
 
 			// add node
 			err = manager.Add(node)
@@ -56,7 +58,7 @@ func TestTransactionManager_Run(t *testing.T) {
 			// run task
 			task := NewTask(1)
 			err = manager.Run(task)
-			require.ErrorIs(t, err, ErrNodePrepareFailed)
+			require.ErrorIs(t, err, ErrSomeNodePrepareError)
 
 			// check
 

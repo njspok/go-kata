@@ -3,9 +3,8 @@ package two_phase_commit
 import "errors"
 
 var (
-	ErrNodePrepareFailed = errors.New("node prepare failed")
-	ErrNodesNotExist     = errors.New("nodes not exist")
-	ErrNodeAlreadyAdded  = errors.New("node already added")
+	ErrNodesNotExist    = errors.New("nodes not exist")
+	ErrNodeAlreadyAdded = errors.New("node already added")
 )
 
 type NodeI interface {
