@@ -50,13 +50,11 @@ func (n *Node) Prepare(task TaskI) error {
 	}
 
 	if n.prepareErr != nil {
-		n.task[task.ID()] = PrepareFailedStatus
-		n.addToLog("prepare %v failed", task.ID())
+		n.setTaskStatus(task.ID(), PrepareFailedStatus)
 		return n.prepareErr
 	}
 
-	n.task[task.ID()] = PrepareSuccessStatus
-	n.addToLog("prepare %v success", task.ID())
+	n.setTaskStatus(task.ID(), PrepareSuccessStatus)
 	return nil
 }
 
@@ -66,13 +64,11 @@ func (n *Node) Commit(id TaskID) error {
 	}
 
 	if n.commitErr != nil {
-		n.task[id] = CommitFailedStatus
-		n.addToLog("commit %v failed", id)
+		n.setTaskStatus(id, CommitFailedStatus)
 		return n.commitErr
 	}
 
-	n.task[id] = CommittedSuccessStatus
-	n.addToLog("commit %v success", id)
+	n.setTaskStatus(id, CommittedSuccessStatus)
 	return nil
 }
 
@@ -93,10 +89,27 @@ func (n *Node) SetPrepareErr(err error) {
 	n.prepareErr = err
 }
 
+func (n *Node) SetCommitErr(err error) {
+	n.commitErr = err
+}
+
 func (n *Node) addToLog(s string, a ...interface{}) {
 	n.log = append(n.log, fmt.Sprintf(s, a...))
 }
 
-func (n *Node) SetCommitErr(err error) {
-	n.commitErr = err
+func (n *Node) setTaskStatus(id TaskID, status Status) {
+	switch status {
+	case PrepareSuccessStatus:
+		n.addToLog("prepare %v success", id)
+	case PrepareFailedStatus:
+		n.addToLog("prepare %v failed", id)
+	case CommitFailedStatus:
+		n.addToLog("commit %v failed", id)
+	case CommittedSuccessStatus:
+		n.addToLog("commit %v success", id)
+	default:
+		panic("unknown status")
+	}
+
+	n.task[id] = status
 }
