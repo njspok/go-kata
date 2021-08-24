@@ -17,12 +17,7 @@ func TestTransactionManager_Run(t *testing.T) {
 		t.Run("success", func(t *testing.T) {
 			var err error
 
-			manager := NewTransactionManager()
-
-			// add node
-			node := NewNode(100)
-			err = manager.Add(node)
-			require.NoError(t, err)
+			manager, node := makeManagerAndNode(t)
 
 			// run task
 			task := NewTask(1)
@@ -30,23 +25,16 @@ func TestTransactionManager_Run(t *testing.T) {
 			require.NoError(t, err)
 
 			// check
-
 			status, err := node.TaskStatus(task.ID())
 			require.NoError(t, err)
 			require.Equal(t, CommittedSuccessStatus, status)
-
-			log := node.Log()
 			require.Equal(t, []string{
 				"prepare 1 success",
 				"commit 1 success",
-			}, log)
+			}, node.Log())
 		})
 		t.Run("run twice", func(t *testing.T) {
-			manager := NewTransactionManager()
-
-			// add node
-			node := NewNode(100)
-			require.NoError(t, manager.Add(node))
+			manager, _ := makeManagerAndNode(t)
 
 			// create task
 			task := NewTask(1)
@@ -59,15 +47,10 @@ func TestTransactionManager_Run(t *testing.T) {
 			var err error
 			ErrSomeNodePrepareError := errors.New("some node prepare error")
 
-			manager := NewTransactionManager()
+			manager, node := makeManagerAndNode(t)
 
-			// new broken node
-			node := NewNode(100)
+			// broken node
 			node.SetPrepareErr(ErrSomeNodePrepareError)
-
-			// add node
-			err = manager.Add(node)
-			require.NoError(t, err)
 
 			// run task
 			task := NewTask(1)
@@ -75,29 +58,21 @@ func TestTransactionManager_Run(t *testing.T) {
 			require.ErrorIs(t, err, ErrSomeNodePrepareError)
 
 			// check
-
 			status, err := node.TaskStatus(task.ID())
 			require.NoError(t, err)
 			require.Equal(t, PrepareFailedStatus, status)
-
-			log := node.Log()
 			require.Equal(t, []string{
 				"prepare 1 failed",
-			}, log)
+			}, node.Log())
 		})
 		t.Run("commit failed", func(t *testing.T) {
 			var err error
 			ErrSomeNodeCommitError := errors.New("some node commit error")
 
-			manager := NewTransactionManager()
+			manager, node := makeManagerAndNode(t)
 
-			// new broken node
-			node := NewNode(100)
+			// broken commit node
 			node.SetCommitErr(ErrSomeNodeCommitError)
-
-			// add node
-			err = manager.Add(node)
-			require.NoError(t, err)
 
 			// run task
 			task := NewTask(1)
@@ -105,16 +80,13 @@ func TestTransactionManager_Run(t *testing.T) {
 			require.ErrorIs(t, err, ErrSomeNodeCommitError)
 
 			// check
-
 			status, err := node.TaskStatus(task.ID())
 			require.NoError(t, err)
 			require.Equal(t, CommitFailedStatus, status)
-
-			log := node.Log()
 			require.Equal(t, []string{
 				"prepare 1 success",
 				"commit 1 failed",
-			}, log)
+			}, node.Log())
 		})
 	})
 	t.Run("multiple nodes", func(t *testing.T) {
@@ -198,4 +170,16 @@ func TestTransactionManager_Add(t *testing.T) {
 		require.NoError(t, manager.Add(NewNode(200)))
 		require.NoError(t, manager.Add(NewNode(300)))
 	})
+}
+
+func makeManagerAndNode(t *testing.T) (*TransactionManager, *Node) {
+	manager := NewTransactionManager()
+	require.NotNil(t, manager)
+
+	node := NewNode(100)
+	require.NotNil(t, node)
+
+	require.NoError(t, manager.Add(node))
+
+	return manager, node
 }
