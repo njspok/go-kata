@@ -53,14 +53,14 @@ func (n *Node) Prepare(task TaskI) error {
 	}
 
 	n.task[task.ID()] = PrepareSuccessStatus
-	n.addToLog("prepare %v", task.ID())
+	n.addToLog("prepare %v success", task.ID())
 	return nil
 }
 
 func (n *Node) Commit(id TaskID) error {
 	if _, exist := n.task[id]; exist {
 		n.task[id] = CommittedSuccessStatus
-		n.addToLog("commit %v", id)
+		n.addToLog("commit %v success", id)
 		return nil
 	}
 

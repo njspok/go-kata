@@ -37,8 +37,8 @@ func TestTransactionManager_Run(t *testing.T) {
 
 			log := node.Log()
 			require.Equal(t, []string{
-				"prepare 1",
-				"commit 1",
+				"prepare 1 success",
+				"commit 1 success",
 			}, log)
 		})
 		t.Run("prepare failed", func(t *testing.T) {
@@ -109,8 +109,8 @@ func TestTransactionManager_Run(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, CommittedSuccessStatus, status)
 			require.Equal(t, []string{
-				"prepare 1",
-				"commit 1",
+				"prepare 1 success",
+				"commit 1 success",
 			}, node100.Log())
 
 			// check node
@@ -118,8 +118,8 @@ func TestTransactionManager_Run(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, CommittedSuccessStatus, status)
 			require.Equal(t, []string{
-				"prepare 1",
-				"commit 1",
+				"prepare 1 success",
+				"commit 1 success",
 			}, node200.Log())
 
 			// check node 1
@@ -127,8 +127,8 @@ func TestTransactionManager_Run(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, CommittedSuccessStatus, status)
 			require.Equal(t, []string{
-				"prepare 1",
-				"commit 1",
+				"prepare 1 success",
+				"commit 1 success",
 			}, node300.Log())
 		})
 		t.Run("prepare failed", func(t *testing.T) {
