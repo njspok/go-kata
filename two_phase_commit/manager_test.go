@@ -41,6 +41,20 @@ func TestTransactionManager_Run(t *testing.T) {
 				"commit 1 success",
 			}, log)
 		})
+		t.Run("run twice", func(t *testing.T) {
+			manager := NewTransactionManager()
+
+			// add node
+			node := NewNode(100)
+			require.NoError(t, manager.Add(node))
+
+			// create task
+			task := NewTask(1)
+
+			// run
+			require.NoError(t, manager.Run(task))
+			require.ErrorIs(t, manager.Run(task), ErrTaskAlreadyExist)
+		})
 		t.Run("prepare failed", func(t *testing.T) {
 			var err error
 			ErrSomeNodePrepareError := errors.New("some node prepare error")
