@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	NoneStatus             Status = "none"
 	CommittedSuccessStatus Status = "committed-success"
 	PrepareFailedStatus    Status = "prepare-failed"
 	PrepareSuccessStatus   Status = "prepare-success"
@@ -66,13 +67,13 @@ func (n *Node) Commit(id TaskID) error {
 	return ErrTaskNotFound
 }
 
-func (n *Node) TaskStatus(id TaskID) Status {
+func (n *Node) TaskStatus(id TaskID) (Status, error) {
 	status, exist := n.task[id]
 	if !exist {
-		return "" // todo repalce interface
+		return NoneStatus, ErrTaskNotFound
 	}
 
-	return status
+	return status, nil
 }
 
 func (n *Node) Log() []string {

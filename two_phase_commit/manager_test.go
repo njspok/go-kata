@@ -30,7 +30,8 @@ func TestTransactionManager_Run(t *testing.T) {
 
 			// check
 
-			status := node.TaskStatus(task.ID())
+			status, err := node.TaskStatus(task.ID())
+			require.NoError(t, err)
 			require.Equal(t, CommittedSuccessStatus, status)
 
 			log := node.Log()
@@ -59,7 +60,8 @@ func TestTransactionManager_Run(t *testing.T) {
 
 			// check
 
-			status := node.TaskStatus(task.ID())
+			status, err := node.TaskStatus(task.ID())
+			require.NoError(t, err)
 			require.Equal(t, PrepareFailedStatus, status)
 
 			log := node.Log()
@@ -74,6 +76,7 @@ func TestTransactionManager_Run(t *testing.T) {
 	t.Run("multiple nodes", func(t *testing.T) {
 		t.Run("success", func(t *testing.T) {
 			var err error
+			var status Status
 
 			manager := NewTransactionManager()
 
@@ -100,21 +103,27 @@ func TestTransactionManager_Run(t *testing.T) {
 			// check
 
 			// check node
-			require.Equal(t, CommittedSuccessStatus, node100.TaskStatus(task.ID()))
+			status, err = node100.TaskStatus(task.ID())
+			require.NoError(t, err)
+			require.Equal(t, CommittedSuccessStatus, status)
 			require.Equal(t, []string{
 				"prepare 1",
 				"commit 1",
 			}, node100.Log())
 
 			// check node
-			require.Equal(t, CommittedSuccessStatus, node200.TaskStatus(task.ID()))
+			status, err = node200.TaskStatus(task.ID())
+			require.NoError(t, err)
+			require.Equal(t, CommittedSuccessStatus, status)
 			require.Equal(t, []string{
 				"prepare 1",
 				"commit 1",
 			}, node200.Log())
 
 			// check node 1
-			require.Equal(t, CommittedSuccessStatus, node300.TaskStatus(task.ID()))
+			status, err = node300.TaskStatus(task.ID())
+			require.NoError(t, err)
+			require.Equal(t, CommittedSuccessStatus, status)
 			require.Equal(t, []string{
 				"prepare 1",
 				"commit 1",
