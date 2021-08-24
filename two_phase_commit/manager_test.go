@@ -1,4 +1,4 @@
-package tpc
+package two_phase_commit
 
 import (
 	"testing"
