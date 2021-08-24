@@ -40,7 +40,32 @@ func TestTransactionManager_Run(t *testing.T) {
 			}, log)
 		})
 		t.Run("prepare failed", func(t *testing.T) {
-			// todo
+			var err error
+
+			manager := NewTransactionManager()
+
+			// new broken node
+			node := NewNode(100)
+			node.SetPrepareErr(ErrNodePrepareFailed)
+
+			// add node
+			err = manager.Add(node)
+			require.NoError(t, err)
+
+			// run task
+			task := NewTask(1)
+			err = manager.Run(task)
+			require.ErrorIs(t, err, ErrNodePrepareFailed)
+
+			// check
+
+			//status := node.TaskStatus(task.ID())
+			//require.Equal(t, PrepareFailedStatus, status)
+
+			log := node.Log()
+			require.Equal(t, []string{
+				"prepare 1 failed",
+			}, log)
 		})
 		t.Run("commit failed", func(t *testing.T) {
 			// todo

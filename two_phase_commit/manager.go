@@ -3,8 +3,9 @@ package two_phase_commit
 import "errors"
 
 var (
-	ErrNodesNotExist    = errors.New("nodes not exist")
-	ErrNodeAlreadyAdded = errors.New("node already added")
+	ErrNodePrepareFailed = errors.New("node prepare failed")
+	ErrNodesNotExist     = errors.New("nodes not exist")
+	ErrNodeAlreadyAdded  = errors.New("node already added")
 )
 
 type NodeI interface {
@@ -33,9 +34,13 @@ func (m *TransactionManager) Run(task TaskI) error {
 	}
 
 	for _, node := range m.nodes {
-		// todo process errors
-		_ = node.Prepare(task)
+		err := node.Prepare(task)
+		if err != nil {
+			return err
+		}
+	}
 
+	for _, node := range m.nodes {
 		// todo process errors
 		_ = node.Commit(task.ID())
 	}
