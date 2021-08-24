@@ -40,8 +40,10 @@ func (m *TransactionManager) Run(task TaskI) error {
 	}
 
 	for _, node := range m.nodes {
-		// todo process errors
-		_ = node.Commit(task.ID())
+		err := node.Commit(task.ID())
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

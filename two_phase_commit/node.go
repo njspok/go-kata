@@ -8,6 +8,7 @@ import (
 const (
 	NoneStatus             Status = "none"
 	CommittedSuccessStatus Status = "committed-success"
+	CommitFailedStatus     Status = "commit-failed"
 	PrepareFailedStatus    Status = "prepare-failed"
 	PrepareSuccessStatus   Status = "prepare-success"
 )
@@ -26,6 +27,7 @@ func NewNode(id NodeID) *Node {
 		id:         id,
 		log:        []string{},
 		prepareErr: nil,
+		commitErr:  nil,
 		task:       make(map[TaskID]Status),
 	}
 }
@@ -34,6 +36,7 @@ type Node struct {
 	id         NodeID
 	log        []string
 	prepareErr error
+	commitErr  error
 	task       map[TaskID]Status
 }
 
@@ -58,13 +61,19 @@ func (n *Node) Prepare(task TaskI) error {
 }
 
 func (n *Node) Commit(id TaskID) error {
-	if _, exist := n.task[id]; exist {
-		n.task[id] = CommittedSuccessStatus
-		n.addToLog("commit %v success", id)
-		return nil
+	if _, exist := n.task[id]; !exist {
+		return ErrTaskNotFound
 	}
 
-	return ErrTaskNotFound
+	if n.commitErr != nil {
+		n.task[id] = CommitFailedStatus
+		n.addToLog("commit %v failed", id)
+		return n.commitErr
+	}
+
+	n.task[id] = CommittedSuccessStatus
+	n.addToLog("commit %v success", id)
+	return nil
 }
 
 func (n *Node) TaskStatus(id TaskID) (Status, error) {
@@ -86,4 +95,8 @@ func (n *Node) SetPrepareErr(err error) {
 
 func (n *Node) addToLog(s string, a ...interface{}) {
 	n.log = append(n.log, fmt.Sprintf(s, a...))
+}
+
+func (n *Node) SetCommitErr(err error) {
+	n.commitErr = err
 }
