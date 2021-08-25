@@ -33,23 +33,9 @@ func (m *TransactionManager) Run(task TaskI) error {
 		return ErrNodesNotExist
 	}
 
-	// todo many errors
-	var lastErr error
-	var prepared []NodeI
-	for _, node := range m.nodes {
-		err := node.Prepare(task)
-		if err != nil {
-			lastErr = err
-			continue
-		}
-		prepared = append(prepared, node)
-	}
-
-	if lastErr != nil {
-		for _, node := range prepared {
-			node.Abort(task.ID())
-		}
-		return lastErr
+	err := m.prepare(task)
+	if err != nil {
+		return err
 	}
 
 	for _, node := range m.nodes {
@@ -72,4 +58,28 @@ func (m *TransactionManager) Add(node NodeI) error {
 
 func (m *TransactionManager) withoutNodes() bool {
 	return len(m.nodes) == 0
+}
+
+func (m *TransactionManager) prepare(task TaskI) error {
+	// todo many errors
+	var lastErr error
+
+	var prepared []NodeI
+	for _, node := range m.nodes {
+		err := node.Prepare(task)
+		if err != nil {
+			lastErr = err
+			continue
+		}
+		prepared = append(prepared, node)
+	}
+
+	if lastErr != nil {
+		for _, node := range prepared {
+			node.Abort(task.ID())
+		}
+		return lastErr
+	}
+
+	return nil
 }
