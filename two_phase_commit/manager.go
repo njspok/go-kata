@@ -45,11 +45,20 @@ func (m *TransactionManager) Run(task TaskI) error {
 }
 
 func (m *TransactionManager) Add(node NodeI) error {
-	if _, exist := m.nodes[node.ID()]; exist {
+	if m.nodeExist(node.ID()) {
 		return ErrNodeAlreadyAdded
 	}
-	m.nodes[node.ID()] = node
+	m.setNode(node)
 	return nil
+}
+
+func (m *TransactionManager) nodeExist(id NodeID) bool {
+	_, exist := m.nodes[id]
+	return exist
+}
+
+func (m *TransactionManager) setNode(node NodeI) {
+	m.nodes[node.ID()] = node
 }
 
 func (m *TransactionManager) withoutNodes() bool {
