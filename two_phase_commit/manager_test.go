@@ -2,6 +2,7 @@ package two_phase_commit
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -91,59 +92,25 @@ func TestTransactionManager_Run(t *testing.T) {
 	})
 	t.Run("multiple nodes", func(t *testing.T) {
 		t.Run("success", func(t *testing.T) {
-			var err error
-			var status Status
-
-			manager := NewTransactionManager()
-
-			// add node
-			node100 := NewNode(100)
-			err = manager.Add(node100)
-			require.NoError(t, err)
-
-			// add node
-			node200 := NewNode(200)
-			err = manager.Add(node200)
-			require.NoError(t, err)
-
-			// add node
-			node300 := NewNode(300)
-			err = manager.Add(node300)
-			require.NoError(t, err)
+			manager, nodes := makeManagerAndNodes(t)
 
 			// run task
 			task := NewTask(1)
-			err = manager.Run(task)
+			err := manager.Run(task)
 			require.NoError(t, err)
 
 			// check
-
-			// check node
-			status, err = node100.TaskStatus(task.ID())
-			require.NoError(t, err)
-			require.Equal(t, CommittedSuccessStatus, status)
-			require.Equal(t, []string{
-				"prepare 1 success",
-				"commit 1 success",
-			}, node100.Log())
-
-			// check node
-			status, err = node200.TaskStatus(task.ID())
-			require.NoError(t, err)
-			require.Equal(t, CommittedSuccessStatus, status)
-			require.Equal(t, []string{
-				"prepare 1 success",
-				"commit 1 success",
-			}, node200.Log())
-
-			// check node 1
-			status, err = node300.TaskStatus(task.ID())
-			require.NoError(t, err)
-			require.Equal(t, CommittedSuccessStatus, status)
-			require.Equal(t, []string{
-				"prepare 1 success",
-				"commit 1 success",
-			}, node300.Log())
+			for i, node := range nodes {
+				t.Run(fmt.Sprintf("check %v", i), func(t *testing.T) {
+					status, err := node.TaskStatus(task.ID())
+					require.NoError(t, err)
+					require.Equal(t, CommittedSuccessStatus, status)
+					require.Equal(t, []string{
+						"prepare 1 success",
+						"commit 1 success",
+					}, node.Log())
+				})
+			}
 		})
 		t.Run("prepare failed", func(t *testing.T) {
 			// todo
@@ -182,4 +149,23 @@ func makeManagerAndNode(t *testing.T) (*TransactionManager, *Node) {
 	require.NoError(t, manager.Add(node))
 
 	return manager, node
+}
+
+func makeManagerAndNodes(t *testing.T) (*TransactionManager, []*Node) {
+	manager := NewTransactionManager()
+	require.NotNil(t, manager)
+
+	// add node
+	node100 := NewNode(100)
+	require.NoError(t, manager.Add(node100))
+
+	// add node
+	node200 := NewNode(200)
+	require.NoError(t, manager.Add(node200))
+
+	// add node
+	node300 := NewNode(300)
+	require.NoError(t, manager.Add(node300))
+
+	return manager, []*Node{node100, node200, node300}
 }
