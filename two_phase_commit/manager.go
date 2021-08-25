@@ -33,16 +33,12 @@ func (m *TransactionManager) Run(task TaskI) error {
 		return ErrNodesNotExist
 	}
 
-	err := m.prepare(task)
-	if err != nil {
+	if err := m.prepare(task); err != nil {
 		return err
 	}
 
-	for _, node := range m.nodes {
-		err := node.Commit(task.ID())
-		if err != nil {
-			return err
-		}
+	if err := m.commit(task); err != nil {
+		return err
 	}
 
 	return nil
@@ -81,5 +77,15 @@ func (m *TransactionManager) prepare(task TaskI) error {
 		return lastErr
 	}
 
+	return nil
+}
+
+func (m *TransactionManager) commit(task TaskI) error {
+	for _, node := range m.nodes {
+		err := node.Commit(task.ID())
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
