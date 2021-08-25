@@ -9,8 +9,9 @@ const (
 	NoneStatus             Status = "none"
 	CommittedSuccessStatus Status = "committed-success"
 	CommitFailedStatus     Status = "commit-failed"
-	PrepareFailedStatus    Status = "prepare-failed"
 	PrepareSuccessStatus   Status = "prepare-success"
+	PrepareFailedStatus    Status = "prepare-failed"
+	AbortSuccessStatus     Status = "abort-success"
 )
 
 var (
@@ -44,6 +45,18 @@ func (n *Node) ID() NodeID {
 	return n.id
 }
 
+func (n *Node) Abort(id TaskID) {
+	// todo return error not found
+
+	status := n.task[id]
+	if status != PrepareSuccessStatus {
+		// todo return error
+		return
+	}
+
+	n.setTaskStatus(id, AbortSuccessStatus)
+}
+
 func (n *Node) Prepare(task TaskI) error {
 	if _, exist := n.task[task.ID()]; exist {
 		return ErrTaskAlreadyExist
@@ -62,6 +75,8 @@ func (n *Node) Commit(id TaskID) error {
 	if _, exist := n.task[id]; !exist {
 		return ErrTaskNotFound
 	}
+
+	// todo check only PrepareSuccessStatus status
 
 	if n.commitErr != nil {
 		n.setTaskStatus(id, CommitFailedStatus)
@@ -98,6 +113,7 @@ func (n *Node) addToLog(s string, a ...interface{}) {
 }
 
 func (n *Node) setTaskStatus(id TaskID, status Status) {
+	// todo make map
 	switch status {
 	case PrepareSuccessStatus:
 		n.addToLog("prepare %v success", id)
@@ -107,6 +123,8 @@ func (n *Node) setTaskStatus(id TaskID, status Status) {
 		n.addToLog("commit %v failed", id)
 	case CommittedSuccessStatus:
 		n.addToLog("commit %v success", id)
+	case AbortSuccessStatus:
+		n.addToLog("abort %v success", id)
 	default:
 		panic("unknown status")
 	}

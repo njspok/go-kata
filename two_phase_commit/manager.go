@@ -11,6 +11,7 @@ type NodeI interface {
 	ID() NodeID
 	Prepare(TaskI) error
 	Commit(TaskID) error
+	Abort(TaskID) // todo need return errors?
 }
 
 type TaskI interface {
@@ -32,11 +33,23 @@ func (m *TransactionManager) Run(task TaskI) error {
 		return ErrNodesNotExist
 	}
 
+	// todo many errors
+	var lastErr error
+	var prepared []NodeI
 	for _, node := range m.nodes {
 		err := node.Prepare(task)
 		if err != nil {
-			return err
+			lastErr = err
+			continue
 		}
+		prepared = append(prepared, node)
+	}
+
+	if lastErr != nil {
+		for _, node := range prepared {
+			node.Abort(task.ID())
+		}
+		return lastErr
 	}
 
 	for _, node := range m.nodes {

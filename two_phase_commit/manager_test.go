@@ -101,7 +101,7 @@ func TestTransactionManager_Run(t *testing.T) {
 
 			// check
 			for i, node := range nodes {
-				t.Run(fmt.Sprintf("check %v", i), func(t *testing.T) {
+				t.Run(fmt.Sprintf("check node %v", i), func(t *testing.T) {
 					status, err := node.TaskStatus(task.ID())
 					require.NoError(t, err)
 					require.Equal(t, CommittedSuccessStatus, status)
@@ -113,7 +113,36 @@ func TestTransactionManager_Run(t *testing.T) {
 			}
 		})
 		t.Run("prepare failed", func(t *testing.T) {
-			// todo
+			manager, nodes := makeManagerAndNodes(t)
+
+			// broken node
+			nodes[300].SetPrepareErr(errors.New("shit happens"))
+
+			// run task
+			task := NewTask(1)
+			err := manager.Run(task)
+			require.EqualError(t, err, "shit happens")
+
+			// check
+
+			checkNodes(t, func(t *testing.T, node *Node) {
+				status, err := node.TaskStatus(task.ID())
+				require.NoError(t, err)
+				require.Equal(t, AbortSuccessStatus, status)
+				require.Equal(t, []string{
+					"prepare 1 success",
+					"abort 1 success",
+				}, node.Log())
+			}, nodes, 100, 200)
+
+			checkNodes(t, func(t *testing.T, node *Node) {
+				status, err := nodes[300].TaskStatus(task.ID())
+				require.NoError(t, err)
+				require.Equal(t, PrepareFailedStatus, status)
+				require.Equal(t, []string{
+					"prepare 1 failed",
+				}, nodes[300].Log())
+			}, nodes, 300)
 		})
 		t.Run("commit failed", func(t *testing.T) {
 			// todo
@@ -139,6 +168,20 @@ func TestTransactionManager_Add(t *testing.T) {
 	})
 }
 
+func checkNodes(
+	t *testing.T,
+	f func(t *testing.T, node *Node),
+	nodes map[NodeID]*Node,
+	ids ...NodeID,
+) {
+	for _, id := range ids {
+		node := nodes[id]
+		t.Run(fmt.Sprintf("check node %v", id), func(t *testing.T) {
+			f(t, node)
+		})
+	}
+}
+
 func makeManagerAndNode(t *testing.T) (*TransactionManager, *Node) {
 	manager := NewTransactionManager()
 	require.NotNil(t, manager)
@@ -151,7 +194,7 @@ func makeManagerAndNode(t *testing.T) (*TransactionManager, *Node) {
 	return manager, node
 }
 
-func makeManagerAndNodes(t *testing.T) (*TransactionManager, []*Node) {
+func makeManagerAndNodes(t *testing.T) (*TransactionManager, map[NodeID]*Node) {
 	manager := NewTransactionManager()
 	require.NotNil(t, manager)
 
@@ -167,5 +210,9 @@ func makeManagerAndNodes(t *testing.T) (*TransactionManager, []*Node) {
 	node300 := NewNode(300)
 	require.NoError(t, manager.Add(node300))
 
-	return manager, []*Node{node100, node200, node300}
+	return manager, map[NodeID]*Node{
+		100: node100,
+		200: node200,
+		300: node300,
+	}
 }
