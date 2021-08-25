@@ -113,36 +113,62 @@ func TestTransactionManager_Run(t *testing.T) {
 			}
 		})
 		t.Run("prepare failed", func(t *testing.T) {
-			manager, nodes := makeManagerAndNodes(t)
+			t.Run("failed 1 node", func(t *testing.T) {
+				manager, nodes := makeManagerAndNodes(t)
 
-			// broken node
-			nodes[300].SetPrepareErr(errors.New("shit happens"))
+				// broken node
+				nodes[300].SetPrepareErr(errors.New("shit happens"))
 
-			// run task
-			task := NewTask(1)
-			err := manager.Run(task)
-			require.EqualError(t, err, "shit happens")
+				// run task
+				task := NewTask(1)
+				err := manager.Run(task)
+				require.EqualError(t, err, "shit happens")
 
-			// check
+				// check
 
-			checkNodes(t, func(t *testing.T, node *Node) {
-				status, err := node.TaskStatus(task.ID())
-				require.NoError(t, err)
-				require.Equal(t, AbortSuccessStatus, status)
-				require.Equal(t, []string{
-					"prepare 1 success",
-					"abort 1 success",
-				}, node.Log())
-			}, nodes, 100, 200)
+				checkNodes(t, func(t *testing.T, node *Node) {
+					status, err := node.TaskStatus(task.ID())
+					require.NoError(t, err)
+					require.Equal(t, AbortSuccessStatus, status)
+					require.Equal(t, []string{
+						"prepare 1 success",
+						"abort 1 success",
+					}, node.Log())
+				}, nodes, 100, 200)
 
-			checkNodes(t, func(t *testing.T, node *Node) {
-				status, err := nodes[300].TaskStatus(task.ID())
-				require.NoError(t, err)
-				require.Equal(t, PrepareFailedStatus, status)
-				require.Equal(t, []string{
-					"prepare 1 failed",
-				}, nodes[300].Log())
-			}, nodes, 300)
+				checkNodes(t, func(t *testing.T, node *Node) {
+					status, err := node.TaskStatus(task.ID())
+					require.NoError(t, err)
+					require.Equal(t, PrepareFailedStatus, status)
+					require.Equal(t, []string{
+						"prepare 1 failed",
+					}, node.Log())
+				}, nodes, 300)
+			})
+			t.Run("failed all nodes", func(t *testing.T) {
+				manager, nodes := makeManagerAndNodes(t)
+
+				// broken all nodes
+				for _, node := range nodes {
+					node.SetPrepareErr(errors.New("shit happens"))
+				}
+
+				// run task
+				task := NewTask(1)
+				err := manager.Run(task)
+				require.EqualError(t, err, "shit happens")
+
+				// check
+
+				checkNodes(t, func(t *testing.T, node *Node) {
+					status, err := node.TaskStatus(task.ID())
+					require.NoError(t, err)
+					require.Equal(t, PrepareFailedStatus, status)
+					require.Equal(t, []string{
+						"prepare 1 failed",
+					}, node.Log())
+				}, nodes, 100, 200, 300)
+			})
 		})
 		t.Run("commit failed", func(t *testing.T) {
 			// todo
