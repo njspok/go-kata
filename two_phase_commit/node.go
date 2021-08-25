@@ -15,8 +15,9 @@ const (
 )
 
 var (
-	ErrTaskAlreadyExist = errors.New("task already exist")
-	ErrTaskNotFound     = errors.New("task not found")
+	ErrTaskAlreadyExist             = errors.New("task already exist")
+	ErrTaskNotFound                 = errors.New("task not found")
+	ErrTaskMustPrepareSuccessStatus = errors.New("task must prepare success status")
 )
 
 type Status string
@@ -72,11 +73,14 @@ func (n *Node) Prepare(task TaskI) error {
 }
 
 func (n *Node) Commit(id TaskID) error {
-	if _, exist := n.task[id]; !exist {
+	status, exist := n.task[id]
+	if !exist {
 		return ErrTaskNotFound
 	}
 
-	// todo check only PrepareSuccessStatus status
+	if status != PrepareSuccessStatus {
+		return ErrTaskMustPrepareSuccessStatus
+	}
 
 	if n.commitErr != nil {
 		n.setTaskStatus(id, CommitFailedStatus)
