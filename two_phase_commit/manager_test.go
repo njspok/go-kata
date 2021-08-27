@@ -42,7 +42,10 @@ func TestTransactionManager_Run(t *testing.T) {
 
 			// run
 			require.NoError(t, manager.Run(task))
-			require.ErrorIs(t, manager.Run(task), ErrTaskAlreadyExist)
+			require.Equal(t,
+				ErrorsList{ErrTaskAlreadyExist},
+				manager.Run(task),
+			)
 		})
 		t.Run("prepare failed", func(t *testing.T) {
 			var err error
@@ -56,7 +59,7 @@ func TestTransactionManager_Run(t *testing.T) {
 			// run task
 			task := NewTask(1)
 			err = manager.Run(task)
-			require.ErrorIs(t, err, ErrSomeNodePrepareError)
+			require.Equal(t, ErrorsList{ErrSomeNodePrepareError}, err)
 
 			// check
 			status, err := node.TaskStatus(task.ID())
@@ -122,7 +125,9 @@ func TestTransactionManager_Run(t *testing.T) {
 				// run task
 				task := NewTask(1)
 				err := manager.Run(task)
-				require.EqualError(t, err, "shit happens")
+				require.Equal(t,
+					ErrorsList{errors.New("shit happens")},
+					err)
 
 				// check
 
@@ -156,7 +161,13 @@ func TestTransactionManager_Run(t *testing.T) {
 				// run task
 				task := NewTask(1)
 				err := manager.Run(task)
-				require.EqualError(t, err, "shit happens")
+				require.Equal(t,
+					ErrorsList{
+						errors.New("shit happens"),
+						errors.New("shit happens"),
+						errors.New("shit happens"),
+					},
+					err)
 
 				// check
 
