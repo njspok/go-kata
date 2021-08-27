@@ -17,5 +17,8 @@ func (l *ErrorsList) Count() int {
 }
 
 func (l ErrorsList) Error() string {
+	if l.Empty() {
+		return "list without errors"
+	}
 	return fmt.Sprintf("list of %v errors", l.Count())
 }

@@ -9,7 +9,8 @@ import (
 
 func TestErrorsList_Error(t *testing.T) {
 	t.Run("empty errors", func(t *testing.T) {
-		// todo
+		errs := ErrorsList{}
+		require.EqualError(t, errs, "list without errors")
 	})
 	t.Run("multiple errors", func(t *testing.T) {
 		errs := ErrorsList{}
