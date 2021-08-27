@@ -117,21 +117,18 @@ func (n *Node) addToLog(s string, a ...interface{}) {
 }
 
 func (n *Node) setTaskStatus(id TaskID, status Status) {
-	// todo make map
-	switch status {
-	case PrepareSuccessStatus:
-		n.addToLog("prepare %v success", id)
-	case PrepareFailedStatus:
-		n.addToLog("prepare %v failed", id)
-	case CommitFailedStatus:
-		n.addToLog("commit %v failed", id)
-	case CommittedSuccessStatus:
-		n.addToLog("commit %v success", id)
-	case AbortSuccessStatus:
-		n.addToLog("abort %v success", id)
-	default:
-		panic("unknown status")
+	messages := map[Status]string{
+		PrepareSuccessStatus:   "prepare %v success",
+		PrepareFailedStatus:    "prepare %v failed",
+		CommitFailedStatus:     "commit %v failed",
+		CommittedSuccessStatus: "commit %v success",
+		AbortSuccessStatus:     "abort %v success",
 	}
 
-	n.task[id] = status
+	if msg, exist := messages[status]; exist {
+		n.addToLog(msg, id)
+		n.task[id] = status
+	} else {
+		panic("unknown status")
+	}
 }
