@@ -44,12 +44,9 @@ func (n *Node) ID() NodeID {
 }
 
 func (n *Node) Abort(id TaskID) error {
-	// todo return error not found
-
-	status := n.task[id]
-	if status != PrepareSuccessStatus {
-		// todo return error
-		return nil
+	err := n.checkTaskFinished(id)
+	if err != nil {
+		return err
 	}
 
 	n.setTaskStatus(id, AbortStatus)
@@ -71,6 +68,16 @@ func (n *Node) Prepare(task TaskI) error {
 }
 
 func (n *Node) Commit(id TaskID) error {
+	err := n.checkTaskFinished(id)
+	if err != nil {
+		return err
+	}
+
+	n.setTaskStatus(id, CommittedStatus)
+	return nil
+}
+
+func (n *Node) checkTaskFinished(id TaskID) error {
 	status, exist := n.task[id]
 	if !exist {
 		return ErrTaskNotFound
@@ -80,7 +87,6 @@ func (n *Node) Commit(id TaskID) error {
 		return ErrTaskFinished
 	}
 
-	n.setTaskStatus(id, CommittedStatus)
 	return nil
 }
 

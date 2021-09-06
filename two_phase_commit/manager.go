@@ -79,7 +79,10 @@ func (m *TransactionManager) prepare(task TaskI) error {
 	}
 
 	if !errs.Empty() {
-		m.abort(task, prepared)
+		err := m.abort(task, prepared)
+		if err != nil {
+			errs.Add(err)
+		}
 		return errs
 	}
 
@@ -96,8 +99,11 @@ func (m *TransactionManager) commit(task TaskI) error {
 	return nil
 }
 
-func (m *TransactionManager) abort(task TaskI, nodes []NodeI) {
+func (m *TransactionManager) abort(task TaskI, nodes []NodeI) error {
 	for _, node := range nodes {
-		node.Abort(task.ID())
+		if err := node.Abort(task.ID()); err != nil {
+			return err
+		}
 	}
+	return nil
 }
