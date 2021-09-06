@@ -77,19 +77,6 @@ func (n *Node) Commit(id TaskID) error {
 	return nil
 }
 
-func (n *Node) checkTaskFinished(id TaskID) error {
-	status, exist := n.task[id]
-	if !exist {
-		return ErrTaskNotFound
-	}
-
-	if status != PrepareSuccessStatus {
-		return ErrTaskFinished
-	}
-
-	return nil
-}
-
 func (n *Node) TaskStatus(id TaskID) (Status, error) {
 	status, exist := n.task[id]
 	if !exist {
@@ -125,4 +112,17 @@ func (n *Node) setTaskStatus(id TaskID, status Status) {
 	} else {
 		panic("unknown status")
 	}
+}
+
+func (n *Node) checkTaskFinished(id TaskID) error {
+	status, exist := n.task[id]
+	if !exist {
+		return ErrTaskNotFound
+	}
+
+	if status != PrepareSuccessStatus {
+		return ErrTaskFinished
+	}
+
+	return nil
 }
