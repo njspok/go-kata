@@ -43,16 +43,17 @@ func (n *Node) ID() NodeID {
 	return n.id
 }
 
-func (n *Node) Abort(id TaskID) {
+func (n *Node) Abort(id TaskID) error {
 	// todo return error not found
 
 	status := n.task[id]
 	if status != PrepareSuccessStatus {
 		// todo return error
-		return
+		return nil
 	}
 
 	n.setTaskStatus(id, AbortStatus)
+	return nil
 }
 
 func (n *Node) Prepare(task TaskI) error {
