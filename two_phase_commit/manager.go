@@ -11,7 +11,7 @@ type NodeI interface {
 	ID() NodeID
 	Prepare(TaskI) error
 	Commit(TaskID) error
-	Abort(TaskID) error // todo need return errors?
+	Abort(TaskID) error
 }
 
 type TaskI interface {
