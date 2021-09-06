@@ -6,18 +6,17 @@ import (
 )
 
 const (
-	NoneStatus             Status = "none"
-	CommittedSuccessStatus Status = "committed-success"
-	CommitFailedStatus     Status = "commit-failed"
-	PrepareSuccessStatus   Status = "prepare-success"
-	PrepareFailedStatus    Status = "prepare-failed"
-	AbortSuccessStatus     Status = "abort-success"
+	NoneStatus           Status = "none"
+	PrepareSuccessStatus Status = "prepare-success"
+	PrepareFailedStatus  Status = "prepare-failed"
+	CommittedStatus      Status = "committed-success"
+	AbortStatus          Status = "abort-success"
 )
 
 var (
-	ErrTaskAlreadyExist             = errors.New("task already exist")
-	ErrTaskNotFound                 = errors.New("task not found")
-	ErrTaskMustPrepareSuccessStatus = errors.New("task must prepare success status")
+	ErrTaskAlreadyExist = errors.New("task already exist")
+	ErrTaskNotFound     = errors.New("task not found")
+	ErrTaskFinished     = errors.New("task finished")
 )
 
 type Status string
@@ -29,7 +28,6 @@ func NewNode(id NodeID) *Node {
 		id:         id,
 		log:        []string{},
 		prepareErr: nil,
-		commitErr:  nil,
 		task:       make(map[TaskID]Status),
 	}
 }
@@ -38,7 +36,6 @@ type Node struct {
 	id         NodeID
 	log        []string
 	prepareErr error
-	commitErr  error
 	task       map[TaskID]Status
 }
 
@@ -55,7 +52,7 @@ func (n *Node) Abort(id TaskID) {
 		return
 	}
 
-	n.setTaskStatus(id, AbortSuccessStatus)
+	n.setTaskStatus(id, AbortStatus)
 }
 
 func (n *Node) Prepare(task TaskI) error {
@@ -79,15 +76,10 @@ func (n *Node) Commit(id TaskID) error {
 	}
 
 	if status != PrepareSuccessStatus {
-		return ErrTaskMustPrepareSuccessStatus
+		return ErrTaskFinished
 	}
 
-	if n.commitErr != nil {
-		n.setTaskStatus(id, CommitFailedStatus)
-		return n.commitErr
-	}
-
-	n.setTaskStatus(id, CommittedSuccessStatus)
+	n.setTaskStatus(id, CommittedStatus)
 	return nil
 }
 
@@ -108,21 +100,16 @@ func (n *Node) SetPrepareErr(err error) {
 	n.prepareErr = err
 }
 
-func (n *Node) SetCommitErr(err error) {
-	n.commitErr = err
-}
-
 func (n *Node) addToLog(s string, a ...interface{}) {
 	n.log = append(n.log, fmt.Sprintf(s, a...))
 }
 
 func (n *Node) setTaskStatus(id TaskID, status Status) {
 	messages := map[Status]string{
-		PrepareSuccessStatus:   "prepare %v success",
-		PrepareFailedStatus:    "prepare %v failed",
-		CommitFailedStatus:     "commit %v failed",
-		CommittedSuccessStatus: "commit %v success",
-		AbortSuccessStatus:     "abort %v success",
+		PrepareSuccessStatus: "prepare %v success",
+		PrepareFailedStatus:  "prepare %v failed",
+		CommittedStatus:      "commit %v success",
+		AbortStatus:          "abort %v success",
 	}
 
 	if msg, exist := messages[status]; exist {

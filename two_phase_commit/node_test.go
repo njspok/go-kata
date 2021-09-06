@@ -20,7 +20,7 @@ func TestNode_Commit(t *testing.T) {
 		require.EqualError(t, err, "shit happens")
 
 		err = node.Commit(999)
-		require.ErrorIs(t, err, ErrTaskMustPrepareSuccessStatus)
+		require.ErrorIs(t, err, ErrTaskFinished)
 	})
 }
 

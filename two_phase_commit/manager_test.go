@@ -28,7 +28,7 @@ func TestTransactionManager_Run(t *testing.T) {
 			// check
 			status, err := node.TaskStatus(task.ID())
 			require.NoError(t, err)
-			require.Equal(t, CommittedSuccessStatus, status)
+			require.Equal(t, CommittedStatus, status)
 			require.Equal(t, []string{
 				"prepare 1 success",
 				"commit 1 success",
@@ -69,29 +69,6 @@ func TestTransactionManager_Run(t *testing.T) {
 				"prepare 1 failed",
 			}, node.Log())
 		})
-		t.Run("commit failed", func(t *testing.T) {
-			var err error
-			ErrSomeNodeCommitError := errors.New("some node commit error")
-
-			manager, node := makeManagerAndNode(t)
-
-			// broken commit node
-			node.SetCommitErr(ErrSomeNodeCommitError)
-
-			// run task
-			task := NewTask(1)
-			err = manager.Run(task)
-			require.ErrorIs(t, err, ErrSomeNodeCommitError)
-
-			// check
-			status, err := node.TaskStatus(task.ID())
-			require.NoError(t, err)
-			require.Equal(t, CommitFailedStatus, status)
-			require.Equal(t, []string{
-				"prepare 1 success",
-				"commit 1 failed",
-			}, node.Log())
-		})
 	})
 	t.Run("multiple nodes", func(t *testing.T) {
 		t.Run("success", func(t *testing.T) {
@@ -107,7 +84,7 @@ func TestTransactionManager_Run(t *testing.T) {
 				t.Run(fmt.Sprintf("check node %v", i), func(t *testing.T) {
 					status, err := node.TaskStatus(task.ID())
 					require.NoError(t, err)
-					require.Equal(t, CommittedSuccessStatus, status)
+					require.Equal(t, CommittedStatus, status)
 					require.Equal(t, []string{
 						"prepare 1 success",
 						"commit 1 success",
@@ -134,7 +111,7 @@ func TestTransactionManager_Run(t *testing.T) {
 				checkNodes(t, func(t *testing.T, node *Node) {
 					status, err := node.TaskStatus(task.ID())
 					require.NoError(t, err)
-					require.Equal(t, AbortSuccessStatus, status)
+					require.Equal(t, AbortStatus, status)
 					require.Equal(t, []string{
 						"prepare 1 success",
 						"abort 1 success",
@@ -180,9 +157,6 @@ func TestTransactionManager_Run(t *testing.T) {
 					}, node.Log())
 				}, nodes, 100, 200, 300)
 			})
-		})
-		t.Run("commit failed", func(t *testing.T) {
-			// todo
 		})
 	})
 }
