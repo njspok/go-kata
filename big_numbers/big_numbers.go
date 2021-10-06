@@ -1,12 +1,13 @@
 package big_numbers
 
 import (
+	"fmt"
 	"strconv"
 )
 
 // todo mayme unit
-func NumberFromInt(v int) Number {
-	return Number(strconv.Itoa(v))
+func NumberFromUint(v uint) Number {
+	return Number(fmt.Sprintf("%d", v))
 }
 
 // todo implement
@@ -14,10 +15,11 @@ func NumberFromString(v string) (Number, error) {
 	panic("not implemented")
 }
 
+// todo change to []uint8?
 type Number string
 
-// todo i change to uint
-func (n Number) Digit(i int) int {
+// todo i change to uint8?
+func (n Number) Digit(i uint) uint {
 	// todo check range limit
 	// todo check conversation
 
@@ -31,18 +33,18 @@ func (n Number) Digit(i int) int {
 	}
 
 	v, _ := strconv.Atoi(string(n[n.LastIndex()-i]))
-	return v
+	return uint(v)
 }
 
-func (n Number) Len() int {
-	return len(n)
+func (n Number) Len() uint {
+	return uint(len(n))
 }
 
-func (n Number) ToBegin(v int) Number {
-	return NumberFromInt(v) + n
+func (n Number) ToBegin(v uint) Number {
+	return NumberFromUint(v) + n
 }
 
-func (n Number) LastIndex() int {
+func (n Number) LastIndex() uint {
 	return n.Len() - 1
 }
 
@@ -52,9 +54,9 @@ func Sum(aug Number, add Number) Number {
 	}
 
 	var result Number
-	var memo int
+	var memo uint
 
-	for i := 0; i <= aug.LastIndex(); i++ {
+	for i := uint(0); i <= aug.LastIndex(); i++ {
 		d1 := aug.Digit(i)
 		d2 := add.Digit(i)
 

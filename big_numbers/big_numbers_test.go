@@ -10,9 +10,9 @@ import (
 )
 
 func TestNumberFromInt(t *testing.T) {
-	require.Equal(t, Number("123"), NumberFromInt(123))
-	require.Equal(t, Number("0"), NumberFromInt(0))
-	require.Equal(t, Number("9"), NumberFromInt(9))
+	require.Equal(t, Number("123"), NumberFromUint(123))
+	require.Equal(t, Number("0"), NumberFromUint(0))
+	require.Equal(t, Number("9"), NumberFromUint(9))
 }
 
 func Test(t *testing.T) {
@@ -33,13 +33,13 @@ func Test(t *testing.T) {
 	})
 	t.Run("replace", func(t *testing.T) {
 		rand.Seed(time.Now().Unix())
-		aug := rand.Intn(1000000)
-		add := rand.Intn(1000000)
+		aug := uint(rand.Intn(1000000))
+		add := uint(rand.Intn(1000000))
 
 		for i := 0; i < 1000000; i++ {
 			require.Equalf(t,
-				NumberFromInt(aug+add),
-				Sum(NumberFromInt(aug), NumberFromInt(add)),
+				NumberFromUint(aug+add),
+				Sum(NumberFromUint(aug), NumberFromUint(add)),
 				fmt.Sprintf("%v,%v", aug, add),
 			)
 		}
