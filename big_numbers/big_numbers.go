@@ -55,12 +55,12 @@ func Sum(aug Number, add Number) Number {
 	var memo int
 
 	for i := 0; i <= aug.LastIndex(); i++ {
-		n1 := aug.Digit(i)
-		n2 := add.Digit(i)
+		d1 := aug.Digit(i)
+		d2 := add.Digit(i)
 
-		n1 += memo
+		d1 += memo
 
-		s := n1 + n2
+		s := d1 + d2
 
 		if s > 9 {
 			result = result.ToBegin(s - 10)
