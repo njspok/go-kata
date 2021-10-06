@@ -13,6 +13,10 @@ type WasRun struct {
 	log []string
 }
 
+func (wr *WasRun) SetTestCase(tc *TestCase) {
+	wr.TestCase = tc
+}
+
 func (wr *WasRun) PanicMethod() {
 	panic("PanicMethod")
 }

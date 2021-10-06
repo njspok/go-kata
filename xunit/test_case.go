@@ -12,11 +12,20 @@ func RunTestCase(t *testing.T, testable interface{}, name string) {
 }
 
 func NewTestCase(name string, testable interface{}, t *testing.T) *TestCase {
-	return &TestCase{
+	ts, ok := testable.(interface{ SetTestCase(*TestCase) })
+	if !ok {
+		panic("cant cast to SetTestCase")
+	}
+
+	tc := &TestCase{
 		name:     name,
-		testable: testable,
+		testable: ts,
 		t:        t,
 	}
+
+	ts.SetTestCase(tc)
+
+	return tc
 }
 
 type TestCase struct {
@@ -25,10 +34,20 @@ type TestCase struct {
 	t        *testing.T
 }
 
-func (tc *TestCase) Run() {
+func (tc *TestCase) Run() *TestResult {
+	tc.t.Run(tc.name, func(t *testing.T) {
+
+	})
+
 	defer tc.runTearDown()
+
+	result := NewTestResult()
+	result.Start()
+
 	tc.runSetUp()
 	tc.run()
+
+	return result
 }
 
 func (tc *TestCase) False(run bool) {

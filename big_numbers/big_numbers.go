@@ -21,7 +21,7 @@ func (n Number) Digit(i int) int {
 	// todo check range limit
 	// todo check conversation
 
-	if i >= n.Len() {
+	if i > n.LastIndex() {
 		return 0
 	}
 
@@ -42,6 +42,10 @@ func (n Number) ToBegin(v int) Number {
 	return NumberFromInt(v) + n
 }
 
+func (n Number) LastIndex() int {
+	return n.Len() - 1
+}
+
 func Sum(aug Number, add Number) Number {
 	if aug.Len() < add.Len() {
 		aug, add = add, aug
@@ -50,7 +54,7 @@ func Sum(aug Number, add Number) Number {
 	var result Number
 	var memo int
 
-	for i1 := aug.Len() - 1; i1 >= 0; i1-- {
+	for i1 := aug.LastIndex(); i1 >= 0; i1-- {
 		n1 := aug.Digit(i1)
 
 		i2 := i1 - (aug.Len() - add.Len())
