@@ -58,19 +58,16 @@ func Sum(aug Number, add Number) Number {
 		d1 := aug.Digit(i)
 		d2 := add.Digit(i)
 
-		d1 += memo
+		d := d1 + d2 + memo
 
-		s := d1 + d2
-
-		if s > 9 {
-			result = result.ToBegin(s - 10)
+		if d > 9 {
+			d -= 10
 			memo = 1
-			continue
+		} else {
+			memo = 0
 		}
 
-		memo = 0
-
-		result = result.ToBegin(s)
+		result = result.ToBegin(d)
 
 	}
 
