@@ -30,7 +30,7 @@ func (n Number) Digit(i int) int {
 		return 0
 	}
 
-	v, _ := strconv.Atoi(string(n[i]))
+	v, _ := strconv.Atoi(string(n[n.LastIndex()-i]))
 	return v
 }
 
@@ -54,11 +54,9 @@ func Sum(aug Number, add Number) Number {
 	var result Number
 	var memo int
 
-	for i1 := aug.LastIndex(); i1 >= 0; i1-- {
-		n1 := aug.Digit(i1)
-
-		i2 := i1 - (aug.Len() - add.Len())
-		n2 := add.Digit(i2)
+	for i := 0; i <= aug.LastIndex(); i++ {
+		n1 := aug.Digit(i)
+		n2 := add.Digit(i)
 
 		n1 += memo
 
