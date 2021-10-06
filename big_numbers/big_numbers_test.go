@@ -44,5 +44,7 @@ func Test(t *testing.T) {
 			)
 		}
 	})
-
+	t.Run("property", func(t *testing.T) {
+		// todo
+	})
 }
