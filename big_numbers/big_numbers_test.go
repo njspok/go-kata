@@ -16,10 +16,6 @@ func TestNumberFromInt(t *testing.T) {
 }
 
 func Test(t *testing.T) {
-
-	// todo empty strings
-	// todo strings with non number characters
-
 	t.Run("success", func(t *testing.T) {
 		require.Equal(t, Number("0"), Sum("0", "0"))
 		require.Equal(t, Number("2"), Sum("1", "1"))
@@ -43,8 +39,5 @@ func Test(t *testing.T) {
 				fmt.Sprintf("%v,%v", aug, add),
 			)
 		}
-	})
-	t.Run("property", func(t *testing.T) {
-		// todo
 	})
 }

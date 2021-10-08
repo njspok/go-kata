@@ -5,30 +5,14 @@ import (
 	"strconv"
 )
 
-// todo mayme unit
 func NumberFromUint(v uint) Number {
 	return Number(fmt.Sprintf("%d", v))
 }
 
-// todo implement
-func NumberFromString(v string) (Number, error) {
-	panic("not implemented")
-}
-
-// todo change to []uint8?
 type Number string
 
-// todo i change to uint8?
 func (n Number) Digit(i uint) uint {
-	// todo check range limit
-	// todo check conversation
-
 	if i > n.LastIndex() {
-		return 0
-	}
-
-	// todo remove !!!
-	if i < 0 {
 		return 0
 	}
 
@@ -40,7 +24,7 @@ func (n Number) Len() uint {
 	return uint(len(n))
 }
 
-func (n Number) ToBegin(v uint) Number {
+func (n Number) Push(v uint) Number {
 	return NumberFromUint(v) + n
 }
 
@@ -69,12 +53,11 @@ func Sum(aug Number, add Number) Number {
 			memo = 0
 		}
 
-		result = result.ToBegin(d)
-
+		result = result.Push(d)
 	}
 
 	if memo == 1 {
-		result = result.ToBegin(1)
+		result = result.Push(1)
 	}
 
 	return result
