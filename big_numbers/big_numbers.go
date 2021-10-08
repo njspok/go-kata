@@ -11,6 +11,10 @@ func NumberFromUint(v uint) Number {
 
 type Number string
 
+func (n Number) Plus(add Number) Number {
+	return Sum(n, add)
+}
+
 func (n Number) Digit(i uint) uint {
 	if i > n.LastIndex() {
 		return 0

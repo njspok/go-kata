@@ -16,6 +16,13 @@ func TestNumberFromInt(t *testing.T) {
 }
 
 func Test(t *testing.T) {
+	t.Run("plus", func(t *testing.T) {
+		require.Equal(
+			t,
+			Number("91002328220491911630239667963"),
+			Number("63829983432984289347293874").Plus(Number("90938498237058927340892374089")),
+		)
+	})
 	t.Run("success", func(t *testing.T) {
 		require.Equal(t, Number("0"), Sum("0", "0"))
 		require.Equal(t, Number("2"), Sum("1", "1"))
