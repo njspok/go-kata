@@ -4,14 +4,14 @@ func NewSagaInfo(id int) *SagaInfo {
 	return &SagaInfo{
 		id:        id,
 		reserveId: 0,
-		stages:    Stages{},
+		log:       Log{},
 	}
 }
 
 type SagaInfo struct {
 	id        int
 	reserveId int
-	stages    Stages
+	log       Log
 }
 
 func (i *SagaInfo) ID() int {
@@ -26,14 +26,8 @@ func (i *SagaInfo) SetReserveID(id int) {
 	i.reserveId = id
 }
 
-func (i *SagaInfo) Stages() Stages {
-	return i.stages
+func (i *SagaInfo) Log() Log {
+	return i.log
 }
 
-type Stages []*Stage
-
-type Stage struct {
-	Name   string
-	Status string
-	Error  error
-}
+type Log []string
