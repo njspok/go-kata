@@ -31,6 +31,7 @@ func TestOrderSagaService(t *testing.T) {
 		require.Equal(t, Log{
 			"Reserve Process",
 			"Reserve Success",
+			"Pay Process",
 		}, info.Log())
 
 		stock.AssertExpectations(t)

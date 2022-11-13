@@ -55,6 +55,9 @@ func (s *SagaService) Run(order *Order) (int, error) {
 	info.SetReserveID(reserveId)
 	info.AddLog("Reserve Success")
 
+	info.AddLog("Pay Process")
+	// todo process payment
+
 	// todo saga success
 
 	return order.id, nil
