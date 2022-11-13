@@ -39,12 +39,21 @@ func (s *SagaService) Run(order *Order) (int, error) {
 
 	s.list[order.id] = info
 
+	reserveStage := &Stage{
+		Name:   "Reserve",
+		Status: "Process",
+		Error:  nil,
+	}
+	info.stages = append(info.stages, reserveStage)
+
 	reserveId, err := s.stock.Reserve(order.itemId, order.qty)
 	if err != nil {
-		info.SetError(err)
+		reserveStage.Status = "Fail"
+		reserveStage.Error = err
 		return 0, err
 	}
 
+	reserveStage.Status = "Success"
 	info.SetReserveID(reserveId)
 
 	return order.id, nil

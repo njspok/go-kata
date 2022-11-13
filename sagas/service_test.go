@@ -26,9 +26,15 @@ func TestOrderSagaService(t *testing.T) {
 
 		info := service.SagaInfo(100)
 		require.NotNil(t, info)
-		require.True(t, info.IsSuccess())
 		require.Equal(t, 100, info.ID())
 		require.Equal(t, 999, info.ReserveID())
+		require.Equal(t, Stages{
+			{
+				Name:   "Reserve",
+				Status: "Success",
+				Error:  nil,
+			},
+		}, info.Stages())
 
 		stock.AssertExpectations(t)
 	})
@@ -50,9 +56,14 @@ func TestOrderSagaService(t *testing.T) {
 
 		info := service.SagaInfo(100)
 		require.NotNil(t, info)
-		require.True(t, info.IsFail())
 		require.Equal(t, 100, info.ID())
-		require.EqualError(t, info.Error(), "shit happens")
+		require.Equal(t, Stages{
+			{
+				Name:   "Reserve",
+				Status: "Fail",
+				Error:  errors.New("shit happens"),
+			},
+		}, info.Stages())
 
 		stock.AssertExpectations(t)
 	})
