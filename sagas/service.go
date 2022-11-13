@@ -37,18 +37,22 @@ func (s *SagaService) Run(order *Order) (int, error) {
 
 	info := NewSagaInfo(order.id)
 
+	// todo saga start
+
 	s.list[order.id] = info
 
-	info.log = append(info.log, "Reserve Process")
+	info.AddLog("Reserve Process")
 
 	reserveId, err := s.stock.Reserve(order.itemId, order.qty)
 	if err != nil {
-		info.log = append(info.log, "Reserve Fail: "+err.Error())
+		info.AddLog("Reserve Fail: %v", err)
 		return 0, err
 	}
 
-	info.log = append(info.log, "Reserve Success")
+	info.AddLog("Reserve Success")
 	info.SetReserveID(reserveId)
+
+	// todo saga success
 
 	return order.id, nil
 }

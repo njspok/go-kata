@@ -1,5 +1,7 @@
 package sagas
 
+import "fmt"
+
 func NewSagaInfo(id int) *SagaInfo {
 	return &SagaInfo{
 		id:        id,
@@ -28,6 +30,10 @@ func (i *SagaInfo) SetReserveID(id int) {
 
 func (i *SagaInfo) Log() Log {
 	return i.log
+}
+
+func (i *SagaInfo) AddLog(s string, a ...any) {
+	i.log = append(i.log, fmt.Sprintf(s, a...))
 }
 
 type Log []string
