@@ -47,15 +47,13 @@ func (s *SagaService) Run(order *Order) (int, error) {
 	s.list[order.id] = info
 
 	info.AddLog("Reserve Process")
-
 	reserveId, err := s.stock.Reserve(order.itemId, order.qty)
 	if err != nil {
 		info.AddLog("Reserve Fail: %v", err)
 		return 0, err
 	}
-
-	info.AddLog("Reserve Success")
 	info.SetReserveID(reserveId)
+	info.AddLog("Reserve Success")
 
 	// todo saga success
 
