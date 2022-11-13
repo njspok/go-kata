@@ -19,7 +19,7 @@ func TestOrderSagaService(t *testing.T) {
 		service := NewOrderSagaService(stock)
 		require.NotNil(t, service)
 
-		order := NewOrder(100, 12345, 11)
+		order := NewOrder(100, 0, 12345, 11)
 		sagaId, err := service.Run(order)
 		require.NoError(t, err)
 		require.Equal(t, order.id, sagaId)
@@ -46,7 +46,7 @@ func TestOrderSagaService(t *testing.T) {
 		service := NewOrderSagaService(stock)
 		require.NotNil(t, service)
 
-		order := NewOrder(100, 12345, 11)
+		order := NewOrder(100, 0, 12345, 11)
 		sagaId, err := service.Run(order)
 		require.EqualError(t, err, "shit happens")
 		require.Zero(t, sagaId)
@@ -70,15 +70,15 @@ func TestOrderSagaService(t *testing.T) {
 		service := NewOrderSagaService(stock)
 		require.NotNil(t, service)
 
-		sagaId, err := service.Run(NewOrder(100, 111111, 11))
+		sagaId, err := service.Run(NewOrder(100, 0, 111111, 11))
 		require.NoError(t, err)
 		require.Equal(t, 100, sagaId)
 
-		sagaId, err = service.Run(NewOrder(200, 111222, 22))
+		sagaId, err = service.Run(NewOrder(200, 0, 111222, 22))
 		require.NoError(t, err)
 		require.Equal(t, 200, sagaId)
 
-		sagaId, err = service.Run(NewOrder(300, 111333, 33))
+		sagaId, err = service.Run(NewOrder(300, 0, 111333, 33))
 		require.NoError(t, err)
 		require.Equal(t, 300, sagaId)
 
@@ -96,7 +96,7 @@ func TestOrderSagaService(t *testing.T) {
 		service := NewOrderSagaService(stock)
 		require.NotNil(t, service)
 
-		order := NewOrder(100, 12345, 11)
+		order := NewOrder(100, 0, 12345, 11)
 
 		_, err := service.Run(order)
 		require.NoError(t, err)

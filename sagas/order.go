@@ -1,15 +1,17 @@
 package sagas
 
-func NewOrder(id int, itemId int, qty int) *Order {
+func NewOrder(id int, clientId int, itemId int, qty int) *Order {
 	return &Order{
-		id:     id,
-		itemId: itemId,
-		qty:    qty,
+		id:       id,
+		clientId: clientId,
+		itemId:   itemId,
+		qty:      qty,
 	}
 }
 
 type Order struct {
-	id     int
-	itemId int
-	qty    int
+	id       int
+	clientId int
+	itemId   int
+	qty      int
 }

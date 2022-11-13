@@ -11,6 +11,11 @@ type Stock interface {
 	CancelReserve(id int) error
 }
 
+type Payment interface {
+	Pay(clientId int, sum int) (int, error)
+	CancelPay(id int) error
+}
+
 func NewOrderSagaService(stock Stock) *SagaService {
 	return &SagaService{
 		list:  make(map[int]*SagaInfo),
