@@ -13,6 +13,7 @@ func NewSagaInfo(id int) *SagaInfo {
 type SagaInfo struct {
 	id        int
 	reserveId int
+	payId     int
 	log       Log
 }
 
@@ -28,12 +29,20 @@ func (i *SagaInfo) SetReserveID(id int) {
 	i.reserveId = id
 }
 
+func (i *SagaInfo) SetPayID(id int) {
+	i.payId = id
+}
+
 func (i *SagaInfo) Log() Log {
 	return i.log
 }
 
 func (i *SagaInfo) AddLog(s string, a ...any) {
 	i.log = append(i.log, fmt.Sprintf(s, a...))
+}
+
+func (i *SagaInfo) PayID() int {
+	return i.payId
 }
 
 type Log []string

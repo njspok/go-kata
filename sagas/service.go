@@ -16,16 +16,18 @@ type Payment interface {
 	CancelPay(id int) error
 }
 
-func NewOrderSagaService(stock Stock) *SagaService {
+func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 	return &SagaService{
-		list:  make(map[int]*SagaInfo),
-		stock: stock,
+		list:    make(map[int]*SagaInfo),
+		stock:   stock,
+		payment: payment,
 	}
 }
 
 type SagaService struct {
-	list  map[int]*SagaInfo
-	stock Stock
+	list    map[int]*SagaInfo
+	stock   Stock
+	payment Payment
 }
 
 func (s *SagaService) SagaInfo(id int) *SagaInfo {
@@ -56,7 +58,13 @@ func (s *SagaService) Run(order *Order) (int, error) {
 	info.AddLog("Reserve Success")
 
 	info.AddLog("Pay Process")
-	// todo process payment
+	payId, err := s.payment.Pay(order.clientId, order.sum)
+	if err != nil {
+		info.AddLog("Pay Fail: %v", err)
+		return 0, err
+	}
+	info.SetPayID(payId)
+	info.AddLog("Pay Success")
 
 	// todo saga success
 
