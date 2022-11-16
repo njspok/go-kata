@@ -62,7 +62,8 @@ func TestOrderSagaService(t *testing.T) {
 		service := NewOrderSagaService(stock, payment)
 		require.NotNil(t, service)
 
-		order := NewOrder(100, 0, 12345, 11, 0)
+		order := NewOrder(100, 0, 12345, 11, 1050)
+
 		sagaId, err := service.Run(order)
 		require.EqualError(t, err, "shit happens")
 		require.Zero(t, sagaId)
@@ -73,6 +74,44 @@ func TestOrderSagaService(t *testing.T) {
 		require.Equal(t, Log{
 			"Reserve Process",
 			"Reserve Fail: shit happens",
+		}, info.Log())
+
+		stock.AssertExpectations(t)
+		payment.AssertExpectations(t)
+	})
+	t.Run("reserve item failed and retry success", func(t *testing.T) {
+		t.SkipNow()
+
+		stock := &MockStock{}
+		stock.
+			EXPECT().
+			Reserve(12345, 11).
+			Return(0, errors.New("shit happens")).
+			Once()
+
+		payment := &MockPayment{}
+
+		service := NewOrderSagaService(stock, payment)
+		require.NotNil(t, service)
+
+		order := NewOrder(100, 0, 12345, 11, 1050)
+
+		sagaId, err := service.Run(order)
+		require.EqualError(t, err, "shit happens")
+		require.Zero(t, sagaId)
+
+		err = service.TryAgain(sagaId)
+		require.NoError(t, err)
+
+		info := service.SagaInfo(100)
+		require.NotNil(t, info)
+		require.Equal(t, 100, info.ID())
+		require.Equal(t, Log{
+			"Reserve Process",
+			"Reserve Fail: shit happens",
+			"Reserve Success",
+			"Pay Process",
+			"Pay Success",
 		}, info.Log())
 
 		stock.AssertExpectations(t)

@@ -2,9 +2,10 @@ package sagas
 
 import "fmt"
 
-func NewSagaInfo(id int) *SagaInfo {
+func NewSagaInfo(order *Order) *SagaInfo {
 	return &SagaInfo{
-		id:        id,
+		id:        order.id,
+		order:     order,
 		reserveId: 0,
 		log:       Log{},
 	}
@@ -12,6 +13,7 @@ func NewSagaInfo(id int) *SagaInfo {
 
 type SagaInfo struct {
 	id        int
+	order     *Order
 	reserveId int
 	payId     int
 	log       Log

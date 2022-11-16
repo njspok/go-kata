@@ -42,31 +42,53 @@ func (s *SagaService) Run(order *Order) (int, error) {
 		return 0, ErrOrderAlreadyProcessed
 	}
 
-	info := NewSagaInfo(order.id)
+	info := NewSagaInfo(order)
 
 	// todo saga start
 
 	s.list[order.id] = info
 
-	info.AddLog("Reserve Process")
-	reserveId, err := s.stock.Reserve(order.itemId, order.qty)
+	err := s.reserve(info)
 	if err != nil {
-		info.AddLog("Reserve Fail: %v", err)
 		return 0, err
 	}
-	info.SetReserveID(reserveId)
-	info.AddLog("Reserve Success")
 
-	info.AddLog("Pay Process")
-	payId, err := s.payment.Pay(order.clientId, order.sum)
+	err = s.pay(info)
 	if err != nil {
-		info.AddLog("Pay Fail: %v", err)
 		return 0, err
 	}
-	info.SetPayID(payId)
-	info.AddLog("Pay Success")
 
 	// todo saga success
 
 	return order.id, nil
+}
+
+func (s *SagaService) pay(info *SagaInfo) error {
+	info.AddLog("Pay Process")
+	payId, err := s.payment.Pay(info.order.clientId, info.order.sum)
+	if err != nil {
+		info.AddLog("Pay Fail: %v", err)
+		return err
+	}
+
+	info.SetPayID(payId)
+	info.AddLog("Pay Success")
+	return nil
+}
+
+func (s *SagaService) reserve(info *SagaInfo) error {
+	info.AddLog("Reserve Process")
+	reserveId, err := s.stock.Reserve(info.order.itemId, info.order.qty)
+	if err != nil {
+		info.AddLog("Reserve Fail: %v", err)
+		return err
+	}
+
+	info.SetReserveID(reserveId)
+	info.AddLog("Reserve Success")
+	return nil
+}
+
+func (s *SagaService) TryAgain(sagaId int) error {
+	return nil
 }
