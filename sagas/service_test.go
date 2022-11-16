@@ -66,7 +66,7 @@ func TestOrderSagaService(t *testing.T) {
 
 		sagaId, err := service.Run(order)
 		require.EqualError(t, err, "shit happens")
-		require.Zero(t, sagaId)
+		require.Equal(t, 100, sagaId)
 
 		info := service.SagaInfo(100)
 		require.NotNil(t, info)
@@ -150,7 +150,7 @@ func TestOrderSagaService(t *testing.T) {
 
 		sagaId, err := service.Run(order)
 		require.EqualError(t, err, "shit happens")
-		require.Equal(t, 0, sagaId)
+		require.Equal(t, 100, sagaId)
 
 		info := service.SagaInfo(100)
 		require.NotNil(t, info)
