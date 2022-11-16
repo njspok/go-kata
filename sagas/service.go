@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ErrOrderAlreadyProcessed = errors.New("order already processed")
+	ErrSagaNotFound          = errors.New("saga not found")
 )
 
 type Stock interface {
@@ -17,17 +18,25 @@ type Payment interface {
 }
 
 func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
-	return &SagaService{
+	srv := &SagaService{
 		list:    make(map[int]*SagaInfo),
 		stock:   stock,
 		payment: payment,
 	}
+
+	srv.scenario = []func(*SagaInfo) error{
+		srv.reserve,
+		srv.pay,
+	}
+
+	return srv
 }
 
 type SagaService struct {
-	list    map[int]*SagaInfo
-	stock   Stock
-	payment Payment
+	list     map[int]*SagaInfo
+	stock    Stock
+	payment  Payment
+	scenario []func(*SagaInfo) error
 }
 
 func (s *SagaService) SagaInfo(id int) *SagaInfo {
@@ -48,19 +57,17 @@ func (s *SagaService) Run(order *Order) (int, error) {
 
 	s.list[order.id] = info
 
-	err := s.reserve(info)
-	if err != nil {
-		return 0, err
-	}
-
-	err = s.pay(info)
-	if err != nil {
-		return 0, err
+	for step, action := range s.scenario {
+		info.SetStep(step)
+		err := action(info)
+		if err != nil {
+			return info.id, err
+		}
 	}
 
 	// todo saga success
 
-	return order.id, nil
+	return info.id, nil
 }
 
 func (s *SagaService) pay(info *SagaInfo) error {
@@ -90,5 +97,19 @@ func (s *SagaService) reserve(info *SagaInfo) error {
 }
 
 func (s *SagaService) TryAgain(sagaId int) error {
+	info := s.list[sagaId]
+	if info == nil {
+		return ErrSagaNotFound
+	}
+
+	for step := info.Step(); step < len(s.scenario); step++ {
+		info.SetStep(step)
+		action := s.scenario[step]
+		err := action(info)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

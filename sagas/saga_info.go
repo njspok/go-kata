@@ -17,6 +17,7 @@ type SagaInfo struct {
 	reserveId int
 	payId     int
 	log       Log
+	step      int
 }
 
 func (i *SagaInfo) ID() int {
@@ -45,6 +46,14 @@ func (i *SagaInfo) AddLog(s string, a ...any) {
 
 func (i *SagaInfo) PayID() int {
 	return i.payId
+}
+
+func (i *SagaInfo) SetStep(step int) {
+	i.step = step
+}
+
+func (i *SagaInfo) Step() int {
+	return i.step
 }
 
 type Log []string
