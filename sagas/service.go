@@ -70,6 +70,24 @@ func (s *SagaService) Run(order *Order) (int, error) {
 	return info.id, nil
 }
 
+func (s *SagaService) TryAgain(sagaId int) error {
+	info := s.list[sagaId]
+	if info == nil {
+		return ErrSagaNotFound
+	}
+
+	for step := info.Step(); step < len(s.scenario); step++ {
+		info.SetStep(step)
+		action := s.scenario[step]
+		err := action(info)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (s *SagaService) pay(info *SagaInfo) error {
 	info.AddLog("Pay Process")
 	payId, err := s.payment.Pay(info.order.clientId, info.order.sum)
@@ -93,23 +111,5 @@ func (s *SagaService) reserve(info *SagaInfo) error {
 
 	info.SetReserveID(reserveId)
 	info.AddLog("Reserve Success")
-	return nil
-}
-
-func (s *SagaService) TryAgain(sagaId int) error {
-	info := s.list[sagaId]
-	if info == nil {
-		return ErrSagaNotFound
-	}
-
-	for step := info.Step(); step < len(s.scenario); step++ {
-		info.SetStep(step)
-		action := s.scenario[step]
-		err := action(info)
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }

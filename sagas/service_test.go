@@ -167,6 +167,55 @@ func TestOrderSagaService(t *testing.T) {
 		stock.AssertExpectations(t)
 		payment.AssertExpectations(t)
 	})
+	t.Run("pay failed and retry success", func(t *testing.T) {
+		stock := &MockStock{}
+		stock.
+			EXPECT().
+			Reserve(12345, 11).
+			Return(999, nil).
+			Once()
+
+		payment := &MockPayment{}
+		payment.
+			EXPECT().
+			Pay(1, 1010).
+			Return(0, errors.New("shit happens")).
+			Once()
+		payment.
+			EXPECT().
+			Pay(1, 1010).
+			Return(111, nil).
+			Once()
+
+		service := NewOrderSagaService(stock, payment)
+		require.NotNil(t, service)
+
+		order := NewOrder(100, 1, 12345, 11, 1010)
+
+		sagaId, err := service.Run(order)
+		require.EqualError(t, err, "shit happens")
+		require.Equal(t, order.id, sagaId)
+
+		err = service.TryAgain(sagaId)
+		require.NoError(t, err)
+
+		info := service.SagaInfo(100)
+		require.NotNil(t, info)
+		require.Equal(t, 100, info.ID())
+		require.Equal(t, 999, info.ReserveID())
+		require.Equal(t, 111, info.PayID())
+		require.Equal(t, Log{
+			"Reserve Process",
+			"Reserve Success",
+			"Pay Process",
+			"Pay Fail: shit happens",
+			"Pay Process",
+			"Pay Success",
+		}, info.Log())
+
+		stock.AssertExpectations(t)
+		payment.AssertExpectations(t)
+	})
 	t.Run("running multiple sagas", func(t *testing.T) {
 		stock := &MockStock{}
 		stock.EXPECT().Reserve(mock.Anything, mock.Anything).Return(1, nil).Once()
