@@ -46,6 +46,9 @@ func TestOrderSagaService(t *testing.T) {
 			"Pay Success",
 		}, info.Log())
 
+		err = service.TryAgain(sagaId)
+		require.ErrorIs(t, err, ErrSagaFinished)
+
 		stock.AssertExpectations(t)
 		payment.AssertExpectations(t)
 	})

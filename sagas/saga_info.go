@@ -12,12 +12,13 @@ func NewSagaInfo(order *Order) *SagaInfo {
 }
 
 type SagaInfo struct {
-	id        int
-	order     *Order
-	reserveId int
-	payId     int
-	log       Log
-	step      int
+	id         int
+	order      *Order
+	reserveId  int
+	payId      int
+	log        Log
+	step       int
+	isFinished bool
 }
 
 func (i *SagaInfo) ID() int {
@@ -54,6 +55,14 @@ func (i *SagaInfo) SetStep(step int) {
 
 func (i *SagaInfo) Step() int {
 	return i.step
+}
+
+func (i *SagaInfo) Finish() {
+	i.isFinished = true
+}
+
+func (i *SagaInfo) IsFinished() bool {
+	return i.isFinished
 }
 
 type Log []string

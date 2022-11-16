@@ -5,6 +5,7 @@ import "errors"
 var (
 	ErrOrderAlreadyProcessed = errors.New("order already processed")
 	ErrSagaNotFound          = errors.New("saga not found")
+	ErrSagaFinished          = errors.New("saga is finished")
 )
 
 type Stock interface {
@@ -65,15 +66,26 @@ func (s *SagaService) Run(order *Order) (int, error) {
 		}
 	}
 
+	info.Finish()
+
 	// todo saga success
 
 	return info.id, nil
+}
+
+func (s *SagaService) Rollback(sagaId int) error {
+	// todo implement!!!
+	panic("not implemented")
 }
 
 func (s *SagaService) TryAgain(sagaId int) error {
 	info := s.list[sagaId]
 	if info == nil {
 		return ErrSagaNotFound
+	}
+
+	if info.IsFinished() {
+		return ErrSagaFinished
 	}
 
 	for step := info.Step(); step < len(s.scenario); step++ {
@@ -84,6 +96,8 @@ func (s *SagaService) TryAgain(sagaId int) error {
 			return err
 		}
 	}
+
+	info.Finish()
 
 	return nil
 }
