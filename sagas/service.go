@@ -58,15 +58,10 @@ func (s *SagaService) Run(order *Order) (int, error) {
 
 	s.list[order.id] = info
 
-	for step, action := range s.scenario {
-		info.SetStep(step)
-		err := action(info)
-		if err != nil {
-			return info.id, err
-		}
+	err := s.process(info)
+	if err != nil {
+		return info.id, err
 	}
-
-	info.Finish()
 
 	// todo saga success
 
@@ -88,6 +83,15 @@ func (s *SagaService) TryAgain(sagaId int) error {
 		return ErrSagaFinished
 	}
 
+	err := s.process(info)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *SagaService) process(info *SagaInfo) error {
 	for step := info.Step(); step < len(s.scenario); step++ {
 		info.SetStep(step)
 		action := s.scenario[step]
@@ -98,7 +102,6 @@ func (s *SagaService) TryAgain(sagaId int) error {
 	}
 
 	info.Finish()
-
 	return nil
 }
 
