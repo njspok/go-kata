@@ -140,6 +140,7 @@ func (s *SagaService) pay(saga *OrderSaga) error {
 		return err
 	}
 
+	// todo move to saga?
 	saga.SetPayID(payId)
 	return nil
 }
@@ -150,6 +151,7 @@ func (s *SagaService) reserve(saga *OrderSaga) error {
 		return err
 	}
 
+	// todo move to saga?
 	saga.SetReserveID(reserveId)
 	return nil
 }
