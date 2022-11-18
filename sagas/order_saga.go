@@ -2,8 +2,8 @@ package sagas
 
 import "fmt"
 
-func NewSagaInfo(order *Order) *SagaInfo {
-	return &SagaInfo{
+func NewOrderSaga(order *Order) *OrderSaga {
+	return &OrderSaga{
 		id:        order.id,
 		order:     order,
 		reserveId: 0,
@@ -11,7 +11,7 @@ func NewSagaInfo(order *Order) *SagaInfo {
 	}
 }
 
-type SagaInfo struct {
+type OrderSaga struct {
 	id         int
 	order      *Order
 	reserveId  int
@@ -22,51 +22,51 @@ type SagaInfo struct {
 	scenario   Scenario
 }
 
-func (i *SagaInfo) Run() error {
+func (i *OrderSaga) Run() error {
 	return i.scenario.Run(i)
 }
 
-func (i *SagaInfo) ID() int {
+func (i *OrderSaga) ID() int {
 	return i.id
 }
 
-func (i *SagaInfo) ReserveID() int {
+func (i *OrderSaga) ReserveID() int {
 	return i.reserveId
 }
 
-func (i *SagaInfo) SetReserveID(id int) {
+func (i *OrderSaga) SetReserveID(id int) {
 	i.reserveId = id
 }
 
-func (i *SagaInfo) SetPayID(id int) {
+func (i *OrderSaga) SetPayID(id int) {
 	i.payId = id
 }
 
-func (i *SagaInfo) Log() Log {
+func (i *OrderSaga) Log() Log {
 	return i.log
 }
 
-func (i *SagaInfo) AddLog(s string, a ...any) {
+func (i *OrderSaga) AddLog(s string, a ...any) {
 	i.log = append(i.log, fmt.Sprintf(s, a...))
 }
 
-func (i *SagaInfo) PayID() int {
+func (i *OrderSaga) PayID() int {
 	return i.payId
 }
 
-func (i *SagaInfo) SetStepN(step int) {
+func (i *OrderSaga) SetStepN(step int) {
 	i.stepN = step
 }
 
-func (i *SagaInfo) StepN() int {
+func (i *OrderSaga) StepN() int {
 	return i.stepN
 }
 
-func (i *SagaInfo) Finish() {
+func (i *OrderSaga) Finish() {
 	i.isFinished = true
 }
 
-func (i *SagaInfo) IsFinished() bool {
+func (i *OrderSaga) IsFinished() bool {
 	return i.isFinished
 }
 

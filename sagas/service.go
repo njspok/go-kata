@@ -20,48 +20,48 @@ type Payment interface {
 	CancelPay(id int) error
 }
 
-type Action func(*SagaInfo) error
+type Action func(*OrderSaga) error
 
 type Step struct {
 	name   string
 	action Action
 }
 
-func (s Step) Run(info *SagaInfo) error {
-	return s.action(info)
+func (s Step) Run(saga *OrderSaga) error {
+	return s.action(saga)
 }
 
-func (s Step) Rollback(info *SagaInfo) error {
+func (s Step) Rollback(saga *OrderSaga) error {
 	// todo implement!!!
 	panic("not implemented")
 }
 
 type Scenario []Step
 
-func (s Scenario) Run(info *SagaInfo) error {
-	for n := info.StepN(); n < len(s); n++ {
-		info.SetStepN(n)
+func (s Scenario) Run(saga *OrderSaga) error {
+	for n := saga.StepN(); n < len(s); n++ {
+		saga.SetStepN(n)
 
 		step := s[n]
 
-		info.AddLog("%s Process", step.name)
+		saga.AddLog("%s Process", step.name)
 
-		err := step.Run(info)
+		err := step.Run(saga)
 		if err != nil {
-			info.AddLog("%s Fail: %v", step.name, err)
+			saga.AddLog("%s Fail: %v", step.name, err)
 			return err
 		}
 
-		info.AddLog("%s Success", step.name)
+		saga.AddLog("%s Success", step.name)
 	}
 
-	info.Finish()
+	saga.Finish()
 	return nil
 }
 
 func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 	srv := &SagaService{
-		list:    make(map[int]*SagaInfo),
+		list:    make(map[int]*OrderSaga),
 		stock:   stock,
 		payment: payment,
 	}
@@ -81,13 +81,13 @@ func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 }
 
 type SagaService struct {
-	list     map[int]*SagaInfo
+	list     map[int]*OrderSaga
 	stock    Stock
 	payment  Payment
 	scenario Scenario
 }
 
-func (s *SagaService) SagaInfo(id int) *SagaInfo {
+func (s *SagaService) OrderSaga(id int) *OrderSaga {
 	if saga, ok := s.list[id]; ok {
 		return saga
 	}
@@ -99,22 +99,22 @@ func (s *SagaService) Run(order *Order) (int, error) {
 		return 0, ErrOrderAlreadyProcessed
 	}
 
-	info := NewSagaInfo(order)
+	saga := NewOrderSaga(order)
 	// todo fix
-	info.scenario = s.scenario
+	saga.scenario = s.scenario
 
 	// todo saga start
 
-	s.list[order.id] = info
+	s.list[order.id] = saga
 
-	err := info.Run()
+	err := saga.Run()
 	if err != nil {
-		return info.id, err
+		return saga.id, err
 	}
 
 	// todo saga success
 
-	return info.id, nil
+	return saga.id, nil
 }
 
 func (s *SagaService) Rollback(sagaId int) error {
@@ -123,16 +123,16 @@ func (s *SagaService) Rollback(sagaId int) error {
 }
 
 func (s *SagaService) TryAgain(sagaId int) error {
-	info := s.list[sagaId]
-	if info == nil {
+	saga := s.list[sagaId]
+	if saga == nil {
 		return ErrSagaNotFound
 	}
 
-	if info.IsFinished() {
+	if saga.IsFinished() {
 		return ErrSagaFinished
 	}
 
-	err := info.Run()
+	err := saga.Run()
 	if err != nil {
 		return err
 	}
@@ -140,22 +140,22 @@ func (s *SagaService) TryAgain(sagaId int) error {
 	return nil
 }
 
-func (s *SagaService) pay(info *SagaInfo) error {
-	payId, err := s.payment.Pay(info.order.clientId, info.order.sum)
+func (s *SagaService) pay(saga *OrderSaga) error {
+	payId, err := s.payment.Pay(saga.order.clientId, saga.order.sum)
 	if err != nil {
 		return err
 	}
 
-	info.SetPayID(payId)
+	saga.SetPayID(payId)
 	return nil
 }
 
-func (s *SagaService) reserve(info *SagaInfo) error {
-	reserveId, err := s.stock.Reserve(info.order.itemId, info.order.qty)
+func (s *SagaService) reserve(saga *OrderSaga) error {
+	reserveId, err := s.stock.Reserve(saga.order.itemId, saga.order.qty)
 	if err != nil {
 		return err
 	}
 
-	info.SetReserveID(reserveId)
+	saga.SetReserveID(reserveId)
 	return nil
 }
