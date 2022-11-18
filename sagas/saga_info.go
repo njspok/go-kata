@@ -17,7 +17,7 @@ type SagaInfo struct {
 	reserveId  int
 	payId      int
 	log        Log
-	step       int
+	stepN      int
 	isFinished bool
 }
 
@@ -49,12 +49,12 @@ func (i *SagaInfo) PayID() int {
 	return i.payId
 }
 
-func (i *SagaInfo) SetStep(step int) {
-	i.step = step
+func (i *SagaInfo) SetStepN(step int) {
+	i.stepN = step
 }
 
-func (i *SagaInfo) Step() int {
-	return i.step
+func (i *SagaInfo) StepN() int {
+	return i.stepN
 }
 
 func (i *SagaInfo) Finish() {

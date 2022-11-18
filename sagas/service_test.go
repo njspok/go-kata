@@ -114,7 +114,7 @@ func TestOrderSagaService(t *testing.T) {
 		info := service.SagaInfo(100)
 		require.NotNil(t, info)
 		require.Equal(t, 100, info.ID())
-		require.Equal(t, 0, info.Step())
+		require.Equal(t, 0, info.StepN())
 
 		err = service.TryAgain(sagaId)
 		require.NoError(t, err)

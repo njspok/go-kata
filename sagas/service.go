@@ -36,11 +36,11 @@ func (s Step) Rollback(info *SagaInfo) error {
 type Scenario []Step
 
 func (s Scenario) Run(info *SagaInfo) error {
-	for step := info.Step(); step < len(s); step++ {
-		info.SetStep(step)
+	for n := info.StepN(); n < len(s); n++ {
+		info.SetStepN(n)
 
-		action := s[step]
-		err := action.Run(info)
+		step := s[n]
+		err := step.Run(info)
 		if err != nil {
 			return err
 		}
