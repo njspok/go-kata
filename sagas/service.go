@@ -18,7 +18,20 @@ type Payment interface {
 	CancelPay(id int) error
 }
 
-type Step func(*SagaInfo) error
+type Action func(*SagaInfo) error
+
+type Step struct {
+	action Action
+}
+
+func (s Step) Run(info *SagaInfo) error {
+	return s.action(info)
+}
+
+func (s Step) Rollback(info *SagaInfo) error {
+	// todo implement!!!
+	panic("not implemented")
+}
 
 func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 	srv := &SagaService{
@@ -28,8 +41,12 @@ func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 	}
 
 	srv.scenario = []Step{
-		srv.reserve,
-		srv.pay,
+		{
+			action: srv.reserve,
+		},
+		{
+			action: srv.pay,
+		},
 	}
 
 	return srv
@@ -97,7 +114,7 @@ func (s *SagaService) process(info *SagaInfo) error {
 	for step := info.Step(); step < len(s.scenario); step++ {
 		info.SetStep(step)
 		action := s.scenario[step]
-		err := action(info)
+		err := action.Run(info)
 		if err != nil {
 			return err
 		}
