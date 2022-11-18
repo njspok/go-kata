@@ -1,6 +1,8 @@
 package sagas
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	ErrOrderAlreadyProcessed = errors.New("order already processed")
@@ -21,6 +23,7 @@ type Payment interface {
 type Action func(*SagaInfo) error
 
 type Step struct {
+	name   string
 	action Action
 }
 
@@ -40,10 +43,16 @@ func (s Scenario) Run(info *SagaInfo) error {
 		info.SetStepN(n)
 
 		step := s[n]
+
+		info.AddLog("%s Process", step.name)
+
 		err := step.Run(info)
 		if err != nil {
+			info.AddLog("%s Fail: %v", step.name, err)
 			return err
 		}
+
+		info.AddLog("%s Success", step.name)
 	}
 
 	info.Finish()
@@ -59,9 +68,11 @@ func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 
 	srv.scenario = Scenario{
 		{
+			name:   "Reserve",
 			action: srv.reserve,
 		},
 		{
+			name:   "Pay",
 			action: srv.pay,
 		},
 	}
@@ -128,27 +139,21 @@ func (s *SagaService) TryAgain(sagaId int) error {
 }
 
 func (s *SagaService) pay(info *SagaInfo) error {
-	info.AddLog("Pay Process")
 	payId, err := s.payment.Pay(info.order.clientId, info.order.sum)
 	if err != nil {
-		info.AddLog("Pay Fail: %v", err)
 		return err
 	}
 
 	info.SetPayID(payId)
-	info.AddLog("Pay Success")
 	return nil
 }
 
 func (s *SagaService) reserve(info *SagaInfo) error {
-	info.AddLog("Reserve Process")
 	reserveId, err := s.stock.Reserve(info.order.itemId, info.order.qty)
 	if err != nil {
-		info.AddLog("Reserve Fail: %v", err)
 		return err
 	}
 
 	info.SetReserveID(reserveId)
-	info.AddLog("Reserve Success")
 	return nil
 }
