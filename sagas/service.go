@@ -126,11 +126,7 @@ func (s *SagaService) TryAgain(sagaId int) error {
 		return ErrSagaNotFound
 	}
 
-	if saga.IsFinished() {
-		return ErrSagaFinished
-	}
-
-	err := saga.Run()
+	err := saga.TryAgain()
 	if err != nil {
 		return err
 	}

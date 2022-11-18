@@ -27,6 +27,14 @@ func (i *OrderSaga) Run() error {
 	return i.scenario.Run(i)
 }
 
+func (i *OrderSaga) TryAgain() error {
+	if i.IsFinished() {
+		return ErrSagaFinished
+	}
+
+	return i.Run()
+}
+
 func (i *OrderSaga) ID() int {
 	return i.id
 }
