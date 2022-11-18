@@ -2,12 +2,13 @@ package sagas
 
 import "fmt"
 
-func NewOrderSaga(order *Order) *OrderSaga {
+func NewOrderSaga(order *Order, scenario Scenario) *OrderSaga {
 	return &OrderSaga{
 		id:        order.id,
 		order:     order,
 		reserveId: 0,
 		log:       Log{},
+		scenario:  scenario,
 	}
 }
 

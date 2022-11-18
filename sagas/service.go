@@ -99,9 +99,7 @@ func (s *SagaService) Run(order *Order) (int, error) {
 		return 0, ErrOrderAlreadyProcessed
 	}
 
-	saga := NewOrderSaga(order)
-	// todo fix
-	saga.scenario = s.scenario
+	saga := NewOrderSaga(order, s.scenario)
 
 	// todo saga start
 
