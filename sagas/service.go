@@ -18,7 +18,7 @@ type Payment interface {
 	CancelPay(id int) error
 }
 
-type Acton func(*SagaInfo) error
+type Step func(*SagaInfo) error
 
 func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 	srv := &SagaService{
@@ -27,7 +27,7 @@ func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 		payment: payment,
 	}
 
-	srv.scenario = []Acton{
+	srv.scenario = []Step{
 		srv.reserve,
 		srv.pay,
 	}
@@ -39,7 +39,7 @@ type SagaService struct {
 	list     map[int]*SagaInfo
 	stock    Stock
 	payment  Payment
-	scenario []Acton
+	scenario []Step
 }
 
 func (s *SagaService) SagaInfo(id int) *SagaInfo {
