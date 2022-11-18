@@ -33,6 +33,23 @@ func (s Step) Rollback(info *SagaInfo) error {
 	panic("not implemented")
 }
 
+type Scenario []Step
+
+func (s Scenario) Run(info *SagaInfo) error {
+	for step := info.Step(); step < len(s); step++ {
+		info.SetStep(step)
+
+		action := s[step]
+		err := action.Run(info)
+		if err != nil {
+			return err
+		}
+	}
+
+	info.Finish()
+	return nil
+}
+
 func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 	srv := &SagaService{
 		list:    make(map[int]*SagaInfo),
@@ -40,7 +57,7 @@ func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 		payment: payment,
 	}
 
-	srv.scenario = []Step{
+	srv.scenario = Scenario{
 		{
 			action: srv.reserve,
 		},
@@ -56,7 +73,7 @@ type SagaService struct {
 	list     map[int]*SagaInfo
 	stock    Stock
 	payment  Payment
-	scenario []Step
+	scenario Scenario
 }
 
 func (s *SagaService) SagaInfo(id int) *SagaInfo {
@@ -77,7 +94,7 @@ func (s *SagaService) Run(order *Order) (int, error) {
 
 	s.list[order.id] = info
 
-	err := s.run(info)
+	err := s.scenario.Run(info)
 	if err != nil {
 		return info.id, err
 	}
@@ -102,25 +119,11 @@ func (s *SagaService) TryAgain(sagaId int) error {
 		return ErrSagaFinished
 	}
 
-	err := s.run(info)
+	err := s.scenario.Run(info)
 	if err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func (s *SagaService) run(info *SagaInfo) error {
-	for step := info.Step(); step < len(s.scenario); step++ {
-		info.SetStep(step)
-		action := s.scenario[step]
-		err := action.Run(info)
-		if err != nil {
-			return err
-		}
-	}
-
-	info.Finish()
 	return nil
 }
 
