@@ -100,12 +100,14 @@ func (s *SagaService) Run(order *Order) (int, error) {
 	}
 
 	info := NewSagaInfo(order)
+	// todo fix
+	info.scenario = s.scenario
 
 	// todo saga start
 
 	s.list[order.id] = info
 
-	err := s.scenario.Run(info)
+	err := info.Run()
 	if err != nil {
 		return info.id, err
 	}
@@ -130,7 +132,7 @@ func (s *SagaService) TryAgain(sagaId int) error {
 		return ErrSagaFinished
 	}
 
-	err := s.scenario.Run(info)
+	err := info.Run()
 	if err != nil {
 		return err
 	}

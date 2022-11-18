@@ -19,6 +19,11 @@ type SagaInfo struct {
 	log        Log
 	stepN      int
 	isFinished bool
+	scenario   Scenario
+}
+
+func (i *SagaInfo) Run() error {
+	return i.scenario.Run(i)
 }
 
 func (i *SagaInfo) ID() int {
