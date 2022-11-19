@@ -36,56 +36,56 @@ type OrderSaga struct {
 	payment Payment
 }
 
-func (i *OrderSaga) Run() error {
-	if i.IsFinished() {
+func (s *OrderSaga) Run() error {
+	if s.IsFinished() {
 		return ErrSagaFinished
 	}
 
-	return i.scenario.Run(i)
+	return s.scenario.Run(s)
 }
 
-func (i *OrderSaga) TryAgain() error {
-	if i.IsFinished() {
+func (s *OrderSaga) TryAgain() error {
+	if s.IsFinished() {
 		return ErrSagaFinished
 	}
 
-	return i.Run()
+	return s.Run()
 }
 
-func (i *OrderSaga) ReserveID() int {
-	return i.reserveId
+func (s *OrderSaga) ReserveID() int {
+	return s.reserveId
 }
 
-func (i *OrderSaga) SetReserveID(id int) {
-	i.reserveId = id
+func (s *OrderSaga) SetReserveID(id int) {
+	s.reserveId = id
 }
 
-func (i *OrderSaga) SetPayID(id int) {
-	i.payId = id
+func (s *OrderSaga) SetPayID(id int) {
+	s.payId = id
 }
 
-func (i *OrderSaga) PayID() int {
-	return i.payId
+func (s *OrderSaga) PayID() int {
+	return s.payId
 }
 
-func (i *OrderSaga) reserve(saga *OrderSaga) error {
-	reserveId, err := i.stock.Reserve(saga.order.itemId, saga.order.qty)
+func (s *OrderSaga) reserve(saga *OrderSaga) error {
+	reserveId, err := s.stock.Reserve(s.order.itemId, s.order.qty)
 	if err != nil {
 		return err
 	}
 
 	// todo move to saga?
-	saga.SetReserveID(reserveId)
+	s.SetReserveID(reserveId)
 	return nil
 }
 
 func (s *OrderSaga) pay(saga *OrderSaga) error {
-	payId, err := s.payment.Pay(saga.order.clientId, saga.order.sum)
+	payId, err := s.payment.Pay(s.order.clientId, s.order.sum)
 	if err != nil {
 		return err
 	}
 
 	// todo move to saga?
-	saga.SetPayID(payId)
+	s.SetPayID(payId)
 	return nil
 }
