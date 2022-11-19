@@ -29,10 +29,9 @@ func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 }
 
 type SagaService struct {
-	list     map[int]*OrderSaga
-	stock    Stock
-	payment  Payment
-	scenario Scenario
+	list    map[int]*OrderSaga
+	stock   Stock
+	payment Payment
 }
 
 func (s *SagaService) OrderSaga(id int) *OrderSaga {
