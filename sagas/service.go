@@ -65,18 +65,6 @@ func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
 		stock:   stock,
 		payment: payment,
 	}
-
-	srv.scenario = Scenario{
-		{
-			name:   "Reserve",
-			action: srv.reserve,
-		},
-		{
-			name:   "Pay",
-			action: srv.pay,
-		},
-	}
-
 	return srv
 }
 
@@ -99,7 +87,7 @@ func (s *SagaService) Run(order *Order) (int, error) {
 		return 0, ErrOrderAlreadyProcessed
 	}
 
-	saga := NewOrderSaga(order, s.scenario)
+	saga := NewOrderSaga(order, s.stock, s.payment)
 
 	// todo saga start
 
@@ -131,27 +119,5 @@ func (s *SagaService) TryAgain(sagaId int) error {
 		return err
 	}
 
-	return nil
-}
-
-func (s *SagaService) pay(saga *OrderSaga) error {
-	payId, err := s.payment.Pay(saga.order.clientId, saga.order.sum)
-	if err != nil {
-		return err
-	}
-
-	// todo move to saga?
-	saga.SetPayID(payId)
-	return nil
-}
-
-func (s *SagaService) reserve(saga *OrderSaga) error {
-	reserveId, err := s.stock.Reserve(saga.order.itemId, saga.order.qty)
-	if err != nil {
-		return err
-	}
-
-	// todo move to saga?
-	saga.SetReserveID(reserveId)
 	return nil
 }

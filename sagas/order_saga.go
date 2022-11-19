@@ -1,13 +1,27 @@
 package sagas
 
-func NewOrderSaga(order *Order, scenario Scenario) *OrderSaga {
-	return &OrderSaga{
-		Saga: NewSaga(order.id, scenario),
-
+func NewOrderSaga(order *Order, stock Stock, payment Payment) *OrderSaga {
+	orderSaga := &OrderSaga{
 		order:     order,
 		reserveId: 0,
 		payId:     0,
+
+		stock:   stock,
+		payment: payment,
 	}
+
+	orderSaga.Saga = NewSaga(order.id, Scenario{
+		{
+			name:   "Reserve",
+			action: orderSaga.reserve,
+		},
+		{
+			name:   "Pay",
+			action: orderSaga.pay,
+		},
+	})
+
+	return orderSaga
 }
 
 // OrderSaga todo generalize saga abstract class?
@@ -17,6 +31,9 @@ type OrderSaga struct {
 	order     *Order
 	reserveId int
 	payId     int
+
+	stock   Stock
+	payment Payment
 }
 
 func (i *OrderSaga) Run() error {
@@ -49,4 +66,26 @@ func (i *OrderSaga) SetPayID(id int) {
 
 func (i *OrderSaga) PayID() int {
 	return i.payId
+}
+
+func (i *OrderSaga) reserve(saga *OrderSaga) error {
+	reserveId, err := i.stock.Reserve(saga.order.itemId, saga.order.qty)
+	if err != nil {
+		return err
+	}
+
+	// todo move to saga?
+	saga.SetReserveID(reserveId)
+	return nil
+}
+
+func (s *OrderSaga) pay(saga *OrderSaga) error {
+	payId, err := s.payment.Pay(saga.order.clientId, saga.order.sum)
+	if err != nil {
+		return err
+	}
+
+	// todo move to saga?
+	saga.SetPayID(payId)
+	return nil
 }
