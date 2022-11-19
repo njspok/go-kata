@@ -11,6 +11,24 @@ var (
 
 type Log []string
 
+type Action func() error
+
+type Step struct {
+	name   string
+	action Action
+}
+
+func (s Step) Run() error {
+	return s.action()
+}
+
+func (s Step) Rollback() error {
+	// todo implement!!!
+	panic("not implemented")
+}
+
+type Scenario []Step
+
 func NewSaga(id int, scenario Scenario) *Saga {
 	return &Saga{
 		id:         id,
@@ -38,7 +56,25 @@ func (s *Saga) Run() error {
 		return ErrSagaFinished
 	}
 
-	return s.scenario.Run(s)
+	for n := s.StepN(); n < len(s.scenario); n++ {
+		s.SetStepN(n)
+
+		step := s.scenario[n]
+
+		s.AddLog("%s Process", step.name)
+
+		err := step.Run()
+		if err != nil {
+			s.AddLog("%s Fail: %v", step.name, err)
+			return err
+		}
+
+		s.AddLog("%s Success", step.name)
+	}
+
+	s.Finish()
+
+	return nil
 }
 
 func (s *Saga) TryAgain() error {
