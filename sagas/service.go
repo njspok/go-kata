@@ -20,7 +20,7 @@ type Payment interface {
 	CancelPay(id int) error
 }
 
-type Action func(*OrderSaga) error
+type Action func(saga *OrderSaga) error
 
 type Step struct {
 	name   string
@@ -107,12 +107,12 @@ func (s *SagaService) Run(order *Order) (int, error) {
 
 	err := saga.Run()
 	if err != nil {
-		return saga.id, err
+		return saga.ID(), err
 	}
 
 	// todo saga success
 
-	return saga.id, nil
+	return saga.ID(), nil
 }
 
 func (s *SagaService) Rollback(sagaId int) error {
