@@ -26,6 +26,22 @@ func (i *Saga) ID() int {
 	return i.id
 }
 
+func (s *Saga) Run() error {
+	if s.IsFinished() {
+		return ErrSagaFinished
+	}
+
+	return s.scenario.Run(s)
+}
+
+func (s *OrderSaga) TryAgain() error {
+	if s.IsFinished() {
+		return ErrSagaFinished
+	}
+
+	return s.Run()
+}
+
 func (i *Saga) Log() Log {
 	return i.log
 }

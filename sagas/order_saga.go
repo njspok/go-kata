@@ -24,7 +24,6 @@ func NewOrderSaga(order *Order, stock Stock, payment Payment) *OrderSaga {
 	return orderSaga
 }
 
-// OrderSaga todo generalize saga abstract class?
 type OrderSaga struct {
 	*Saga
 
@@ -34,22 +33,6 @@ type OrderSaga struct {
 
 	stock   Stock
 	payment Payment
-}
-
-func (s *OrderSaga) Run() error {
-	if s.IsFinished() {
-		return ErrSagaFinished
-	}
-
-	return s.scenario.Run(s)
-}
-
-func (s *OrderSaga) TryAgain() error {
-	if s.IsFinished() {
-		return ErrSagaFinished
-	}
-
-	return s.Run()
 }
 
 func (s *OrderSaga) ReserveID() int {
@@ -68,7 +51,7 @@ func (s *OrderSaga) PayID() int {
 	return s.payId
 }
 
-func (s *OrderSaga) reserve(saga *OrderSaga) error {
+func (s *OrderSaga) reserve() error {
 	reserveId, err := s.stock.Reserve(s.order.itemId, s.order.qty)
 	if err != nil {
 		return err
@@ -79,7 +62,7 @@ func (s *OrderSaga) reserve(saga *OrderSaga) error {
 	return nil
 }
 
-func (s *OrderSaga) pay(saga *OrderSaga) error {
+func (s *OrderSaga) pay() error {
 	payId, err := s.payment.Pay(s.order.clientId, s.order.sum)
 	if err != nil {
 		return err

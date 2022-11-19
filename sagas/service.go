@@ -20,25 +20,25 @@ type Payment interface {
 	CancelPay(id int) error
 }
 
-type Action func(saga *OrderSaga) error
+type Action func() error
 
 type Step struct {
 	name   string
 	action Action
 }
 
-func (s Step) Run(saga *OrderSaga) error {
-	return s.action(saga)
+func (s Step) Run() error {
+	return s.action()
 }
 
-func (s Step) Rollback(saga *OrderSaga) error {
+func (s Step) Rollback() error {
 	// todo implement!!!
 	panic("not implemented")
 }
 
 type Scenario []Step
 
-func (s Scenario) Run(saga *OrderSaga) error {
+func (s Scenario) Run(saga *Saga) error {
 	for n := saga.StepN(); n < len(s); n++ {
 		saga.SetStepN(n)
 
@@ -46,7 +46,7 @@ func (s Scenario) Run(saga *OrderSaga) error {
 
 		saga.AddLog("%s Process", step.name)
 
-		err := step.Run(saga)
+		err := step.Run()
 		if err != nil {
 			saga.AddLog("%s Fail: %v", step.name, err)
 			return err
