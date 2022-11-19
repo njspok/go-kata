@@ -24,6 +24,10 @@ type OrderSaga struct {
 }
 
 func (i *OrderSaga) Run() error {
+	if i.IsFinished() {
+		return ErrSagaFinished
+	}
+
 	return i.scenario.Run(i)
 }
 
