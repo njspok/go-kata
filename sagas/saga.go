@@ -23,10 +23,10 @@ func NewSaga(id int, scenario Scenario) *Saga {
 
 type Saga struct {
 	id         int
-	log        Log
-	isFinished bool
-	stepN      int
 	scenario   Scenario
+	log        Log
+	stepN      int
+	isFinished bool
 }
 
 func (s *Saga) ID() int {
