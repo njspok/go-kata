@@ -1,6 +1,13 @@
 package sagas
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
+
+var (
+	ErrSagaFinished = errors.New("saga is finished")
+)
 
 type Log []string
 

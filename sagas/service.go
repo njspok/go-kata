@@ -7,7 +7,6 @@ import (
 var (
 	ErrOrderAlreadyProcessed = errors.New("order already processed")
 	ErrSagaNotFound          = errors.New("saga not found")
-	ErrSagaFinished          = errors.New("saga is finished")
 )
 
 type Stock interface {
@@ -18,45 +17,6 @@ type Stock interface {
 type Payment interface {
 	Pay(clientId int, sum int) (int, error)
 	CancelPay(id int) error
-}
-
-type Action func() error
-
-type Step struct {
-	name   string
-	action Action
-}
-
-func (s Step) Run() error {
-	return s.action()
-}
-
-func (s Step) Rollback() error {
-	// todo implement!!!
-	panic("not implemented")
-}
-
-type Scenario []Step
-
-func (s Scenario) Run(saga *Saga) error {
-	for n := saga.StepN(); n < len(s); n++ {
-		saga.SetStepN(n)
-
-		step := s[n]
-
-		saga.AddLog("%s Process", step.name)
-
-		err := step.Run()
-		if err != nil {
-			saga.AddLog("%s Fail: %v", step.name, err)
-			return err
-		}
-
-		saga.AddLog("%s Success", step.name)
-	}
-
-	saga.Finish()
-	return nil
 }
 
 func NewOrderSagaService(stock Stock, payment Payment) *SagaService {
