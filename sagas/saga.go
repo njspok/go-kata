@@ -22,8 +22,8 @@ type Saga struct {
 	scenario   Scenario
 }
 
-func (i *Saga) ID() int {
-	return i.id
+func (s *Saga) ID() int {
+	return s.id
 }
 
 func (s *Saga) Run() error {
@@ -34,7 +34,7 @@ func (s *Saga) Run() error {
 	return s.scenario.Run(s)
 }
 
-func (s *OrderSaga) TryAgain() error {
+func (s *Saga) TryAgain() error {
 	if s.IsFinished() {
 		return ErrSagaFinished
 	}
@@ -42,26 +42,26 @@ func (s *OrderSaga) TryAgain() error {
 	return s.Run()
 }
 
-func (i *Saga) Log() Log {
-	return i.log
+func (s *Saga) Log() Log {
+	return s.log
 }
 
-func (i *Saga) AddLog(s string, a ...any) {
-	i.log = append(i.log, fmt.Sprintf(s, a...))
+func (s *Saga) AddLog(format string, a ...any) {
+	s.log = append(s.log, fmt.Sprintf(format, a...))
 }
 
-func (i *Saga) Finish() {
-	i.isFinished = true
+func (s *Saga) Finish() {
+	s.isFinished = true
 }
 
-func (i *Saga) IsFinished() bool {
-	return i.isFinished
+func (s *Saga) IsFinished() bool {
+	return s.isFinished
 }
 
-func (i *Saga) SetStepN(step int) {
-	i.stepN = step
+func (s *Saga) SetStepN(step int) {
+	s.stepN = step
 }
 
-func (i *Saga) StepN() int {
-	return i.stepN
+func (s *Saga) StepN() int {
+	return s.stepN
 }
