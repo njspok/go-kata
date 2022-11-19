@@ -49,16 +49,12 @@ func (s *SagaService) Run(order *Order) (int, error) {
 
 	saga := NewOrderSaga(order, s.stock, s.payment)
 
-	// todo saga start
-
 	s.list[saga.ID()] = saga
 
 	err := saga.Run()
 	if err != nil {
 		return saga.ID(), err
 	}
-
-	// todo saga success
 
 	return saga.ID(), nil
 }

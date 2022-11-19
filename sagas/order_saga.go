@@ -57,7 +57,6 @@ func (s *OrderSaga) reserve() error {
 		return err
 	}
 
-	// todo move to saga?
 	s.SetReserveID(reserveId)
 	return nil
 }
@@ -68,7 +67,6 @@ func (s *OrderSaga) pay() error {
 		return err
 	}
 
-	// todo move to saga?
 	s.SetPayID(payId)
 	return nil
 }
