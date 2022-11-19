@@ -103,7 +103,7 @@ func (s *SagaService) Run(order *Order) (int, error) {
 
 	// todo saga start
 
-	s.list[order.id] = saga
+	s.list[saga.ID()] = saga
 
 	err := saga.Run()
 	if err != nil {
