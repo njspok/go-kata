@@ -42,10 +42,6 @@ func (s *Saga) Run() error {
 }
 
 func (s *Saga) TryAgain() error {
-	if s.IsFinished() {
-		return ErrSagaFinished
-	}
-
 	return s.Run()
 }
 
