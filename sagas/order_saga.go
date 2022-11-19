@@ -12,6 +12,7 @@ func NewOrderSaga(order *Order, scenario Scenario) *OrderSaga {
 	}
 }
 
+// OrderSaga todo generalize saga abstract class?
 type OrderSaga struct {
 	id         int
 	order      *Order
