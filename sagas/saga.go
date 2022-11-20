@@ -77,10 +77,6 @@ func (s *Saga) Run() error {
 	return nil
 }
 
-func (s *Saga) TryAgain() error {
-	return s.Run()
-}
-
 func (s *Saga) Log() Log {
 	return s.log
 }

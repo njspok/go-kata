@@ -69,7 +69,7 @@ func (s *SagaService) TryAgain(sagaId int) error {
 		return ErrSagaNotFound
 	}
 
-	err := saga.TryAgain()
+	err := saga.Run()
 	if err != nil {
 		return err
 	}
