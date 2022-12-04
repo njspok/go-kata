@@ -59,8 +59,17 @@ func (s *SagaService) Run(order *Order) (int, error) {
 }
 
 func (s *SagaService) Rollback(sagaId int) error {
-	// todo implement!!!
-	panic("not implemented")
+	saga := s.list[sagaId]
+	if saga == nil {
+		return ErrSagaNotFound
+	}
+
+	err := saga.Rollback()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *SagaService) TryAgain(sagaId int) error {

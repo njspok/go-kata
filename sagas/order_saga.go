@@ -12,8 +12,9 @@ func NewOrderSaga(order *Order, stock Stock, payment Payment) *OrderSaga {
 
 	orderSaga.Saga = NewSaga(order.id, Scenario{
 		{
-			name:   "Reserve",
-			action: orderSaga.reserve,
+			name:     "Reserve",
+			action:   orderSaga.reserve,
+			rollback: orderSaga.cancelReserve,
 		},
 		{
 			name:   "Pay",
@@ -59,6 +60,10 @@ func (s *OrderSaga) reserve() error {
 
 	s.SetReserveID(reserveId)
 	return nil
+}
+
+func (s *OrderSaga) cancelReserve() error {
+	return s.stock.CancelReserve(s.reserveId)
 }
 
 func (s *OrderSaga) pay() error {

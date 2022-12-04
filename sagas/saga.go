@@ -14,8 +14,9 @@ type Log []string
 type Action func() error
 
 type Step struct {
-	name   string
-	action Action
+	name     string
+	action   Action
+	rollback Action
 }
 
 func (s Step) Run() error {
@@ -23,8 +24,7 @@ func (s Step) Run() error {
 }
 
 func (s Step) Rollback() error {
-	// todo implement!!!
-	panic("not implemented")
+	return s.rollback()
 }
 
 type Scenario []Step
@@ -70,6 +70,37 @@ func (s *Saga) Run() error {
 		}
 
 		s.AddLog("%s Success", step.name)
+	}
+
+	s.Finish()
+
+	return nil
+}
+
+func (s *Saga) Rollback() error {
+	if s.IsFinished() {
+		return ErrSagaFinished
+	}
+
+	if s.StepN() == 0 {
+		s.Finish()
+		return nil
+	}
+
+	for n := s.StepN() - 1; n >= 0; n-- {
+		s.SetStepN(n)
+
+		step := s.scenario[n]
+
+		s.AddLog("%s Rollback Start", step.name)
+
+		err := step.Rollback()
+		if err != nil {
+			s.AddLog("%s Rollback Fail: %v", step.name, err)
+			return err
+		}
+
+		s.AddLog("%s Rollback Success", step.name)
 	}
 
 	s.Finish()
