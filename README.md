@@ -13,7 +13,8 @@
 - [Очередь ожидания](wait_queue/README.md)
 - [Печать отчета](report/README.md)
 - [Транзакция](transaction/README.md)
-- [Большие числа](big_numbers//README.md)
+- [Большие числа](big_numbers/README.md)
+- [Саги](sagas/README.md)
 
 # Путь TDD
 
