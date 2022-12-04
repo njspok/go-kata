@@ -6,7 +6,7 @@
 
 - [Банкомат](atm/README.md)
 - [Боулинг](bowling/README.md)
-- [Лампа](lamp/)
+- [Лампа](lamp/README.md)
 - [Весы](libra/README.md)
 - [Деньги](money/README.md)
 - [DSL](dsl/README.md)
