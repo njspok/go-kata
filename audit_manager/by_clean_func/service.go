@@ -2,8 +2,32 @@ package mock_version
 
 import "time"
 
+type Auditer interface {
+	AddRecord(
+		lastRec *AuditRecord,
+		name string,
+		time time.Time,
+		direction Direction,
+	) (
+		*AuditRecord,
+		error,
+	)
+}
+
+type AuditRep interface {
+	LastRecordByName(name string) (*AuditRecord, error)
+	Add(record *AuditRecord) error
+}
+
+func NewAuditService(rep AuditRep, manager Auditer) *AuditService {
+	return &AuditService{
+		manager: manager,
+		rep:     rep,
+	}
+}
+
 type AuditService struct {
-	manager *AuditManager
+	manager Auditer
 	rep     AuditRep
 }
 
