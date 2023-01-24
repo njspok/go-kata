@@ -15,6 +15,7 @@
 - [Транзакция](transaction/README.md)
 - [Большие числа](big_numbers/README.md)
 - [Саги](sagas/README.md)
+- [Менеджер аудита](audit_manager/README.md)
 
 # Путь TDD
 
