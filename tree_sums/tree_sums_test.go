@@ -15,7 +15,10 @@ func TestNode_Sums(t *testing.T) {
 		}
 
 		require.Equal(t, 100, root.Sum())
-		require.Equal(t, 100, root.MaxPathSum())
+
+		sum, path := root.MaxPathSum()
+		require.Equal(t, 100, sum)
+		require.Equal(t, []int{100}, path)
 	})
 	t.Run("tree", func(t *testing.T) {
 		root := &Node{
@@ -41,6 +44,9 @@ func TestNode_Sums(t *testing.T) {
 		}
 
 		require.Equal(t, 233, root.Sum())
-		require.Equal(t, 213, root.MaxPathSum())
+
+		sum, path := root.MaxPathSum()
+		require.Equal(t, 213, sum)
+		require.Equal(t, []int{100, 99, 14}, path)
 	})
 }

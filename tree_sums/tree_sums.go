@@ -6,12 +6,26 @@ type Node struct {
 	Right *Node
 }
 
-func (n *Node) MaxPathSum() int {
+func (n *Node) MaxPathSum() (int, []int) {
 	if n == nil {
-		return 0
+		return 0, []int{}
 	}
 
-	return n.Val + max(n.Left.MaxPathSum(), n.Right.MaxPathSum())
+	lsum, lpath := n.Left.MaxPathSum()
+	rsum, rpath := n.Right.MaxPathSum()
+
+	path := []int{n.Val}
+	sum := n.Val
+
+	if lsum <= rsum {
+		sum += rsum
+		path = append(path, rpath...)
+	} else {
+		sum += lsum
+		path = append(path, lpath...)
+	}
+
+	return sum, path
 }
 
 func (n *Node) Sum() int {
@@ -20,11 +34,4 @@ func (n *Node) Sum() int {
 	}
 
 	return n.Val + n.Left.Sum() + n.Right.Sum()
-}
-
-func max(a, b int) int {
-	if a <= b {
-		return b
-	}
-	return a
 }
