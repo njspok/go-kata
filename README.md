@@ -16,6 +16,7 @@
 - [Большие числа](big_numbers/README.md)
 - [Саги](sagas/README.md)
 - [Менеджер аудита](audit_manager/README.md)
+- [Суммы значений узлов дерева](tree_sums/README.md)
 
 # Путь TDD
 
