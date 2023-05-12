@@ -13,16 +13,39 @@ func (p *Party) Add(person *Person) {
 }
 
 func (p *Party) Celebrity() *Person {
-	if len(p.persons) == 0 {
+	if p.isNoPersons() {
 		return nil
 	}
 
-	if len(p.persons) == 1 {
+	if p.isSingleParty() {
 		return nil
 	}
 
-	// find potential celebrity
+	found := p.findPotentialCelebrity()
 
+	if p.isCelebrity(found) {
+		return found
+	}
+
+	return nil
+}
+
+func (p *Party) isCelebrity(found *Person) bool {
+	for _, cur := range p.persons {
+		if cur == found {
+			continue
+		}
+
+		if cur.IsKnow(found) && found.IsDontKnow(cur) {
+			continue
+		}
+
+		return false
+	}
+	return true
+}
+
+func (p *Party) findPotentialCelebrity() *Person {
 	left := 0
 	right := len(p.persons) - 1
 
@@ -34,21 +57,13 @@ func (p *Party) Celebrity() *Person {
 		}
 	}
 
-	// check potential celebrity
+	return p.persons[left]
+}
 
-	found := p.persons[left]
+func (p *Party) isSingleParty() bool {
+	return len(p.persons) == 1
+}
 
-	for _, cur := range p.persons {
-		if cur == found {
-			continue
-		}
-
-		if cur.IsKnow(found) && found.IsDontKnow(cur) {
-			continue
-		}
-
-		return nil
-	}
-
-	return found
+func (p *Party) isNoPersons() bool {
+	return len(p.persons) == 0
 }
