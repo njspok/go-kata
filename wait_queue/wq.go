@@ -2,23 +2,21 @@ package wait_queue
 
 import "sync"
 
-type Result interface{}
+type Action[T any] func() T
 
-type Action func() Result
-
-func NewWaitQueue() *WaitQueue {
-	return &WaitQueue{}
+func NewWaitQueue[T any]() *WaitQueue[T] {
+	return &WaitQueue[T]{}
 }
 
-type WaitQueue struct {
+type WaitQueue[T any] struct {
 	mu   sync.Mutex
 	list sync.Map
 }
 
-func (q *WaitQueue) Run(name string, do Action) Result {
+func (q *WaitQueue[T]) Run(name string, do Action[T]) T {
 	newTask := NewTask(do)
 	v, loaded := q.list.LoadOrStore(name, newTask)
-	task := v.(*Task)
+	task := v.(*Task[T])
 
 	if loaded {
 		task.Wait()
@@ -31,11 +29,11 @@ func (q *WaitQueue) Run(name string, do Action) Result {
 	return task.Result
 }
 
-func (q *WaitQueue) Load(name string) *Task {
+func (q *WaitQueue[T]) Load(name string) *Task[T] {
 	v, _ := q.list.Load(name)
 	if v == nil {
 		return nil
 	}
 
-	return v.(*Task)
+	return v.(*Task[T])
 }

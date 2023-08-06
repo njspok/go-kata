@@ -10,32 +10,32 @@ import (
 
 func TestWaitQueue(t *testing.T) {
 	t.Run("create", func(t *testing.T) {
-		q := NewWaitQueue()
+		q := NewWaitQueue[int]()
 		require.NotNil(t, q)
 	})
 	t.Run("run", func(t *testing.T) {
-		queue := NewWaitQueue()
+		queue := NewWaitQueue[bool]()
 
-		result := queue.Run("do-it", func() Result {
+		result := queue.Run("do-it", func() bool {
 			return true
 		})
 
 		require.Equal(t, true, result)
 	})
 	t.Run("run different parallel", func(t *testing.T) {
-		queue := NewWaitQueue()
+		queue := NewWaitQueue[any]()
 
 		result := make(chan bool)
 
 		go func() {
-			queue.Run("first", func() Result {
+			queue.Run("first", func() any {
 				result <- true
 				return nil
 			})
 		}()
 
 		go func() {
-			queue.Run("second", func() Result {
+			queue.Run("second", func() any {
 				result <- true
 				return nil
 			})
@@ -45,14 +45,14 @@ func TestWaitQueue(t *testing.T) {
 		require.True(t, <-result)
 	})
 	t.Run("run same parallel", func(t *testing.T) {
-		queue := NewWaitQueue()
+		queue := NewWaitQueue[bool]()
 
-		result := make(chan Result)
+		result := make(chan bool)
 
 		var counter int32
 
 		do := func() {
-			result <- queue.Run("first", func() Result {
+			result <- queue.Run("first", func() bool {
 				atomic.AddInt32(&counter, 1)
 				time.Sleep(1 * time.Second)
 				return true

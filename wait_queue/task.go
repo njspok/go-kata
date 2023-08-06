@@ -2,27 +2,27 @@ package wait_queue
 
 import "sync"
 
-func NewTask(do Action) *Task {
-	t := &Task{
+func NewTask[T any](do Action[T]) *Task[T] {
+	t := &Task[T]{
 		do: do,
 	}
 	t.wg.Add(1)
 	return t
 }
 
-type Task struct {
+type Task[T any] struct {
 	wg     sync.WaitGroup
-	do     Action
-	Result Result
+	do     Action[T]
+	Result T
 }
 
-func (t *Task) Run() {
+func (t *Task[T]) Run() {
 	go func() {
 		t.Result = t.do()
 		t.wg.Done()
 	}()
 }
 
-func (t *Task) Wait() {
+func (t *Task[T]) Wait() {
 	t.wg.Wait()
 }

@@ -9,11 +9,11 @@ import (
 func TestNewTask(t *testing.T) {
 	const count = 10
 
-	task := NewTask(func() Result {
+	task := NewTask(func() int {
 		return 101
 	})
 
-	results := make(chan Result, count)
+	results := make(chan int, count)
 
 	for i := 0; i < count; i++ {
 		go func() {
