@@ -18,6 +18,7 @@
 - [Менеджер аудита](audit_manager/README.md)
 - [Суммы значений узлов дерева](tree_sums/README.md)
 - [Поиск знаменитости на вечеринке](celebrity/README.md)
+- [Цветная карта Австралии](constraint/README.md)
 
 # Путь TDD
 
