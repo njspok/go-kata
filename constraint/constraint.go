@@ -1,0 +1,105 @@
+package constraint
+
+import (
+	"errors"
+
+	"github.com/samber/lo"
+)
+
+type Constraint[V comparable, D any] interface {
+	Satisfied(assignment map[V]D) bool
+	Variables() []V
+}
+
+func NewCSP[V comparable, D any](variables []V, domains map[V][]D) (*CSP[V, D], error) {
+	csp := &CSP[V, D]{
+		variables: variables,
+		domains:   domains,
+	}
+
+	csp.constraints = make(map[V][]Constraint[V, D])
+	for _, v := range csp.variables {
+		csp.constraints[v] = []Constraint[V, D]{}
+		if _, ok := csp.domains[v]; !ok {
+			return nil, errors.New("every variable should have a domain assigned to it")
+		}
+	}
+
+	return csp, nil
+}
+
+type CSP[V comparable, D any] struct {
+	variables   []V
+	domains     map[V][]D
+	constraints map[V][]Constraint[V, D]
+}
+
+func (c *CSP[V, D]) AddConstraint(constr Constraint[V, D]) error {
+	for _, v := range constr.Variables() {
+		if lo.Contains(c.variables, v) {
+			c.constraints[v] = append(c.constraints[v], constr)
+		} else {
+			return errors.New("variable in constraint not in CSP")
+		}
+	}
+
+	return nil
+}
+
+func (c *CSP[V, D]) AddConstraints(list ...Constraint[V, D]) error {
+	for _, constr := range list {
+		if err := c.AddConstraint(constr); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c *CSP[V, D]) Consistent(v V, assignment map[V]D) bool {
+	for _, constr := range c.constraints[v] {
+		if !constr.Satisfied(assignment) {
+			return false
+		}
+	}
+	return true
+}
+
+func (c *CSP[V, D]) BacktrackingSearch(assignment map[V]D) map[V]D {
+	if assignment == nil {
+		assignment = make(map[V]D)
+	}
+
+	// find all assignments for variables
+	if len(assignment) == len(c.variables) {
+		return assignment
+	}
+
+	var unassigned []V
+	for _, v := range c.variables {
+		if _, ok := assignment[v]; !ok {
+			unassigned = append(unassigned, v)
+		}
+	}
+
+	first := unassigned[0]
+	for _, value := range c.domains[first] {
+		localAssignment := copyMap(assignment)
+		localAssignment[first] = value
+		if c.Consistent(first, localAssignment) {
+			result := c.BacktrackingSearch(localAssignment)
+			if result != nil {
+				return result
+			}
+		}
+	}
+
+	return nil
+}
+
+func copyMap[V comparable, D any](m map[V]D) map[V]D {
+	result := make(map[V]D, len(m))
+	for v, d := range m {
+		result[v] = d
+	}
+	return result
+}
