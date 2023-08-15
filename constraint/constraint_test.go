@@ -22,9 +22,9 @@ type MapColoringConstraint struct {
 	place2 State
 }
 
-func (c *MapColoringConstraint) Satisfied(assignment map[State]Color) bool {
-	color1, exist1 := assignment[c.place1]
-	color2, exist2 := assignment[c.place2]
+func (c *MapColoringConstraint) Satisfied(solution Solution[State, Color]) bool {
+	color1, exist1 := solution[c.place1]
+	color2, exist2 := solution[c.place2]
 
 	if !exist1 || !exist2 {
 		return true
@@ -72,7 +72,7 @@ func TestCSP(t *testing.T) {
 		require.NoError(t, err)
 
 		result := csp.BacktrackingSearch(nil)
-		require.Equal(t, map[State]Color{
+		require.Equal(t, Solution[State, Color]{
 			"Western Australia":  "red",
 			"Northern Territory": "green",
 			"South Australia":    "blue",

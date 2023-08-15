@@ -6,8 +6,10 @@ import (
 	"github.com/samber/lo"
 )
 
+type Solution[V comparable, D any] map[V]D
+
 type Constraint[V comparable, D any] interface {
-	Satisfied(solution map[V]D) bool
+	Satisfied(Solution[V, D]) bool
 	Variables() []V
 }
 
@@ -55,7 +57,7 @@ func (c *CSP[V, D]) AddConstraints(list ...Constraint[V, D]) error {
 	return nil
 }
 
-func (c *CSP[V, D]) Consistent(v V, solution map[V]D) bool {
+func (c *CSP[V, D]) Consistent(v V, solution Solution[V, D]) bool {
 	for _, constr := range c.constraints[v] {
 		if !constr.Satisfied(solution) {
 			return false
@@ -64,9 +66,9 @@ func (c *CSP[V, D]) Consistent(v V, solution map[V]D) bool {
 	return true
 }
 
-func (c *CSP[V, D]) BacktrackingSearch(solution map[V]D) map[V]D {
+func (c *CSP[V, D]) BacktrackingSearch(solution Solution[V, D]) Solution[V, D] {
 	if solution == nil {
-		solution = make(map[V]D)
+		solution = make(Solution[V, D])
 	}
 
 	// find all assignments for variables
