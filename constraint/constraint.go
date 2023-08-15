@@ -7,7 +7,7 @@ import (
 )
 
 type Constraint[V comparable, D any] interface {
-	Satisfied(assignment map[V]D) bool
+	Satisfied(solution map[V]D) bool
 	Variables() []V
 }
 
@@ -55,38 +55,38 @@ func (c *CSP[V, D]) AddConstraints(list ...Constraint[V, D]) error {
 	return nil
 }
 
-func (c *CSP[V, D]) Consistent(v V, assignment map[V]D) bool {
+func (c *CSP[V, D]) Consistent(v V, solution map[V]D) bool {
 	for _, constr := range c.constraints[v] {
-		if !constr.Satisfied(assignment) {
+		if !constr.Satisfied(solution) {
 			return false
 		}
 	}
 	return true
 }
 
-func (c *CSP[V, D]) BacktrackingSearch(assignment map[V]D) map[V]D {
-	if assignment == nil {
-		assignment = make(map[V]D)
+func (c *CSP[V, D]) BacktrackingSearch(solution map[V]D) map[V]D {
+	if solution == nil {
+		solution = make(map[V]D)
 	}
 
 	// find all assignments for variables
-	if len(assignment) == len(c.variables) {
-		return assignment
+	if len(solution) == len(c.variables) {
+		return solution
 	}
 
 	var unassigned []V
 	for _, v := range c.variables {
-		if _, ok := assignment[v]; !ok {
+		if _, ok := solution[v]; !ok {
 			unassigned = append(unassigned, v)
 		}
 	}
 
 	first := unassigned[0]
 	for _, value := range c.domains[first] {
-		localAssignment := copyMap(assignment)
-		localAssignment[first] = value
-		if c.Consistent(first, localAssignment) {
-			result := c.BacktrackingSearch(localAssignment)
+		localSolution := copyMap(solution)
+		localSolution[first] = value
+		if c.Consistent(first, localSolution) {
+			result := c.BacktrackingSearch(localSolution)
 			if result != nil {
 				return result
 			}
