@@ -39,47 +39,85 @@ func (c *MapColoringConstraint) Variables() []State {
 
 func TestCSP(t *testing.T) {
 	t.Run("coloring map", func(t *testing.T) {
-		variables := []State{
-			"Western Australia",
-			"Northern Territory",
-			"South Australia",
-			"Queensland",
-			"New South Wales",
-			"Victoria",
-			"Tasmania",
-		}
+		t.Run("solved", func(t *testing.T) {
+			variables := []State{
+				"Western Australia",
+				"Northern Territory",
+				"South Australia",
+				"Queensland",
+				"New South Wales",
+				"Victoria",
+				"Tasmania",
+			}
 
-		domains := make(map[State][]Color)
-		for _, v := range variables {
-			domains[v] = []Color{"red", "green", "blue"}
-		}
+			domains := make(map[State][]Color)
+			for _, v := range variables {
+				domains[v] = []Color{"red", "green", "blue"}
+			}
 
-		csp, err := NewCSP(variables, domains)
-		require.NoError(t, err)
+			csp, err := NewCSP(variables, domains)
+			require.NoError(t, err)
 
-		err = csp.AddConstraints(
-			NewMapColorConstraint("Western Australia", "Northern Territory"),
-			NewMapColorConstraint("Western Australia", "South Australia"),
-			NewMapColorConstraint("South Australia", "Northern Territory"),
-			NewMapColorConstraint("Queensland", "Northern Territory"),
-			NewMapColorConstraint("Queensland", "South Australia"),
-			NewMapColorConstraint("Queensland", "New South Wales"),
-			NewMapColorConstraint("New South Wales", "South Australia"),
-			NewMapColorConstraint("Victoria", "South Australia"),
-			NewMapColorConstraint("Victoria", "New South Wales"),
-			NewMapColorConstraint("Victoria", "Tasmania"),
-		)
-		require.NoError(t, err)
+			err = csp.AddConstraints(
+				NewMapColorConstraint("Western Australia", "Northern Territory"),
+				NewMapColorConstraint("Western Australia", "South Australia"),
+				NewMapColorConstraint("South Australia", "Northern Territory"),
+				NewMapColorConstraint("Queensland", "Northern Territory"),
+				NewMapColorConstraint("Queensland", "South Australia"),
+				NewMapColorConstraint("Queensland", "New South Wales"),
+				NewMapColorConstraint("New South Wales", "South Australia"),
+				NewMapColorConstraint("Victoria", "South Australia"),
+				NewMapColorConstraint("Victoria", "New South Wales"),
+				NewMapColorConstraint("Victoria", "Tasmania"),
+			)
+			require.NoError(t, err)
 
-		result := csp.Search()
-		require.Equal(t, Solution[State, Color]{
-			"Western Australia":  "red",
-			"Northern Territory": "green",
-			"South Australia":    "blue",
-			"Queensland":         "red",
-			"New South Wales":    "green",
-			"Victoria":           "red",
-			"Tasmania":           "green",
-		}, result)
+			result := csp.Search()
+			require.Equal(t, Solution[State, Color]{
+				"Western Australia":  "red",
+				"Northern Territory": "green",
+				"South Australia":    "blue",
+				"Queensland":         "red",
+				"New South Wales":    "green",
+				"Victoria":           "red",
+				"Tasmania":           "green",
+			}, result)
+		})
+		t.Run("not solved", func(t *testing.T) {
+			variables := []State{
+				"Western Australia",
+				"Northern Territory",
+				"South Australia",
+				"Queensland",
+				"New South Wales",
+				"Victoria",
+				"Tasmania",
+			}
+
+			domains := make(map[State][]Color)
+			for _, v := range variables {
+				domains[v] = []Color{"red", "green"}
+			}
+
+			csp, err := NewCSP(variables, domains)
+			require.NoError(t, err)
+
+			err = csp.AddConstraints(
+				NewMapColorConstraint("Western Australia", "Northern Territory"),
+				NewMapColorConstraint("Western Australia", "South Australia"),
+				NewMapColorConstraint("South Australia", "Northern Territory"),
+				NewMapColorConstraint("Queensland", "Northern Territory"),
+				NewMapColorConstraint("Queensland", "South Australia"),
+				NewMapColorConstraint("Queensland", "New South Wales"),
+				NewMapColorConstraint("New South Wales", "South Australia"),
+				NewMapColorConstraint("Victoria", "South Australia"),
+				NewMapColorConstraint("Victoria", "New South Wales"),
+				NewMapColorConstraint("Victoria", "Tasmania"),
+			)
+			require.NoError(t, err)
+
+			result := csp.Search()
+			require.Nil(t, result)
+		})
 	})
 }
