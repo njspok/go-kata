@@ -39,17 +39,30 @@ func (c *MapColoringConstraint) Variables() []State {
 
 func TestCSP(t *testing.T) {
 	t.Run("coloring map", func(t *testing.T) {
-		t.Run("solved", func(t *testing.T) {
-			variables := []State{
-				"Western Australia",
-				"Northern Territory",
-				"South Australia",
-				"Queensland",
-				"New South Wales",
-				"Victoria",
-				"Tasmania",
-			}
+		variables := []State{
+			"Western Australia",
+			"Northern Territory",
+			"South Australia",
+			"Queensland",
+			"New South Wales",
+			"Victoria",
+			"Tasmania",
+		}
 
+		constraints := []Constraint[State, Color]{
+			NewMapColorConstraint("Western Australia", "Northern Territory"),
+			NewMapColorConstraint("Western Australia", "South Australia"),
+			NewMapColorConstraint("South Australia", "Northern Territory"),
+			NewMapColorConstraint("Queensland", "Northern Territory"),
+			NewMapColorConstraint("Queensland", "South Australia"),
+			NewMapColorConstraint("Queensland", "New South Wales"),
+			NewMapColorConstraint("New South Wales", "South Australia"),
+			NewMapColorConstraint("Victoria", "South Australia"),
+			NewMapColorConstraint("Victoria", "New South Wales"),
+			NewMapColorConstraint("Victoria", "Tasmania"),
+		}
+
+		t.Run("solved", func(t *testing.T) {
 			domains := make(map[State][]Color)
 			for _, v := range variables {
 				domains[v] = []Color{"red", "green", "blue"}
@@ -58,18 +71,7 @@ func TestCSP(t *testing.T) {
 			csp, err := NewCSP(variables, domains)
 			require.NoError(t, err)
 
-			err = csp.AddConstraints(
-				NewMapColorConstraint("Western Australia", "Northern Territory"),
-				NewMapColorConstraint("Western Australia", "South Australia"),
-				NewMapColorConstraint("South Australia", "Northern Territory"),
-				NewMapColorConstraint("Queensland", "Northern Territory"),
-				NewMapColorConstraint("Queensland", "South Australia"),
-				NewMapColorConstraint("Queensland", "New South Wales"),
-				NewMapColorConstraint("New South Wales", "South Australia"),
-				NewMapColorConstraint("Victoria", "South Australia"),
-				NewMapColorConstraint("Victoria", "New South Wales"),
-				NewMapColorConstraint("Victoria", "Tasmania"),
-			)
+			err = csp.AddConstraints(constraints...)
 			require.NoError(t, err)
 
 			result := csp.Search()
@@ -84,16 +86,6 @@ func TestCSP(t *testing.T) {
 			}, result)
 		})
 		t.Run("not solved", func(t *testing.T) {
-			variables := []State{
-				"Western Australia",
-				"Northern Territory",
-				"South Australia",
-				"Queensland",
-				"New South Wales",
-				"Victoria",
-				"Tasmania",
-			}
-
 			domains := make(map[State][]Color)
 			for _, v := range variables {
 				domains[v] = []Color{"red", "green"}
@@ -102,18 +94,7 @@ func TestCSP(t *testing.T) {
 			csp, err := NewCSP(variables, domains)
 			require.NoError(t, err)
 
-			err = csp.AddConstraints(
-				NewMapColorConstraint("Western Australia", "Northern Territory"),
-				NewMapColorConstraint("Western Australia", "South Australia"),
-				NewMapColorConstraint("South Australia", "Northern Territory"),
-				NewMapColorConstraint("Queensland", "Northern Territory"),
-				NewMapColorConstraint("Queensland", "South Australia"),
-				NewMapColorConstraint("Queensland", "New South Wales"),
-				NewMapColorConstraint("New South Wales", "South Australia"),
-				NewMapColorConstraint("Victoria", "South Australia"),
-				NewMapColorConstraint("Victoria", "New South Wales"),
-				NewMapColorConstraint("Victoria", "Tasmania"),
-			)
+			err = csp.AddConstraints(constraints...)
 			require.NoError(t, err)
 
 			result := csp.Search()
