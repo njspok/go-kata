@@ -66,7 +66,11 @@ func (c *CSP[V, D]) Consistent(v V, solution Solution[V, D]) bool {
 	return true
 }
 
-func (c *CSP[V, D]) BacktrackingSearch(solution Solution[V, D]) Solution[V, D] {
+func (c *CSP[V, D]) Search() Solution[V, D] {
+	return c.backtrackingSearch(nil)
+}
+
+func (c *CSP[V, D]) backtrackingSearch(solution Solution[V, D]) Solution[V, D] {
 	if solution == nil {
 		solution = make(Solution[V, D])
 	}
@@ -88,7 +92,7 @@ func (c *CSP[V, D]) BacktrackingSearch(solution Solution[V, D]) Solution[V, D] {
 		localSolution := copyMap(solution)
 		localSolution[first] = value
 		if c.Consistent(first, localSolution) {
-			result := c.BacktrackingSearch(localSolution)
+			result := c.backtrackingSearch(localSolution)
 			if result != nil {
 				return result
 			}

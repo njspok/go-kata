@@ -71,7 +71,7 @@ func TestCSP(t *testing.T) {
 		)
 		require.NoError(t, err)
 
-		result := csp.BacktrackingSearch(nil)
+		result := csp.Search()
 		require.Equal(t, Solution[State, Color]{
 			"Western Australia":  "red",
 			"Northern Territory": "green",
