@@ -22,15 +22,19 @@ type MapColoringConstraint struct {
 	place2 State
 }
 
-func (c *MapColoringConstraint) Satisfied(solution Solution[State, Color]) bool {
+func (c *MapColoringConstraint) Satisfied(solution Solution[State, Color]) Result {
 	color1, exist1 := solution[c.place1]
 	color2, exist2 := solution[c.place2]
 
 	if !exist1 || !exist2 {
-		return true
+		return Missing
 	}
 
-	return color1 != color2
+	if color1 != color2 {
+		return Correct
+	}
+
+	return Incorrect
 }
 
 func (c *MapColoringConstraint) Variables() []State {
@@ -39,15 +43,19 @@ func (c *MapColoringConstraint) Variables() []State {
 
 type LinearSystem struct{}
 
-func (l *LinearSystem) Satisfied(solution Solution[string, int]) bool {
+func (l *LinearSystem) Satisfied(solution Solution[string, int]) Result {
 	x, e1 := solution["X"]
 	y, e2 := solution["Y"]
 
 	if !e1 || !e2 {
-		return true
+		return Missing
 	}
 
-	return ((x + y) == 12) && ((x - y) == -2)
+	if ((x + y) == 12) && ((x - y) == -2) {
+		return Correct
+	}
+
+	return Incorrect
 }
 
 func (l *LinearSystem) Variables() []string {
@@ -128,6 +136,9 @@ func TestCSP(t *testing.T) {
 		require.NoError(t, csp.AddConstraint(&LinearSystem{}))
 
 		solution := csp.Search()
-		require.EqualValues(t, 1, solution)
+		require.EqualValues(t, Solution[string, int]{
+			"X": 5,
+			"Y": 7,
+		}, solution)
 	})
 }

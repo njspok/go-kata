@@ -6,10 +6,18 @@ import (
 	"github.com/samber/lo"
 )
 
+type Result int
+
+const (
+	Correct Result = iota
+	Incorrect
+	Missing
+)
+
 type Solution[V comparable, D any] map[V]D
 
 type Constraint[V comparable, D any] interface {
-	Satisfied(Solution[V, D]) bool
+	Satisfied(Solution[V, D]) Result
 	Variables() []V
 }
 
@@ -59,7 +67,12 @@ func (c *CSP[V, D]) AddConstraints(list ...Constraint[V, D]) error {
 
 func (c *CSP[V, D]) Consistent(v V, solution Solution[V, D]) bool {
 	for _, constr := range c.constraints[v] {
-		if !constr.Satisfied(solution) {
+		switch constr.Satisfied(solution) {
+		case Missing:
+			continue
+		case Correct:
+			continue
+		case Incorrect:
 			return false
 		}
 	}
@@ -69,6 +82,38 @@ func (c *CSP[V, D]) Consistent(v V, solution Solution[V, D]) bool {
 func (c *CSP[V, D]) Search() Solution[V, D] {
 	return c.backtrackingSearch(nil)
 }
+
+//func (c *CSP[V, D]) backtrackingSearch(solution Solution[V, D]) Solution[V, D] {
+//	if solution == nil {
+//		solution = make(Solution[V, D])
+//	}
+//
+//	// find all assignments for variables
+//	if len(solution) == len(c.variables) {
+//		return solution
+//	}
+//
+//	var unassigned []V
+//	for _, v := range c.variables {
+//		if _, ok := solution[v]; !ok {
+//			unassigned = append(unassigned, v)
+//		}
+//	}
+//
+//	first := unassigned[0]
+//	for _, value := range c.domains[first] {
+//		localSolution := copyMap(solution)
+//		localSolution[first] = value
+//		if c.Consistent(first, localSolution) {
+//			result := c.backtrackingSearch(localSolution)
+//			if result != nil {
+//				return result
+//			}
+//		}
+//	}
+//
+//	return nil
+//}
 
 func (c *CSP[V, D]) backtrackingSearch(solution Solution[V, D]) Solution[V, D] {
 	if solution == nil {
