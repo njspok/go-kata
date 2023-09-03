@@ -194,7 +194,16 @@ func TestCSP(t *testing.T) {
 		require.NoError(t, err)
 
 		solution := csp.Search()
-		require.Equal(t, 1, solution)
+		require.Equal(t, Solution[int, int]{
+			1: 1,
+			2: 5,
+			3: 8,
+			4: 6,
+			5: 3,
+			6: 7,
+			7: 2,
+			8: 4,
+		}, solution)
 	})
 }
 
