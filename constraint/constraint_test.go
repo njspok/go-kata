@@ -41,9 +41,9 @@ func (c *MapColoringConstraint) Variables() []State {
 	return []State{c.place1, c.place2}
 }
 
-type LinearSystem struct{}
+type LinearEquationSystem struct{}
 
-func (l *LinearSystem) Satisfied(solution Solution[string, int]) Result {
+func (l *LinearEquationSystem) Satisfied(solution Solution[string, int]) Result {
 	x, e1 := solution["X"]
 	y, e2 := solution["Y"]
 
@@ -58,7 +58,7 @@ func (l *LinearSystem) Satisfied(solution Solution[string, int]) Result {
 	return Incorrect
 }
 
-func (l *LinearSystem) Variables() []string {
+func (l *LinearEquationSystem) Variables() []string {
 	return []string{"X", "Y"}
 }
 
@@ -133,7 +133,7 @@ func TestCSP(t *testing.T) {
 		})
 		require.NoError(t, err)
 
-		require.NoError(t, csp.AddConstraint(&LinearSystem{}))
+		require.NoError(t, csp.AddConstraint(&LinearEquationSystem{}))
 
 		solution := csp.Search()
 		require.EqualValues(t, Solution[string, int]{
