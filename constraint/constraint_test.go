@@ -62,6 +62,37 @@ func (l *LinearEquationSystem) Variables() []string {
 	return []string{"X", "Y"}
 }
 
+type QueenConstraint struct{}
+
+func (q *QueenConstraint) Satisfied(s Solution[int, int]) Result {
+
+	for i := 1; i < 8; i++ {
+		for j := i + 1; j <= 8; j++ {
+			_, exist1 := s[i]
+			_, exist2 := s[j]
+			if !exist1 || !exist2 {
+				return Missing
+			}
+
+			// not one line
+			if s[i] == s[j] {
+				return Incorrect
+			}
+
+			// not one diagonal
+			if abs(i-j) == abs(s[i]-s[j]) {
+				return Incorrect
+			}
+		}
+	}
+
+	return Correct
+}
+
+func (q *QueenConstraint) Variables() []int {
+	return []int{1, 2, 3, 4, 5, 6, 7, 8}
+}
+
 func TestCSP(t *testing.T) {
 	t.Run("coloring map", func(t *testing.T) {
 		variables := []State{
@@ -141,4 +172,35 @@ func TestCSP(t *testing.T) {
 			"Y": 7,
 		}, solution)
 	})
+	t.Run("queens", func(t *testing.T) {
+		csp, err := NewCSP(
+			[]int{
+				1, 2, 3, 4, 5, 6, 7, 8,
+			},
+			map[int][]int{
+				1: {1, 2, 3, 4, 5, 6, 7, 8},
+				2: {1, 2, 3, 4, 5, 6, 7, 8},
+				3: {1, 2, 3, 4, 5, 6, 7, 8},
+				4: {1, 2, 3, 4, 5, 6, 7, 8},
+				5: {1, 2, 3, 4, 5, 6, 7, 8},
+				6: {1, 2, 3, 4, 5, 6, 7, 8},
+				7: {1, 2, 3, 4, 5, 6, 7, 8},
+				8: {1, 2, 3, 4, 5, 6, 7, 8},
+			},
+		)
+		require.NoError(t, err)
+
+		err = csp.AddConstraint(&QueenConstraint{})
+		require.NoError(t, err)
+
+		solution := csp.Search()
+		require.Equal(t, 1, solution)
+	})
+}
+
+func abs(i int) int {
+	if i < 0 {
+		return -i
+	}
+	return i
 }
