@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test(t *testing.T) {
+func TestSimpleEquation(t *testing.T) {
 	var initPop []Chromosome
 	for i := 0; i < 20; i++ {
 		initPop = append(initPop, RandomSimpleEquation())
