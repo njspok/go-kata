@@ -7,12 +7,12 @@ import (
 )
 
 func TestSimpleEquation(t *testing.T) {
-	var initPop []Chromosome
+	var initPop []*SimpleEquation
 	for i := 0; i < 20; i++ {
 		initPop = append(initPop, RandomSimpleEquation())
 	}
 
-	ga := New(
+	ga := New[*SimpleEquation](
 		initPop,
 		13,
 		200,
@@ -22,7 +22,7 @@ func TestSimpleEquation(t *testing.T) {
 	)
 
 	result := ga.Run()
-	require.EqualValues(t, &SimpleEquation{
+	require.Equal(t, &SimpleEquation{
 		x: 0,
 		y: 0,
 	}, result)

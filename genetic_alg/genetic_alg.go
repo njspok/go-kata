@@ -13,15 +13,15 @@ const (
 	Tournament SelectionType = "tournament"
 )
 
-func New(
-	initPopulation []Chromosome,
+func New[T Chromosome[T]](
+	initPopulation []T,
 	threshold float64,
 	maxGenerations int,
 	mutationChance float64,
 	crossoverChance float64,
 	selectionType SelectionType,
-) *GeneticAlgorithm {
-	return &GeneticAlgorithm{
+) *GeneticAlgorithm[T] {
+	return &GeneticAlgorithm[T]{
 		population:      initPopulation,
 		threshold:       threshold,
 		maxGenerations:  maxGenerations,
@@ -32,8 +32,8 @@ func New(
 	}
 }
 
-type GeneticAlgorithm struct {
-	population      []Chromosome
+type GeneticAlgorithm[T Chromosome[T]] struct {
+	population      []T
 	threshold       float64
 	maxGenerations  int
 	mutationChance  float64
@@ -42,14 +42,21 @@ type GeneticAlgorithm struct {
 	fitnessKey      func() float64
 }
 
-func (ga *GeneticAlgorithm) Run() Chromosome {
+func (ga *GeneticAlgorithm[T]) Run() T {
 	best := maxFitness(ga.population)
 	for generation := 0; generation < ga.maxGenerations; generation++ {
 		if best.Fitness() >= ga.threshold {
 			return best
 		}
 
-		fmt.Println("Generation", generation, "Best", best.Fitness(), "Avg", avg(ga.population)) // todo replace
+		fmt.Println(
+			"Generation",
+			generation,
+			"Best",
+			best.Fitness(),
+			"Avg",
+			avg(ga.population),
+		)
 
 		ga.reproduceAndReplace()
 		ga.mutate()
@@ -62,7 +69,7 @@ func (ga *GeneticAlgorithm) Run() Chromosome {
 	return best
 }
 
-func (ga *GeneticAlgorithm) mutate() {
+func (ga *GeneticAlgorithm[T]) mutate() {
 	for _, individual := range ga.population {
 		if rand.Float64() < ga.mutationChance {
 			individual.Mutate()
@@ -70,12 +77,12 @@ func (ga *GeneticAlgorithm) mutate() {
 	}
 }
 
-func (ga *GeneticAlgorithm) reproduceAndReplace() {
-	var newPopulation []Chromosome
+func (ga *GeneticAlgorithm[T]) reproduceAndReplace() {
+	var newPopulation []T
 
 	for len(newPopulation) < len(ga.population) {
-		var p1 Chromosome
-		var p2 Chromosome
+		var p1 T
+		var p2 T
 
 		if ga.selectionType == Roulette {
 			// roulette
@@ -101,18 +108,18 @@ func (ga *GeneticAlgorithm) reproduceAndReplace() {
 	ga.population = newPopulation
 }
 
-func (ga *GeneticAlgorithm) pickRoulette(list []float64) (Chromosome, Chromosome) {
+func (ga *GeneticAlgorithm[T]) pickRoulette(list []float64) (T, T) {
 	r := choices(ga.population, list, 2)
 	return r[0], r[1]
 }
 
-func (ga *GeneticAlgorithm) pickTournament(i int) (Chromosome, Chromosome) {
+func (ga *GeneticAlgorithm[T]) pickTournament(i int) (T, T) {
 	// participants: List[C] = choices(self._population, k=num_participants)
 	// return tuple(nlargest(2, participants, key=self._fitness_key))
 	panic("need implement")
 }
 
-func listFitness(list []Chromosome) []float64 {
+func listFitness[T Chromosome[T]](list []T) []float64 {
 	var result []float64
 	for _, individual := range list {
 		result = append(result, individual.Fitness())
@@ -120,7 +127,7 @@ func listFitness(list []Chromosome) []float64 {
 	return result
 }
 
-func maxFitness(list []Chromosome) Chromosome {
+func maxFitness[T Chromosome[T]](list []T) T {
 	result := list[0]
 	for _, individual := range list {
 		if result.Fitness() < individual.Fitness() {
@@ -130,7 +137,7 @@ func maxFitness(list []Chromosome) Chromosome {
 	return result
 }
 
-func avg(list []Chromosome) float64 {
+func avg[T Chromosome[T]](list []T) float64 {
 	var sum float64
 	for _, individual := range list {
 		sum += individual.Fitness()

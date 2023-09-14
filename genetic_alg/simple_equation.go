@@ -25,10 +25,10 @@ func (s *SimpleEquation) Fitness() float64 {
 	return 1 / float64(z)
 }
 
-func (s *SimpleEquation) Crossover(other Chromosome) (Chromosome, Chromosome) {
+func (s *SimpleEquation) Crossover(other *SimpleEquation) (*SimpleEquation, *SimpleEquation) {
 	child1 := s.copy()
-	child2 := other.(*SimpleEquation).copy()
-	child1.y = other.(*SimpleEquation).y
+	child2 := other.copy()
+	child1.y = other.y
 	child2.y = s.y
 	return child1, child2
 }

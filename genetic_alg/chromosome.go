@@ -1,7 +1,7 @@
 package genetic_alg
 
-type Chromosome interface {
+type Chromosome[T any] interface {
 	Fitness() float64
-	Crossover(other Chromosome) (Chromosome, Chromosome)
+	Crossover(other T) (T, T)
 	Mutate()
 }
