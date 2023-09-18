@@ -13,13 +13,13 @@ const (
 	Tournament SelectionType = "tournament"
 )
 
-type Individual[T any] interface {
+type Solving[T any] interface {
 	Fitness() float64
 	Crossover(other T) (T, T)
 	Mutate()
 }
 
-func New[T Individual[T]](
+func New[T Solving[T]](
 	initPopulation []T,
 	threshold float64,
 	maxGenerations int,
@@ -38,7 +38,7 @@ func New[T Individual[T]](
 	}
 }
 
-type GeneticAlgorithm[T Individual[T]] struct {
+type GeneticAlgorithm[T Solving[T]] struct {
 	population      []T
 	threshold       float64
 	maxGenerations  int
@@ -123,7 +123,7 @@ func (ga *GeneticAlgorithm[T]) pickTournament(i int) (T, T) {
 	panic("need implement")
 }
 
-func listFitness[T Individual[T]](list []T) []float64 {
+func listFitness[T Solving[T]](list []T) []float64 {
 	var result []float64
 	for _, individual := range list {
 		result = append(result, individual.Fitness())
@@ -131,7 +131,7 @@ func listFitness[T Individual[T]](list []T) []float64 {
 	return result
 }
 
-func maxFitness[T Individual[T]](list []T) T {
+func maxFitness[T Solving[T]](list []T) T {
 	result := list[0]
 	for _, individual := range list {
 		if result.Fitness() < individual.Fitness() {
@@ -141,7 +141,7 @@ func maxFitness[T Individual[T]](list []T) T {
 	return result
 }
 
-func avg[T Individual[T]](list []T) float64 {
+func avg[T Solving[T]](list []T) float64 {
 	var sum float64
 	for _, individual := range list {
 		sum += individual.Fitness()
