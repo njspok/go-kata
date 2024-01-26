@@ -20,7 +20,7 @@ func Test(t *testing.T) {
 	o.SetValue("Width", 20)
 	o.SetValue("Height", 5)
 
-	o.Set("FoundationSquare", func(list Solver) VarValue {
+	o.SetOperation("FoundationSquare", func(list Solver) VarValue {
 		length, err := list.Solve("Length")
 		if err != nil {
 			panic(err)
@@ -37,7 +37,7 @@ func Test(t *testing.T) {
 	require.NoError(t, err)
 	require.EqualValues(t, 200, result)
 
-	o.Set("TotalSquare", func(list Solver) VarValue {
+	o.SetOperation("TotalSquare", func(list Solver) VarValue {
 		fs, err := list.Solve("FoundationSquare")
 		if err != nil {
 			panic(err)
@@ -64,7 +64,7 @@ func Test(t *testing.T) {
 	require.NoError(t, err)
 	require.EqualValues(t, 700, result)
 
-	o.Set("Volume", func(list Solver) VarValue {
+	o.SetOperation("Volume", func(list Solver) VarValue {
 		fs, err := list.Solve("FoundationSquare")
 		if err != nil {
 			panic(err)

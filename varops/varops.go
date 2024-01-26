@@ -23,10 +23,10 @@ func (l Solver) Solve(varName VarName) (VarValue, error) {
 	return 0, ErrSolveNotFound
 }
 
-func (l Solver) Set(varName VarName, op Operation) {
+func (l Solver) SetOperation(varName VarName, op Operation) {
 	l[varName] = op
 }
 
 func (l Solver) SetValue(varName VarName, value VarValue) {
-	l.Set(varName, func(_ Solver) VarValue { return value })
+	l.SetOperation(varName, func(_ Solver) VarValue { return value })
 }
