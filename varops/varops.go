@@ -26,3 +26,7 @@ func (l Solver) Solve(varName VarName) (VarValue, error) {
 func (l Solver) Set(varName VarName, op Operation) {
 	l[varName] = op
 }
+
+func (l Solver) SetValue(varName VarName, value VarValue) {
+	l.Set(varName, func(_ Solver) VarValue { return value })
+}

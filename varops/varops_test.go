@@ -12,9 +12,13 @@ func Test(t *testing.T) {
 
 	o := NewSolver()
 
-	o.Set("Length", func(_ Solver) VarValue { return 10 })
-	o.Set("Width", func(_ Solver) VarValue { return 20 })
-	o.Set("Height", func(_ Solver) VarValue { return 5 })
+	// set value то что известно, может быть только одно
+	// set operation то что вычисляется через другие операции,
+	// set operatiion может быть несколько на 1 значение
+
+	o.SetValue("Length", 10)
+	o.SetValue("Width", 20)
+	o.SetValue("Height", 5)
 
 	o.Set("FoundationSquare", func(list Solver) VarValue {
 		length, err := list.Solve("Length")
