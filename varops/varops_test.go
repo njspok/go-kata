@@ -12,6 +12,7 @@ func Test(t *testing.T) {
 
 	o := NewSolver()
 
+	// todo
 	// set value то что известно, может быть только одно
 	// set operation то что вычисляется через другие операции,
 	// set operatiion может быть несколько на 1 значение
