@@ -2,7 +2,8 @@ package perceptron
 
 func New() *Perceptron {
 	return &Perceptron{
-		weights: []float64{},
+		weights:   []float64{},
+		threshold: 0.5,
 	}
 }
 
@@ -11,7 +12,14 @@ func (p *Perceptron) Run(input []float64) float64 {
 	for n, i := range input {
 		out += i * p.weights[n]
 	}
-	return out + p.biasWeight*1
+
+	out += p.biasWeight * 1
+
+	if out > p.threshold {
+		return 1
+	}
+
+	return 0
 }
 
 func (p *Perceptron) SetWeight(weights []float64) {
@@ -25,4 +33,5 @@ func (p *Perceptron) SetBiasWeight(w float64) {
 type Perceptron struct {
 	weights    []float64
 	biasWeight float64
+	threshold  float64
 }
