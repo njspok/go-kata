@@ -2,22 +2,10 @@ package perceptron
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
-
-func initWeights(p *Perceptron) {
-	weights := []float64{
-		rand.Float64() / 1000,
-		rand.Float64() / 1000,
-	}
-	biasWeight := rand.Float64() / 1000
-
-	p.SetWeights(weights)
-	p.SetBiasWeight(biasWeight)
-}
 
 func Test(t *testing.T) {
 	t.Run("teacher", func(t *testing.T) {
@@ -46,26 +34,15 @@ func Test(t *testing.T) {
 		initWeights(p)
 
 		for i := 0; i < 5; i++ {
-			matched := 0
+			countMatched := 0
 			for n, sample := range sampleData {
-				actual := p.Evaluate(sample.input)
+				matched, actual := lesson(p, sample.input, sample.expected)
 				fmt.Printf("Test %d: actual %f expected %f\n", n, actual, sample.expected)
-				if actual == sample.expected {
-					matched++
+				if matched {
+					countMatched++
 				}
-
-				// new weights
-				var newWeights []float64
-				for j := 0; j < p.InputCounts(); j++ {
-					w := p.Weight(j) + (sample.expected-actual)*sample.input[j]
-					newWeights = append(newWeights, w)
-				}
-				p.SetWeights(newWeights)
-
-				newBiasWeight := p.BiasWeight() + (sample.expected-actual)*1
-				p.SetBiasWeight(newBiasWeight)
 			}
-			fmt.Printf("Matched %d from %d\n", matched, len(sampleData))
+			fmt.Printf("Matched %d from %d\n", countMatched, len(sampleData))
 		}
 	})
 	t.Run("logic", func(t *testing.T) {

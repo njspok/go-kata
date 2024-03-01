@@ -1,6 +1,9 @@
 package perceptron
 
-import "slices"
+import (
+	"math/rand"
+	"slices"
+)
 
 const defaultThreshold = 0.5
 
@@ -59,4 +62,32 @@ type Perceptron struct {
 type SampleData struct {
 	input    []float64
 	expected float64
+}
+
+func initWeights(p *Perceptron) {
+	weights := []float64{
+		rand.Float64() / 1000,
+		rand.Float64() / 1000,
+	}
+	biasWeight := rand.Float64() / 1000
+
+	p.SetWeights(weights)
+	p.SetBiasWeight(biasWeight)
+}
+
+func lesson(p *Perceptron, input []float64, expected float64) (matched bool, actual float64) {
+	actual = p.Evaluate(input)
+
+	// new weights
+	var newWeights []float64
+	for j := 0; j < p.InputCounts(); j++ {
+		w := p.Weight(j) + (expected-actual)*input[j]
+		newWeights = append(newWeights, w)
+	}
+	p.SetWeights(newWeights)
+
+	newBiasWeight := p.BiasWeight() + (expected-actual)*1
+	p.SetBiasWeight(newBiasWeight)
+
+	return actual == expected, actual
 }
