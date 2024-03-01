@@ -97,10 +97,10 @@ func correction(p *Perceptron, expected float64, actual float64, input []float64
 	p.SetBiasWeight(newBiasWeight)
 }
 
-func train(p *Perceptron, samples []SampleData) {
+func train(p *Perceptron, samples []SampleData, countIterations int) {
 	initWeights(p)
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < countIterations; i++ {
 		countMatched := 0
 		for n, sample := range samples {
 			matched, actual := lesson(p, sample.input, sample.expected)
