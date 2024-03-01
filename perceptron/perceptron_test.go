@@ -8,6 +8,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func initWeights(p *Perceptron) {
+	weights := []float64{
+		rand.Float64() / 1000,
+		rand.Float64() / 1000,
+	}
+	biasWeight := rand.Float64() / 1000
+
+	p.SetWeights(weights)
+	p.SetBiasWeight(biasWeight)
+}
+
 func Test(t *testing.T) {
 	t.Run("teacher", func(t *testing.T) {
 		// login or element simulation
@@ -32,17 +43,7 @@ func Test(t *testing.T) {
 
 		p := New()
 
-		weights := []float64{
-			rand.Float64() / 1000,
-			rand.Float64() / 1000,
-		}
-		biasWeight := rand.Float64() / 1000
-
-		fmt.Printf("weights: %v\n", weights)
-		fmt.Printf("bias weight: %v\n", biasWeight)
-
-		p.SetWeights(weights)
-		p.SetBiasWeight(biasWeight)
+		initWeights(p)
 
 		for i := 0; i < 5; i++ {
 			matched := 0
