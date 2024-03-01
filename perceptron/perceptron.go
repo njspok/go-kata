@@ -81,16 +81,17 @@ func lesson(p *Perceptron, input []float64, expected float64) (matched bool, act
 		return true, actual
 	}
 
-	// new weights
-	var newWeights []float64
-	for j := 0; j < p.InputCounts(); j++ {
-		w := p.Weight(j) + (expected-actual)*input[j]
-		newWeights = append(newWeights, w)
+	train(p, expected, actual, input)
+
+	return false, actual
+}
+
+func train(p *Perceptron, expected float64, actual float64, input []float64) {
+	for n := 0; n < p.InputCounts(); n++ {
+		w := p.Weight(n) + (expected-actual)*input[n]
+		p.SetWeight(n, w)
 	}
-	p.SetWeights(newWeights)
 
 	newBiasWeight := p.BiasWeight() + (expected-actual)*1
 	p.SetBiasWeight(newBiasWeight)
-
-	return false, actual
 }
