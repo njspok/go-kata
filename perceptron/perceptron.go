@@ -1,6 +1,7 @@
 package perceptron
 
 import (
+	"fmt"
 	"math/rand"
 	"slices"
 )
@@ -81,12 +82,12 @@ func lesson(p *Perceptron, input []float64, expected float64) (matched bool, act
 		return true, actual
 	}
 
-	train(p, expected, actual, input)
+	correction(p, expected, actual, input)
 
 	return false, actual
 }
 
-func train(p *Perceptron, expected float64, actual float64, input []float64) {
+func correction(p *Perceptron, expected float64, actual float64, input []float64) {
 	for n := 0; n < p.InputCounts(); n++ {
 		w := p.Weight(n) + (expected-actual)*input[n]
 		p.SetWeight(n, w)
@@ -94,4 +95,20 @@ func train(p *Perceptron, expected float64, actual float64, input []float64) {
 
 	newBiasWeight := p.BiasWeight() + (expected-actual)*1
 	p.SetBiasWeight(newBiasWeight)
+}
+
+func train(p *Perceptron, samples []SampleData) {
+	initWeights(p)
+
+	for i := 0; i < 5; i++ {
+		countMatched := 0
+		for n, sample := range samples {
+			matched, actual := lesson(p, sample.input, sample.expected)
+			fmt.Printf("Test %d: actual %f expected %f\n", n, actual, sample.expected)
+			if matched {
+				countMatched++
+			}
+		}
+		fmt.Printf("Matched %d from %d\n", countMatched, len(samples))
+	}
 }

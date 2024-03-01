@@ -1,7 +1,6 @@
 package perceptron
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,7 +9,7 @@ import (
 func Test(t *testing.T) {
 	t.Run("teacher", func(t *testing.T) {
 		// login or element simulation
-		sampleData := []SampleData{
+		samples := []SampleData{
 			{
 				input:    []float64{0, 0},
 				expected: 0,
@@ -31,19 +30,7 @@ func Test(t *testing.T) {
 
 		p := New()
 
-		initWeights(p)
-
-		for i := 0; i < 5; i++ {
-			countMatched := 0
-			for n, sample := range sampleData {
-				matched, actual := lesson(p, sample.input, sample.expected)
-				fmt.Printf("Test %d: actual %f expected %f\n", n, actual, sample.expected)
-				if matched {
-					countMatched++
-				}
-			}
-			fmt.Printf("Matched %d from %d\n", countMatched, len(sampleData))
-		}
+		train(p, samples)
 	})
 	t.Run("logic", func(t *testing.T) {
 		p := New()
