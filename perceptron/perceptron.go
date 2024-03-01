@@ -77,6 +77,9 @@ func initWeights(p *Perceptron) {
 
 func lesson(p *Perceptron, input []float64, expected float64) (matched bool, actual float64) {
 	actual = p.Evaluate(input)
+	if actual == expected {
+		return true, actual
+	}
 
 	// new weights
 	var newWeights []float64
@@ -89,5 +92,5 @@ func lesson(p *Perceptron, input []float64, expected float64) (matched bool, act
 	newBiasWeight := p.BiasWeight() + (expected-actual)*1
 	p.SetBiasWeight(newBiasWeight)
 
-	return actual == expected, actual
+	return false, actual
 }
