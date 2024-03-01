@@ -1,13 +1,17 @@
 package perceptron
 
+import "slices"
+
+const defaultThreshold = 0.5
+
 func New() *Perceptron {
 	return &Perceptron{
 		weights:   []float64{},
-		threshold: 0.5,
+		threshold: defaultThreshold,
 	}
 }
 
-func (p *Perceptron) Run(input []float64) float64 {
+func (p *Perceptron) Evaluate(input []float64) float64 {
 	var out float64
 	for n, i := range input {
 		out += i * p.weights[n]
@@ -22,8 +26,24 @@ func (p *Perceptron) Run(input []float64) float64 {
 	return 0
 }
 
-func (p *Perceptron) SetWeight(weights []float64) {
-	p.weights = weights
+func (p *Perceptron) InputCounts() int {
+	return len(p.weights)
+}
+
+func (p *Perceptron) Weight(n int) float64 {
+	return p.weights[n]
+}
+
+func (p *Perceptron) BiasWeight() float64 {
+	return p.biasWeight
+}
+
+func (p *Perceptron) SetWeights(weights []float64) {
+	p.weights = slices.Clone(weights)
+}
+
+func (p *Perceptron) SetWeight(n int, w float64) {
+	p.weights[n] = w
 }
 
 func (p *Perceptron) SetBiasWeight(w float64) {
