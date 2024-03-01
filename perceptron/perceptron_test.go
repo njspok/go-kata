@@ -8,16 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type SampleData struct {
-	input    []float64
-	expected float64
-}
-
-func Test2(t *testing.T) {
-	r := rand.Float64() / 1000
-	fmt.Println(r)
-}
-
 func Test(t *testing.T) {
 	t.Run("teacher", func(t *testing.T) {
 		// login or element simulation

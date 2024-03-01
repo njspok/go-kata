@@ -55,3 +55,8 @@ type Perceptron struct {
 	biasWeight float64
 	threshold  float64
 }
+
+type SampleData struct {
+	input    []float64
+	expected float64
+}
