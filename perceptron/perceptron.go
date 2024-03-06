@@ -65,39 +65,7 @@ type SampleData struct {
 	expected float64
 }
 
-func initWeights(p *Perceptron) {
-	weights := []float64{
-		rand.Float64() / 1000,
-		rand.Float64() / 1000,
-	}
-	biasWeight := rand.Float64() / 1000
-
-	p.SetWeights(weights)
-	p.SetBiasWeight(biasWeight)
-}
-
-func lesson(p *Perceptron, input []float64, expected float64) (matched bool, actual float64) {
-	actual = p.Evaluate(input)
-	if actual == expected {
-		return true, actual
-	}
-
-	correction(p, expected, actual, input)
-
-	return false, actual
-}
-
-func correction(p *Perceptron, expected float64, actual float64, input []float64) {
-	for n := 0; n < p.InputCounts(); n++ {
-		w := p.Weight(n) + (expected-actual)*input[n]
-		p.SetWeight(n, w)
-	}
-
-	newBiasWeight := p.BiasWeight() + (expected-actual)*1
-	p.SetBiasWeight(newBiasWeight)
-}
-
-func train(p *Perceptron, samples []SampleData, countIterations int) {
+func Training(p *Perceptron, samples []SampleData, countIterations int) {
 	initWeights(p)
 
 	for i := 0; i < countIterations; i++ {
@@ -111,4 +79,36 @@ func train(p *Perceptron, samples []SampleData, countIterations int) {
 		}
 		fmt.Printf("Matched %d from %d\n", countMatched, len(samples))
 	}
+}
+
+func initWeights(p *Perceptron) {
+	weights := []float64{
+		rand.Float64() / 1000,
+		rand.Float64() / 1000,
+	}
+	biasWeight := rand.Float64() / 1000
+
+	p.SetWeights(weights)
+	p.SetBiasWeight(biasWeight)
+}
+
+func correction(p *Perceptron, expected float64, actual float64, input []float64) {
+	for n := 0; n < p.InputCounts(); n++ {
+		w := p.Weight(n) + (expected-actual)*input[n]
+		p.SetWeight(n, w)
+	}
+
+	newBiasWeight := p.BiasWeight() + (expected-actual)*1
+	p.SetBiasWeight(newBiasWeight)
+}
+
+func lesson(p *Perceptron, input []float64, expected float64) (matched bool, actual float64) {
+	actual = p.Evaluate(input)
+	if actual == expected {
+		return true, actual
+	}
+
+	correction(p, expected, actual, input)
+
+	return false, actual
 }

@@ -30,7 +30,7 @@ func Test(t *testing.T) {
 
 		p := New()
 
-		train(p, samples, 5)
+		Training(p, samples, 5)
 	})
 	t.Run("logic", func(t *testing.T) {
 		p := New()
