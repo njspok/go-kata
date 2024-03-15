@@ -1,12 +1,15 @@
 package perceptron
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"slices"
 )
 
 const defaultThreshold = 0.5
+
+var ErrTrainingFailed = errors.New("fail training")
 
 func New() *Perceptron {
 	return &Perceptron{
@@ -65,7 +68,7 @@ type SampleData struct {
 	expected float64
 }
 
-func Training(p *Perceptron, samples []SampleData, countIterations int) {
+func Training(p *Perceptron, samples []SampleData, countIterations int) error {
 	initWeights(p)
 
 	for i := 0; i < countIterations; i++ {
@@ -78,7 +81,13 @@ func Training(p *Perceptron, samples []SampleData, countIterations int) {
 			}
 		}
 		fmt.Printf("Matched %d from %d\n", countMatched, len(samples))
+
+		if countMatched == len(samples) {
+			return nil
+		}
 	}
+
+	return ErrTrainingFailed
 }
 
 func initWeights(p *Perceptron) {

@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test(t *testing.T) {
-	t.Run("teacher", func(t *testing.T) {
+func TestTraining(t *testing.T) {
+	t.Run("success training OR logic", func(t *testing.T) {
 		// logic OR element simulation
 		samples := []SampleData{
 			{
@@ -30,19 +30,73 @@ func Test(t *testing.T) {
 
 		p := New()
 
-		Training(p, samples, 5)
+		err := Training(p, samples, 5)
+		require.NoError(t, err)
 	})
-	t.Run("logic", func(t *testing.T) {
+	t.Run("success training AND logic", func(t *testing.T) {
+		// logic OR element simulation
+		samples := []SampleData{
+			{
+				input:    []float64{0, 0},
+				expected: 0,
+			},
+			{
+				input:    []float64{0, 1},
+				expected: 0,
+			},
+			{
+				input:    []float64{1, 0},
+				expected: 0,
+			},
+			{
+				input:    []float64{1, 1},
+				expected: 1,
+			},
+		}
+
 		p := New()
 
-		p.SetWeights([]float64{1, 1, 0.5})
-		p.SetBiasWeight(1)
-		out := p.Evaluate([]float64{1, 1, 1})
-		require.EqualValues(t, 1, out)
-
-		p.SetWeights([]float64{0, 0, 0})
-		p.SetBiasWeight(0.1)
-		out = p.Evaluate([]float64{1, 1, 1})
-		require.EqualValues(t, 0, out)
+		err := Training(p, samples, 10)
+		require.NoError(t, err)
 	})
+	t.Run("success AND", func(t *testing.T) {
+		// logic OR element simulation
+		samples := []SampleData{
+			{
+				input:    []float64{0, 0},
+				expected: 0,
+			},
+			{
+				input:    []float64{0, 1},
+				expected: 1,
+			},
+			{
+				input:    []float64{1, 0},
+				expected: 1,
+			},
+			{
+				input:    []float64{1, 1},
+				expected: 1,
+			},
+		}
+
+		p := New()
+
+		err := Training(p, samples, 1)
+		require.ErrorIs(t, err, ErrTrainingFailed)
+	})
+}
+
+func TestPerceptron(t *testing.T) {
+	p := New()
+
+	p.SetWeights([]float64{1, 1, 0.5})
+	p.SetBiasWeight(1)
+	out := p.Evaluate([]float64{1, 1, 1})
+	require.EqualValues(t, 1, out)
+
+	p.SetWeights([]float64{0, 0, 0})
+	p.SetBiasWeight(0.1)
+	out = p.Evaluate([]float64{1, 1, 1})
+	require.EqualValues(t, 0, out)
 }
