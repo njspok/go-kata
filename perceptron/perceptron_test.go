@@ -8,7 +8,7 @@ import (
 
 func Test(t *testing.T) {
 	t.Run("teacher", func(t *testing.T) {
-		// login or element simulation
+		// logic OR element simulation
 		samples := []SampleData{
 			{
 				input:    []float64{0, 0},
