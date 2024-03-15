@@ -59,7 +59,7 @@ func TestTraining(t *testing.T) {
 		err := Training(p, samples, 10)
 		require.NoError(t, err)
 	})
-	t.Run("success AND", func(t *testing.T) {
+	t.Run("fail traing OR logic", func(t *testing.T) {
 		// logic OR element simulation
 		samples := []SampleData{
 			{
