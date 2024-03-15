@@ -19,6 +19,7 @@
 - [Суммы значений узлов дерева](tree_sums/README.md)
 - [Поиск знаменитости на вечеринке](celebrity/README.md)
 - [Цветная карта Австралии](constraint/README.md)
+- [Перцептрон](perceptron/README.md)
 
 # Путь TDD
 
