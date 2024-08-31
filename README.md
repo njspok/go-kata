@@ -20,6 +20,7 @@
 - [Поиск знаменитости на вечеринке](celebrity/README.md)
 - [Цветная карта Австралии](constraint/README.md)
 - [Перцептрон](perceptron/README.md)
+- [Метод помидора](pomo/README.md)
 
 # Путь TDD
 
