@@ -23,7 +23,7 @@ const (
 	WorkDuration       = time.Minute * 25
 	ShortRelaxDuration = time.Minute * 5
 	LongRelaxDuration  = time.Minute * 15
-	countIteration     = 4
+	CountIteration     = 4
 )
 
 func NewWorkInterval(start time.Time) *Interval {
@@ -112,7 +112,7 @@ func (p *Pomo) Interval(t time.Time) (*Interval, error) {
 
 	// pomo life cycle
 	for {
-		for range countIteration - 1 {
+		for range CountIteration - 1 {
 			interval := NewWorkInterval(start)
 			if !interval.IsEnd(t) {
 				return interval, nil
