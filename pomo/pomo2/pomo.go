@@ -88,9 +88,9 @@ func (p *Pomo) Resume() {
 	p.isPaused.Store(false)
 }
 
-func (p *Pomo) mustMakeEvent(number int) Event {
+func (p *Pomo) mustMakeEvent(t IntervalType) Event {
 	var event Event
-	switch IntervalTypeByNumber(number) {
+	switch t {
 	case LongRelax:
 		event = Event{IntervalType: LongRelax, Duration: p.longRelaxInterval, Elapsed: 0}
 	case ShortRelax:
@@ -104,7 +104,8 @@ func (p *Pomo) mustMakeEvent(number int) Event {
 }
 
 func (p *Pomo) runInterval(intervalNumber int) {
-	event := p.mustMakeEvent(intervalNumber)
+	t := IntervalTypeByNumber(intervalNumber)
+	event := p.mustMakeEvent(t)
 
 	ticks := int64(event.Duration) / int64(p.tick)
 	counter := int64(0)
