@@ -1,4 +1,4 @@
-package pomo
+package pomo1
 
 import (
 	"errors"
