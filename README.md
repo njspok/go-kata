@@ -21,6 +21,7 @@
 - [Цветная карта Австралии](constraint/README.md)
 - [Перцептрон](perceptron/README.md)
 - [Метод помидора](pomo/README.md)
+- [TTL Cache со статистикой](ttl_cache/README.md)
 
 # Путь TDD
 
