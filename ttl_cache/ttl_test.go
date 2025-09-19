@@ -166,7 +166,6 @@ func TestTTLCache_DataRace(t *testing.T) {
 		}
 		wg.Wait()
 	})
-
 	t.Run("two", func(t *testing.T) {
 		cache := NewTTLCache()
 
