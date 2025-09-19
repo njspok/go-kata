@@ -24,39 +24,14 @@ type TTLCache struct {
 
 	hits atomic.Uint64
 	miss atomic.Uint64
-
-	cleanupInterval time.Duration
-	stop            chan struct{}
 }
 
-type Option func(*TTLCache)
-
-func WithCleanupInterval(interval time.Duration) Option {
-	return func(c *TTLCache) {
-		c.cleanupInterval = interval
-	}
-}
-
-func NewTTLCache(options ...Option) *TTLCache {
+func NewTTLCache() *TTLCache {
 	c := &TTLCache{
-		data:            make(map[string]cachedItem),
-		cleanupInterval: 1 * time.Minute,
-		stop:            make(chan struct{}),
-	}
-
-	for _, opt := range options {
-		opt(c)
-	}
-
-	if c.cleanupInterval > 0 {
-		go c.startCleanup()
+		data: make(map[string]cachedItem),
 	}
 
 	return c
-}
-
-func (c *TTLCache) Stop() {
-	close(c.stop)
 }
 
 func (c *TTLCache) Set(key string, value interface{}, ttl time.Duration) {
@@ -128,21 +103,7 @@ func (c *TTLCache) Size() int {
 	return len(c.data)
 }
 
-func (c *TTLCache) startCleanup() {
-	ticker := time.NewTicker(c.cleanupInterval)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			c.deleteExpired()
-		case <-c.stop:
-			return
-		}
-	}
-}
-
-func (c *TTLCache) deleteExpired() {
+func (c *TTLCache) ВeleteExpired() {
 	now := time.Now().UnixNano()
 
 	// на время чистки, будет все заблокировано
