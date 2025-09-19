@@ -103,7 +103,7 @@ func (c *TTLCache) Size() int {
 	return len(c.data)
 }
 
-func (c *TTLCache) ВeleteExpired() {
+func (c *TTLCache) DeleteExpired() {
 	now := time.Now().UnixNano()
 
 	// на время чистки, будет все заблокировано

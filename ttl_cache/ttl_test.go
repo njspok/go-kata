@@ -3,6 +3,7 @@ package ttl_cache
 import (
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -90,7 +91,24 @@ func TestTTLCache(t *testing.T) {
 		require.Equal(t, Stats{Hits: 1, Miss: 1}, cache.Stats())
 		require.EqualValues(t, 1, cache.Size())
 	})
+	t.Run("delete expired element", func(t *testing.T) {
+		// Arrange
+		cache := NewTTLCache()
+		cache.Set("one", 1, time.Hour)
+		cache.Set("two", 2, time.Nanosecond)
 
+		// Act
+		cache.DeleteExpired()
+
+		// Assert
+		require.Equal(t, 1, cache.Size())
+
+		_, exist := cache.Get("one")
+		require.True(t, exist)
+
+		_, exist = cache.Get("two")
+		require.False(t, exist)
+	})
 }
 
 func TestTTLCache_Get(t *testing.T) {
