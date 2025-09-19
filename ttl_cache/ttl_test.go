@@ -95,18 +95,28 @@ func TestTTLCache(t *testing.T) {
 
 func TestTTLCache_Get(t *testing.T) {
 	cache := NewTTLCache()
+	cache.Set("world", 1, 0)
 
 	wg := sync.WaitGroup{}
 	for i := 0; i < 1000; i++ {
+		// получаем не существующее значение
 		wg.Add(1)
 		go func() {
 			_, _ = cache.Get("hello")
+			wg.Done()
+		}()
+
+		// получаем существующее значение
+		wg.Add(1)
+		go func() {
+			_, _ = cache.Get("world")
 			wg.Done()
 		}()
 	}
 	wg.Wait()
 
 	require.EqualValues(t, 1000, cache.Stats().Miss)
+	require.EqualValues(t, 1000, cache.Stats().Hits)
 }
 
 func TestTTLCache_DataRace(t *testing.T) {
