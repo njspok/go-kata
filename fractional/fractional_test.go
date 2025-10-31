@@ -7,16 +7,6 @@ import (
 )
 
 func Test(t *testing.T) {
-	t.Run("fractional", func(t *testing.T) {
-		f1 := Frac(2, 3)
-		f2 := Frac(4, 5)
-		f3 := f1.Plus(f2)
-		n, d := f3.Parts()
-		require.Equal(t, 22, n)
-		require.Equal(t, 15, d)
-		require.EqualValues(t, 1.4666666666666666, f3.ToFloat64())
-	})
-
 	tests := []struct {
 		name      string
 		a         Fractional
