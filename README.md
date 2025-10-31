@@ -22,6 +22,7 @@
 - [Перцептрон](perceptron/README.md)
 - [Метод помидора](pomo/README.md)
 - [TTL Cache со статистикой](ttl_cache/README.md)
+- [Дроби](fractional/README.md)
 
 # Путь TDD
 
