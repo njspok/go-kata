@@ -25,6 +25,13 @@ func Test(t *testing.T) {
 		result    Fractional
 	}{
 		{
+			name:      "sum zero and number",
+			a:         Number(0),
+			b:         Number(33),
+			operation: "plus",
+			result:    Number(33),
+		},
+		{
 			name:      "sum two numbers",
 			a:         Number(11),
 			b:         Number(33),
