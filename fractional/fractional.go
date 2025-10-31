@@ -30,6 +30,13 @@ func (f Fractional) Plus(m Fractional) Fractional {
 	}
 }
 
+func (f Fractional) Minus(m Fractional) Fractional {
+	return Fractional{
+		num:   f.num*m.denum - m.num*f.denum,
+		denum: f.denum * m.denum,
+	}
+}
+
 func (f Fractional) Parts() (num, denum int) {
 	return f.num, f.denum
 }

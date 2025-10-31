@@ -45,6 +45,27 @@ func Test(t *testing.T) {
 			operation: "plus",
 			result:    Frac(59, 5),
 		},
+		{
+			name:      "minus two numbers",
+			a:         Number(11),
+			b:         Number(22),
+			operation: "minus",
+			result:    Number(-11),
+		},
+		{
+			name:      "minus two fractions",
+			a:         Frac(2, 3),
+			b:         Frac(4, 5),
+			operation: "minus",
+			result:    Frac(-2, 15),
+		},
+		{
+			name:      "sum fractions and number",
+			a:         Number(11),
+			b:         Frac(4, 5),
+			operation: "minus",
+			result:    Frac(51, 5),
+		},
 	}
 
 	for _, test := range tests {
@@ -52,6 +73,8 @@ func Test(t *testing.T) {
 			switch test.operation {
 			case "plus":
 				require.Equal(t, test.result, test.a.Plus(test.b))
+			case "minus":
+				require.Equal(t, test.result, test.a.Minus(test.b))
 			default:
 				require.Fail(t, "unexpected operation")
 			}
