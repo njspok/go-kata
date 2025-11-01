@@ -34,3 +34,15 @@ func Test(t *testing.T) {
 		})
 	}
 }
+
+func TestFracFromString(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		f, err := FracFromString("11", "22")
+		require.NoError(t, err)
+		require.Equal(t, Frac(11, 22), f)
+	})
+	t.Run("invalid string", func(t *testing.T) {
+		_, err := FracFromString("invalid string", "99")
+		require.Error(t, err)
+	})
+}
