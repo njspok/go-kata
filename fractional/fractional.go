@@ -4,6 +4,7 @@ import (
 	"strconv"
 )
 
+// todo check denum is zero !!!
 func Frac(num, denum int) Fractional {
 	return Fractional{
 		num:   num,
