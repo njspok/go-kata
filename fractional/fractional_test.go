@@ -6,9 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// todo rewrite tests in style "2+3=5", "2/5+5/3=31/15"
-
-func Test2(t *testing.T) {
+func Test(t *testing.T) {
 	tests := []struct {
 		name string
 		expr string
