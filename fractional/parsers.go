@@ -8,7 +8,7 @@ import (
 
 // regex for pars strings operations in two fractions like
 // 2+2=4 or 2|5+1|3=11|15
-var rx = regexp.MustCompile(`^(\d+)\|?(\d*)([+\-*/])(\d+)\|?(\d*)(=)(-?\d+)\|?(\d*)$`)
+var rx = regexp.MustCompile(`^(-?\d+)\|?(\d*)([+\-*:])(-?\d+)\|?(\d*)(=)(-?\d+)\|?(\d*)$`)
 
 func ParseExpression(str string) (a, b, c Fractional, operation string, err error) {
 	groups := rx.FindAllStringSubmatch(str, -1)

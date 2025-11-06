@@ -59,6 +59,20 @@ func (f Fractional) Minus(m Fractional) Fractional {
 	}
 }
 
+func (f Fractional) Mult(m Fractional) Fractional {
+	return Fractional{
+		num:   f.num * m.num,
+		denum: f.denum * m.denum,
+	}
+}
+
+func (f Fractional) Div(m Fractional) Fractional {
+	return Fractional{
+		num:   f.num * m.denum,
+		denum: f.denum * m.num,
+	}
+}
+
 func (f Fractional) Parts() (num, denum int) {
 	return f.num, f.denum
 }
