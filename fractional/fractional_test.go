@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test(t *testing.T) {
+func TestCalc(t *testing.T) {
 	tests := []string{
 		// plus
 		"12+0=12",
@@ -32,7 +32,7 @@ func Test(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test, func(t *testing.T) {
-			a, b, c, operation, err := ParseExpression(test)
+			a, b, c, operation, err := ParseCalcExpression(test)
 			require.NoError(t, err)
 			switch operation {
 			case "+":
@@ -43,6 +43,25 @@ func Test(t *testing.T) {
 				require.Equal(t, c, a.Mult(b))
 			case ":":
 				require.Equal(t, c, a.Div(b))
+			default:
+				require.Fail(t, "unknown operation")
+			}
+		})
+	}
+}
+
+func TestCmp(t *testing.T) {
+	tests := []string{
+		"1|3=1|3",
+		"1|3=10|30",
+	}
+	for _, test := range tests {
+		t.Run(test, func(t *testing.T) {
+			a, b, operation, err := ParseCmpExpression(test)
+			require.NoError(t, err)
+			switch operation {
+			case "=":
+				require.True(t, a.Equal(b))
 			default:
 				require.Fail(t, "unknown operation")
 			}

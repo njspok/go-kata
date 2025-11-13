@@ -76,3 +76,7 @@ func (f Fractional) Div(m Fractional) Fractional {
 func (f Fractional) Parts() (num, denum int) {
 	return f.num, f.denum
 }
+
+func (f Fractional) Equal(m Fractional) bool {
+	return f.Minus(m).num == 0
+}
