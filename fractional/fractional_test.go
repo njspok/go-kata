@@ -52,8 +52,12 @@ func TestCalc(t *testing.T) {
 
 func TestCmp(t *testing.T) {
 	tests := []string{
+		// equal
 		"1|3=1|3",
 		"1|3=10|30",
+
+		// not equal
+		"1|3≠1|4",
 	}
 	for _, test := range tests {
 		t.Run(test, func(t *testing.T) {
@@ -62,6 +66,8 @@ func TestCmp(t *testing.T) {
 			switch operation {
 			case "=":
 				require.True(t, a.Equal(b))
+			case "≠":
+				require.True(t, a.NotEqual(b))
 			default:
 				require.Fail(t, "unknown operation")
 			}

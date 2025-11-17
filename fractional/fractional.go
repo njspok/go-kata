@@ -80,3 +80,7 @@ func (f Fractional) Parts() (num, denum int) {
 func (f Fractional) Equal(m Fractional) bool {
 	return f.Minus(m).num == 0
 }
+
+func (f Fractional) NotEqual(m Fractional) bool {
+	return !f.Equal(m)
+}
