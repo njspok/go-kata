@@ -1,6 +1,6 @@
 module bitbucket.org/njspok/go-kata
 
-go 1.23
+go 1.25.5
 
 require (
 	github.com/pkg/errors v0.9.1
