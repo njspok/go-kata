@@ -16,7 +16,7 @@ func TestServerRing(t *testing.T) {
 	s, err := ring.Get("hello")
 
 	require.NoError(t, err)
-	require.Equal(t, "server3", s)
+	require.EqualValues(t, "server3", s)
 }
 
 func TestHash(t *testing.T) {

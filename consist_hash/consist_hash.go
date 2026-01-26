@@ -6,6 +6,8 @@ import (
 	"sort"
 )
 
+type ServerName string
+
 type ServerNo uint32
 
 func (no ServerNo) MoreOrEqual(val uint32) bool {
@@ -14,23 +16,23 @@ func (no ServerNo) MoreOrEqual(val uint32) bool {
 
 func NewServerRing() *ServersRing {
 	return &ServersRing{
-		names: map[ServerNo]string{},
+		names: map[ServerNo]ServerName{},
 	}
 }
 
 type ServersRing struct {
 	servers []ServerNo
-	names   map[ServerNo]string
+	names   map[ServerNo]ServerName
 }
 
-func (s *ServersRing) Add(serverName string) {
-	no := ServerNo(crc32.ChecksumIEEE([]byte(serverName)))
+func (s *ServersRing) Add(name ServerName) {
+	no := ServerNo(crc32.ChecksumIEEE([]byte(name)))
 	s.servers = append(s.servers, no)
-	s.names[no] = serverName
+	s.names[no] = name
 	sort.Slice(s.servers, func(i, j int) bool { return s.servers[i] < s.servers[j] })
 }
 
-func (s *ServersRing) Get(key string) (string, error) {
+func (s *ServersRing) Get(key string) (ServerName, error) {
 	hash := crc32.ChecksumIEEE([]byte(key))
 	no, err := getServer(s.servers, hash)
 	if err != nil {
