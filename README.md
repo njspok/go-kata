@@ -23,6 +23,7 @@
 - [Метод помидора](pomo/README.md)
 - [TTL Cache со статистикой](ttl_cache/README.md)
 - [Дроби](fractional/README.md)
+- [Консистентное хеширование](/consist_hash/README.md)
 
 # Путь TDD
 
