@@ -25,11 +25,15 @@ type ServersRing struct {
 	names   map[ServerNo]ServerName
 }
 
-func (s *ServersRing) Add(name ServerName) {
+func (s *ServersRing) Add(name ServerName) error {
 	no := ServerNo(crc32.ChecksumIEEE([]byte(name)))
+	if _, ok := s.names[no]; ok {
+		return errors.New("server already exists")
+	}
 	s.servers = append(s.servers, no)
 	s.names[no] = name
 	sort.Slice(s.servers, func(i, j int) bool { return s.servers[i] < s.servers[j] })
+	return nil
 }
 
 func (s *ServersRing) Get(key string) (ServerName, error) {
