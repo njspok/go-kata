@@ -7,6 +7,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestServerRing(t *testing.T) {
+	ring := NewServerRing()
+	ring.Add("server1")
+	ring.Add("server2")
+	ring.Add("server3")
+
+	s, err := ring.Get("hello")
+
+	require.NoError(t, err)
+	require.Equal(t, "server3", s)
+}
+
 func TestHash(t *testing.T) {
 	t.Run("no servers", func(t *testing.T) {
 		_, err := getServer(nil, 100)

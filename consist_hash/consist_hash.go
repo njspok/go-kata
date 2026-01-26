@@ -13,22 +13,30 @@ func (no ServerNo) MoreOrEqual(val uint32) bool {
 }
 
 func NewServerRing() *ServersRing {
-	return &ServersRing{}
+	return &ServersRing{
+		names: map[ServerNo]string{},
+	}
 }
 
 type ServersRing struct {
 	servers []ServerNo
+	names   map[ServerNo]string
 }
 
 func (s *ServersRing) Add(serverName string) {
-	no := crc32.ChecksumIEEE([]byte(serverName))
-	s.servers = append(s.servers, ServerNo(no))
+	no := ServerNo(crc32.ChecksumIEEE([]byte(serverName)))
+	s.servers = append(s.servers, no)
+	s.names[no] = serverName
 	sort.Slice(s.servers, func(i, j int) bool { return s.servers[i] < s.servers[j] })
 }
 
-func (s *ServersRing) Get(key string) (ServerNo, error) {
+func (s *ServersRing) Get(key string) (string, error) {
 	hash := crc32.ChecksumIEEE([]byte(key))
-	return getServer(s.servers, hash)
+	no, err := getServer(s.servers, hash)
+	if err != nil {
+		return "", err
+	}
+	return s.names[no], nil
 }
 
 func getServer(servers []ServerNo, hash uint32) (ServerNo, error) {
