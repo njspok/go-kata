@@ -17,6 +17,12 @@ func TestServerRing(t *testing.T) {
 
 	require.NoError(t, err)
 	require.EqualValues(t, "server3", s)
+
+	// Тестирование на основе свойств
+	// todo проверить что get всегда возвращает одно  и то же
+	// todo проверить, что get возвращает сервез из списка доступных серверов
+	// todo проверить, что get имеет распределение ключей между серверами равномерно и нет серверов с нулевым числом ключей
+	// todo
 }
 
 func TestHash(t *testing.T) {

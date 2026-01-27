@@ -26,23 +26,33 @@ type ServersRing struct {
 }
 
 func (s *ServersRing) Add(name ServerName) error {
-	no := ServerNo(crc32.ChecksumIEEE([]byte(name)))
+	if len(name) == 0 {
+		return errors.New("server name must not be empty")
+	}
+
+	no := ServerNo(hash(string(name)))
 	if _, ok := s.names[no]; ok {
 		return errors.New("server already exists")
 	}
+
 	s.servers = append(s.servers, no)
 	s.names[no] = name
 	sort.Slice(s.servers, func(i, j int) bool { return s.servers[i] < s.servers[j] })
+
 	return nil
 }
 
 func (s *ServersRing) Get(key string) (ServerName, error) {
-	hash := crc32.ChecksumIEEE([]byte(key))
+	hash := hash(key)
 	no, err := getServer(s.servers, hash)
 	if err != nil {
 		return "", err
 	}
 	return s.names[no], nil
+}
+
+func hash(v string) uint32 {
+	return crc32.ChecksumIEEE([]byte(v))
 }
 
 func getServer(servers []ServerNo, hash uint32) (ServerNo, error) {
