@@ -74,7 +74,54 @@ func TestServerRingPropertyBased(t *testing.T) {
 	})
 
 	t.Run("rebalanced keys after add new server", func(t *testing.T) {
-		// todo implement
+		// Arrange
+		ring := NewServerRing()
+
+		require.NoError(t, ring.Add("server1"))
+		require.NoError(t, ring.Add("server2"))
+		require.NoError(t, ring.Add("server3"))
+
+		keys := randomKeys()
+
+		distributionBeforeRebalance := make(map[ServerName]int)
+		for _, key := range keys {
+			server, err := ring.Get(key)
+			require.NoError(t, err)
+			distributionBeforeRebalance[server]++
+		}
+
+		// Act
+		require.NoError(t, ring.Add("server4"))
+		require.NoError(t, ring.Add("server5"))
+
+		// Assert
+		total := 0
+		for key, count := range distributionBeforeRebalance {
+			require.NotZero(t, count, key)
+			total += count
+		}
+		require.Equal(t, len(keys), total)
+
+		distributionAfterRebalance := make(map[ServerName]int)
+		for _, key := range keys {
+			server, err := ring.Get(key)
+			require.NoError(t, err)
+			distributionAfterRebalance[server]++
+		}
+
+		total = 0
+		for key, count := range distributionAfterRebalance {
+			require.NotZero(t, count, key)
+			total += count
+		}
+		require.Equal(t, len(keys), total)
+
+		for server, count := range distributionBeforeRebalance {
+			require.GreaterOrEqual(t, count, distributionAfterRebalance[server])
+		}
+
+		fmt.Println(distributionAfterRebalance)
+		fmt.Println(distributionBeforeRebalance)
 	})
 }
 
@@ -108,4 +155,13 @@ func TestHash(t *testing.T) {
 			})
 		}
 	})
+}
+
+func randomKeys() []string {
+	const len = 100
+	keys := make([]string, 0, len)
+	for range len {
+		keys = append(keys, strconv.Itoa(rand.Intn(math.MaxInt)))
+	}
+	return keys
 }
