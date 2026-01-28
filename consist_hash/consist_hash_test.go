@@ -1,25 +1,48 @@
 package consist_hash
 
 import (
+	"fmt"
 	"math"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-func TestServerRing(t *testing.T) {
-	ring := NewServerRing()
-	ring.Add("server1")
-	ring.Add("server2")
-	ring.Add("server3")
+func TestServerRingProperty(t *testing.T) {
+	t.Run("return same server", func(t *testing.T) {
+		ring := NewServerRing()
 
-	s, err := ring.Get("hello")
+		require.NoError(t, ring.Add("server1"))
+		require.NoError(t, ring.Add("server2"))
+		require.NoError(t, ring.Add("server3"))
 
-	require.NoError(t, err)
-	require.EqualValues(t, "server3", s)
+		server, err := ring.Get("hello")
+		require.NoError(t, err)
+
+		for range 100 {
+			res, err := ring.Get("hello")
+			require.NoError(t, err)
+			require.Equal(t, server, res)
+		}
+	})
+
+	t.Run("return server from server list", func(t *testing.T) {
+		ring := NewServerRing()
+
+		servers := []ServerName{"server1", "server2", "server3"}
+		for _, server := range servers {
+			require.NoError(t, ring.Add(server))
+		}
+
+		for i := range 100 {
+			key := fmt.Sprintf("hello_no_%d", i)
+			server, err := ring.Get(key)
+			require.NoError(t, err)
+			require.Contains(t, servers, server)
+		}
+	})
 
 	// Тестирование на основе свойств
-	// todo проверить что get всегда возвращает одно  и то же
 	// todo проверить, что get возвращает сервез из списка доступных серверов
 	// todo проверить, что get имеет распределение ключей между серверами равномерно и нет серверов с нулевым числом ключей
 	// todo
