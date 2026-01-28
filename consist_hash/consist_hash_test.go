@@ -83,42 +83,52 @@ func TestServerRingPropertyBased(t *testing.T) {
 
 		keys := randomKeys()
 
-		distributionBeforeRebalance := make(map[ServerName]int)
-		for _, key := range keys {
-			server, err := ring.Get(key)
-			require.NoError(t, err)
-			distributionBeforeRebalance[server]++
+		makeKeyDistribution := func() map[ServerName]int {
+			result := make(map[ServerName]int)
+			for _, key := range keys {
+				server, err := ring.Get(key)
+				require.NoError(t, err)
+				result[server]++
+			}
+			return result
 		}
+
+		distributionBeforeRebalance := makeKeyDistribution()
 
 		// Act
 		require.NoError(t, ring.Add("server4"))
 		require.NoError(t, ring.Add("server5"))
 
 		// Assert
-		total := 0
-		for key, count := range distributionBeforeRebalance {
-			require.NotZero(t, count, key)
-			total += count
-		}
-		require.Equal(t, len(keys), total)
-
-		distributionAfterRebalance := make(map[ServerName]int)
-		for _, key := range keys {
-			server, err := ring.Get(key)
-			require.NoError(t, err)
-			distributionAfterRebalance[server]++
+		requireNoZeroElements := func(t *testing.T, d map[ServerName]int) {
+			t.Helper()
+			for key, count := range d {
+				require.NotZero(t, count, key)
+			}
 		}
 
-		total = 0
-		for key, count := range distributionAfterRebalance {
-			require.NotZero(t, count, key)
-			total += count
+		requireEqualTotal := func(t *testing.T, expect int, d map[ServerName]int) {
+			t.Helper()
+			var actual int
+			for _, count := range d {
+				actual += count
+			}
+			require.Equal(t, expect, actual)
 		}
-		require.Equal(t, len(keys), total)
+
+		requireNoZeroElements(t, distributionBeforeRebalance)
+		requireEqualTotal(t, len(keys), distributionBeforeRebalance)
+
+		distributionAfterRebalance := makeKeyDistribution()
+		requireNoZeroElements(t, distributionAfterRebalance)
+		requireEqualTotal(t, len(keys), distributionAfterRebalance)
 
 		for server, count := range distributionBeforeRebalance {
 			require.GreaterOrEqual(t, count, distributionAfterRebalance[server])
 		}
+
+		require.Len(t, distributionBeforeRebalance, 3)
+		require.Len(t, distributionAfterRebalance, 5)
 	})
 }
 
