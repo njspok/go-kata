@@ -93,7 +93,7 @@ func TestServerRingPropertyBased(t *testing.T) {
 			return result
 		}
 
-		distributionBeforeRebalance := makeKeyDistribution()
+		beforeDistribution := makeKeyDistribution()
 
 		// Act
 		require.NoError(t, ring.Add("server4"))
@@ -116,19 +116,19 @@ func TestServerRingPropertyBased(t *testing.T) {
 			require.Equal(t, expect, actual)
 		}
 
-		requireNoZeroElements(t, distributionBeforeRebalance)
-		requireEqualTotal(t, len(keys), distributionBeforeRebalance)
+		requireNoZeroElements(t, beforeDistribution)
+		requireEqualTotal(t, len(keys), beforeDistribution)
 
-		distributionAfterRebalance := makeKeyDistribution()
-		requireNoZeroElements(t, distributionAfterRebalance)
-		requireEqualTotal(t, len(keys), distributionAfterRebalance)
+		afterDistribution := makeKeyDistribution()
+		requireNoZeroElements(t, afterDistribution)
+		requireEqualTotal(t, len(keys), afterDistribution)
 
-		for server, count := range distributionBeforeRebalance {
-			require.GreaterOrEqual(t, count, distributionAfterRebalance[server])
+		for server := range beforeDistribution {
+			require.GreaterOrEqual(t, beforeDistribution[server], afterDistribution[server])
 		}
 
-		require.Len(t, distributionBeforeRebalance, 3)
-		require.Len(t, distributionAfterRebalance, 5)
+		require.Len(t, beforeDistribution, 3)
+		require.Len(t, afterDistribution, 5)
 	})
 }
 
