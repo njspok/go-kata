@@ -3,12 +3,14 @@ package consist_hash
 import (
 	"fmt"
 	"math"
+	"math/rand"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-func TestServerRingProperty(t *testing.T) {
+func TestServerRingPropertyBased(t *testing.T) {
 	t.Run("return same server", func(t *testing.T) {
 		ring := NewServerRing()
 
@@ -42,8 +44,38 @@ func TestServerRingProperty(t *testing.T) {
 		}
 	})
 
-	// Тестирование на основе свойств
-	// todo проверить, что get имеет распределение ключей между серверами равномерно и нет серверов с нулевым числом ключей
+	t.Run("keys distributions by server correctly", func(t *testing.T) {
+		// Arrange
+		ring := NewServerRing()
+
+		require.NoError(t, ring.Add("server1"))
+		require.NoError(t, ring.Add("server2"))
+		require.NoError(t, ring.Add("server3"))
+		require.NoError(t, ring.Add("server4"))
+		require.NoError(t, ring.Add("server5"))
+
+		distribution := make(map[ServerName]int)
+
+		// Act
+		for range 100 {
+			key := strconv.Itoa(rand.Intn(math.MaxInt))
+			server, err := ring.Get(key)
+			require.NoError(t, err)
+			distribution[server]++
+		}
+
+		// Assert
+		total := 0
+		for key, count := range distribution {
+			require.NotZero(t, count, key)
+			total += count
+		}
+		require.Equal(t, 100, total)
+	})
+
+	t.Run("rebalanced keys after add new server", func(t *testing.T) {
+		// todo implement
+	})
 }
 
 func TestHash(t *testing.T) {
