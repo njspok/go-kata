@@ -119,9 +119,6 @@ func TestServerRingPropertyBased(t *testing.T) {
 		for server, count := range distributionBeforeRebalance {
 			require.GreaterOrEqual(t, count, distributionAfterRebalance[server])
 		}
-
-		fmt.Println(distributionAfterRebalance)
-		fmt.Println(distributionBeforeRebalance)
 	})
 }
 
