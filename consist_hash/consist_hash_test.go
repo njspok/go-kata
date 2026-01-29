@@ -93,21 +93,21 @@ func TestServerRingPropertyBased(t *testing.T) {
 			return result
 		}
 
-		beforeDistribution := makeKeyDistribution()
+		distributionBefore := makeKeyDistribution()
 
 		// Act
 		require.NoError(t, ring.Add("server4"))
 		require.NoError(t, ring.Add("server5"))
 
 		// Assert
-		requireNoZeroElements := func(t *testing.T, d map[ServerName]int) {
+		requiredAllKeysDistributed := func(t *testing.T, d map[ServerName]int) {
 			t.Helper()
 			for key, count := range d {
 				require.NotZero(t, count, key)
 			}
 		}
 
-		requireEqualTotal := func(t *testing.T, expect int, d map[ServerName]int) {
+		requiredNumberOfKeysEqual := func(t *testing.T, expect int, d map[ServerName]int) {
 			t.Helper()
 			var actual int
 			for _, count := range d {
@@ -116,19 +116,19 @@ func TestServerRingPropertyBased(t *testing.T) {
 			require.Equal(t, expect, actual)
 		}
 
-		requireNoZeroElements(t, beforeDistribution)
-		requireEqualTotal(t, len(keys), beforeDistribution)
+		requiredAllKeysDistributed(t, distributionBefore)
+		requiredNumberOfKeysEqual(t, len(keys), distributionBefore)
 
-		afterDistribution := makeKeyDistribution()
-		requireNoZeroElements(t, afterDistribution)
-		requireEqualTotal(t, len(keys), afterDistribution)
+		distributionAfter := makeKeyDistribution()
+		requiredAllKeysDistributed(t, distributionAfter)
+		requiredNumberOfKeysEqual(t, len(keys), distributionAfter)
 
-		for server := range beforeDistribution {
-			require.GreaterOrEqual(t, beforeDistribution[server], afterDistribution[server])
+		for server := range distributionBefore {
+			require.GreaterOrEqual(t, distributionBefore[server], distributionAfter[server])
 		}
 
-		require.Len(t, beforeDistribution, 3)
-		require.Len(t, afterDistribution, 5)
+		require.Len(t, distributionBefore, 3)
+		require.Len(t, distributionAfter, 5)
 	})
 }
 
