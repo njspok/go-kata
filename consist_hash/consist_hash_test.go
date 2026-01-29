@@ -11,6 +11,24 @@ import (
 )
 
 func TestServerRingPropertyBased(t *testing.T) {
+	// Helpers
+
+	requiredAllKeysDistributed := func(t *testing.T, d map[ServerName]int) {
+		t.Helper()
+		for key, count := range d {
+			require.NotZero(t, count, key)
+		}
+	}
+
+	requiredNumberOfKeysEqual := func(t *testing.T, expect int, d map[ServerName]int) {
+		t.Helper()
+		var actual int
+		for _, count := range d {
+			actual += count
+		}
+		require.Equal(t, expect, actual)
+	}
+
 	t.Run("return same server", func(t *testing.T) {
 		ring := NewServerRing()
 
@@ -56,21 +74,18 @@ func TestServerRingPropertyBased(t *testing.T) {
 
 		distribution := make(map[ServerName]int)
 
+		keys := randomKeys()
+
 		// Act
-		for range 100 {
-			key := strconv.Itoa(rand.Intn(math.MaxInt))
+		for _, key := range keys {
 			server, err := ring.Get(key)
 			require.NoError(t, err)
 			distribution[server]++
 		}
 
 		// Assert
-		total := 0
-		for key, count := range distribution {
-			require.NotZero(t, count, key)
-			total += count
-		}
-		require.Equal(t, 100, total)
+		requiredAllKeysDistributed(t, distribution)
+		requiredNumberOfKeysEqual(t, 100, distribution)
 	})
 
 	t.Run("rebalanced keys after add new server", func(t *testing.T) {
@@ -100,22 +115,6 @@ func TestServerRingPropertyBased(t *testing.T) {
 		require.NoError(t, ring.Add("server5"))
 
 		// Assert
-		requiredAllKeysDistributed := func(t *testing.T, d map[ServerName]int) {
-			t.Helper()
-			for key, count := range d {
-				require.NotZero(t, count, key)
-			}
-		}
-
-		requiredNumberOfKeysEqual := func(t *testing.T, expect int, d map[ServerName]int) {
-			t.Helper()
-			var actual int
-			for _, count := range d {
-				actual += count
-			}
-			require.Equal(t, expect, actual)
-		}
-
 		requiredAllKeysDistributed(t, distributionBefore)
 		requiredNumberOfKeysEqual(t, len(keys), distributionBefore)
 
