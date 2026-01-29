@@ -165,9 +165,9 @@ func TestHash(t *testing.T) {
 }
 
 func randomKeys() []string {
-	const len = 100
-	keys := make([]string, 0, len)
-	for range len {
+	const count = 100
+	keys := make([]string, 0, count)
+	for range count {
 		keys = append(keys, strconv.Itoa(rand.Intn(math.MaxInt)))
 	}
 	return keys
