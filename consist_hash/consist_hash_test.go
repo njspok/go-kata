@@ -13,20 +13,30 @@ import (
 func TestServerRingPropertyBased(t *testing.T) {
 	// Helpers
 
-	requiredAllKeysDistributed := func(t *testing.T, d map[ServerName]int) {
+	// распределение ключей по серверам server => count
+	type distribution map[ServerName]int
+
+	requiredAllKeysDistributed := func(t *testing.T, d distribution) {
 		t.Helper()
 		for key, count := range d {
 			require.NotZero(t, count, key)
 		}
 	}
 
-	requiredNumberOfKeysEqual := func(t *testing.T, expect int, d map[ServerName]int) {
+	requiredNumberOfKeysEqual := func(t *testing.T, expect int, d distribution) {
 		t.Helper()
 		var actual int
 		for _, count := range d {
 			actual += count
 		}
 		require.Equal(t, expect, actual)
+	}
+
+	requireCompatibility := func(t *testing.T, before, after distribution) {
+		t.Helper()
+		for server := range before {
+			require.GreaterOrEqual(t, before[server], after[server])
+		}
 	}
 
 	t.Run("return same server", func(t *testing.T) {
@@ -72,7 +82,7 @@ func TestServerRingPropertyBased(t *testing.T) {
 		require.NoError(t, ring.Add("server4"))
 		require.NoError(t, ring.Add("server5"))
 
-		distribution := make(map[ServerName]int)
+		distribution := make(distribution)
 
 		keys := randomKeys()
 
@@ -85,7 +95,7 @@ func TestServerRingPropertyBased(t *testing.T) {
 
 		// Assert
 		requiredAllKeysDistributed(t, distribution)
-		requiredNumberOfKeysEqual(t, 100, distribution)
+		requiredNumberOfKeysEqual(t, len(keys), distribution)
 	})
 
 	t.Run("rebalanced keys after add new server", func(t *testing.T) {
@@ -98,7 +108,7 @@ func TestServerRingPropertyBased(t *testing.T) {
 
 		keys := randomKeys()
 
-		makeKeyDistribution := func() map[ServerName]int {
+		makeKeyDistribution := func() distribution {
 			result := make(map[ServerName]int)
 			for _, key := range keys {
 				server, err := ring.Get(key)
@@ -122,9 +132,7 @@ func TestServerRingPropertyBased(t *testing.T) {
 		requiredAllKeysDistributed(t, distributionAfter)
 		requiredNumberOfKeysEqual(t, len(keys), distributionAfter)
 
-		for server := range distributionBefore {
-			require.GreaterOrEqual(t, distributionBefore[server], distributionAfter[server])
-		}
+		requireCompatibility(t, distributionBefore, distributionAfter)
 
 		require.Len(t, distributionBefore, 3)
 		require.Len(t, distributionAfter, 5)
@@ -164,7 +172,7 @@ func TestHash(t *testing.T) {
 }
 
 func randomKeys() []string {
-	const count = 100
+	const count = 1000
 	keys := make([]string, 0, count)
 	for range count {
 		keys = append(keys, strconv.Itoa(rand.Intn(math.MaxInt)))
