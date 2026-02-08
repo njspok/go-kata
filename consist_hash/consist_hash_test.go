@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"slices"
+	"sort"
 	"strconv"
 	"testing"
 
@@ -136,6 +138,105 @@ func TestServerRingPropertyBased(t *testing.T) {
 
 		require.Len(t, distributionBefore, 3)
 		require.Len(t, distributionAfter, 5)
+	})
+}
+
+func TestServerRingPropertyBased2(t *testing.T) {
+	// распределение ключей по серверам
+	type distribution map[ServerName][]string
+
+	makeDistribution := func(t *testing.T, ring *ServersRing, keys []string) distribution {
+		result := make(distribution)
+		for _, key := range keys {
+			server, err := ring.Get(key)
+			require.NoError(t, err)
+			result[server] = append(result[server], key)
+		}
+		return result
+	}
+
+	requireAllKeysDistributed := func(t *testing.T, keys []string, d distribution) {
+		t.Helper()
+
+		var dKeys []string
+		for _, keys := range d {
+			dKeys = append(dKeys, keys...)
+		}
+
+		slices.Sort(keys)
+		slices.Sort(dKeys)
+
+		require.Equal(t, keys, dKeys)
+	}
+
+	requireRedistributeKeysThenAddedOneServer := func(t *testing.T, before, after distribution) {
+		t.Helper()
+
+		require.Equalf(t, len(before), len(after)-1, "distribution before and after must defferent only 1 servers")
+
+		var newServer ServerName
+		var oldServer ServerName
+		for server, aKeys := range after {
+			// запоминаем новый появившийся сервер
+			if _, ok := before[server]; !ok {
+				require.Emptyf(t, newServer, "only one new server bust added after rebalance")
+				newServer = server
+				continue
+			}
+
+			bKeys := before[server]
+
+			sort.Strings(bKeys)
+			sort.Strings(aKeys)
+
+			if slices.Compare(bKeys, aKeys) == 0 {
+				continue
+			}
+
+			require.Emptyf(t, oldServer, "only one old server")
+			oldServer = server
+		}
+
+		require.Greater(t, len(before[oldServer]), len(after[oldServer]))
+
+		bKeys := before[oldServer]
+		aKeys := append(after[oldServer], after[newServer]...)
+
+		sort.Strings(bKeys)
+		sort.Strings(aKeys)
+
+		require.Equal(t, aKeys, bKeys)
+	}
+
+	keys := randomKeys()
+
+	t.Run("first distribution", func(t *testing.T) {
+		ring := NewServerRing()
+
+		require.NoError(t, ring.Add("server1"))
+		require.NoError(t, ring.Add("server2"))
+		require.NoError(t, ring.Add("server3"))
+
+		distribution := makeDistribution(t, ring, keys)
+
+		requireAllKeysDistributed(t, keys, distribution)
+	})
+	t.Run("rebalance", func(t *testing.T) {
+		ring := NewServerRing()
+
+		require.NoError(t, ring.Add("server1"))
+		require.NoError(t, ring.Add("server2"))
+		require.NoError(t, ring.Add("server3"))
+
+		before := makeDistribution(t, ring, keys)
+
+		require.NoError(t, ring.Add("server4"))
+
+		after := makeDistribution(t, ring, keys)
+
+		requireAllKeysDistributed(t, keys, before)
+		requireAllKeysDistributed(t, keys, after)
+		requireRedistributeKeysThenAddedOneServer(t, before, after)
 	})
 }
 
