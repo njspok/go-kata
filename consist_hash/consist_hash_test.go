@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestServerRingPropertyBased(t *testing.T) {
+func TestServerRingPropertyBasedByCount(t *testing.T) {
 	// Helpers
 
 	// распределение ключей по серверам server => count
@@ -141,7 +141,7 @@ func TestServerRingPropertyBased(t *testing.T) {
 	})
 }
 
-func TestServerRingPropertyBased2(t *testing.T) {
+func TestServerRingPropertyBasedByKeys(t *testing.T) {
 	// распределение ключей по серверам
 	type distribution map[ServerName][]string
 
