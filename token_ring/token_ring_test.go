@@ -7,26 +7,44 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func NewRing() *Ring {
+	r := &Ring{
+		ch: make(chan struct{}, 1),
+	}
+	r.ch <- struct{}{}
+	return r
+}
+
+type Ring struct {
+	ch chan struct{}
+}
+
+func (r *Ring) TakeToken() {
+	<-r.ch
+}
+
+func (r *Ring) PutToken() {
+	r.ch <- struct{}{}
+}
+
 func Test(t *testing.T) {
-	ring := make(chan struct{}, 1)
-	token := struct{}{}
-	ring <- token
+	ring := NewRing()
 
 	counter := 0
 
 	wg := sync.WaitGroup{}
 	wg.Go(func() {
 		for range 10000 {
-			<-ring
+			ring.TakeToken()
 			counter++
-			ring <- token
+			ring.PutToken()
 		}
 	})
 	wg.Go(func() {
 		for range 10000 {
-			<-ring
+			ring.TakeToken()
 			counter++
-			ring <- token
+			ring.PutToken()
 		}
 	})
 	wg.Wait()
