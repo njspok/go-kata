@@ -1,8 +1,8 @@
 package token_ring
 
 import (
+	"sync"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -13,23 +13,22 @@ func Test(t *testing.T) {
 
 	counter := 0
 
-	go func() {
+	wg := sync.WaitGroup{}
+	wg.Go(func() {
 		for range 10000 {
 			<-token
 			counter++
 			token <- struct{}{}
 		}
-	}()
-
-	go func() {
+	})
+	wg.Go(func() {
 		for range 10000 {
 			<-token
 			counter++
 			token <- struct{}{}
 		}
-	}()
-
-	time.Sleep(2 * time.Second)
+	})
+	wg.Wait()
 
 	require.Equal(t, 20000, counter)
 }
