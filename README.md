@@ -24,6 +24,7 @@
 - [TTL Cache со статистикой](ttl_cache/README.md)
 - [Дроби](fractional/README.md)
 - [Консистентное хеширование](/consist_hash/README.md)
+- [Маркерное кольцо](./token_ring/README.md)
 
 # Путь TDD
 
