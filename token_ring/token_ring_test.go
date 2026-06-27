@@ -8,24 +8,25 @@ import (
 )
 
 func Test(t *testing.T) {
-	token := make(chan struct{}, 1)
-	token <- struct{}{}
+	ring := make(chan struct{}, 1)
+	token := struct{}{}
+	ring <- token
 
 	counter := 0
 
 	wg := sync.WaitGroup{}
 	wg.Go(func() {
 		for range 10000 {
-			<-token
+			<-ring
 			counter++
-			token <- struct{}{}
+			ring <- token
 		}
 	})
 	wg.Go(func() {
 		for range 10000 {
-			<-token
+			<-ring
 			counter++
-			token <- struct{}{}
+			ring <- token
 		}
 	})
 	wg.Wait()
