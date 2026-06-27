@@ -23,5 +23,7 @@ func Test(t *testing.T) {
 		start <- struct{}{}
 	}
 
+	close(start)
+
 	require.Equal(t, 3000, counter)
 }
