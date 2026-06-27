@@ -31,19 +31,3 @@ func Test(t *testing.T) {
 
 	require.Equal(t, 20000, counter)
 }
-
-//func Test(t *testing.T) {
-//	counter := 0
-//
-//	p1 := NewProcess(func() { counter++ }, 1000)
-//	p2 := NewProcess(func() { counter++ }, 1000)
-//
-//	ring := NewRing(p1, p2)
-//
-//	go p1.Run()
-//	go p2.Run()
-//
-//	time.Sleep(1 * time.Second)
-//
-//	require.Equal(t, 2000, counter)
-//}
