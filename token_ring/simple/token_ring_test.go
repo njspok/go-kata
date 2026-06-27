@@ -1,4 +1,4 @@
-package token_ring
+package simple
 
 import (
 	"sync"

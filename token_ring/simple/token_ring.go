@@ -1,4 +1,4 @@
-package token_ring
+package simple
 
 // есть пачка процессов
 // они объеденены в кольцо
