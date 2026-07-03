@@ -31,10 +31,12 @@ func Test(t *testing.T) {
 	broker.Add(node2)
 	broker.Add(node3)
 
+	const ttl = 10_000
+
 	broker.Publish(Marker{
 		To:  1,
-		TTL: 100,
+		TTL: ttl,
 	})
 
-	require.Equal(t, 100, counter)
+	require.Equal(t, ttl, counter)
 }

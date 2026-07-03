@@ -1,5 +1,7 @@
 package pubsub
 
+import "sync"
+
 type Message any
 
 type Marker struct {
@@ -73,7 +75,11 @@ func (b *LightBroker) Add(n *Node) {
 }
 
 func (b *LightBroker) Publish(msg Message) {
+	wg := sync.WaitGroup{}
 	for _, node := range b.nodes {
-		node.Send(msg)
+		wg.Go(func() {
+			node.Send(msg)
+		})
 	}
+	wg.Wait()
 }
