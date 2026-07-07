@@ -25,6 +25,7 @@
 - [Дроби](fractional/README.md)
 - [Консистентное хеширование](/consist_hash/README.md)
 - [Маркерное кольцо](./token_ring/README.md)
+- [Распределенный алгоритм усреднения](./avg_cons/README.md)
 
 # Путь TDD
 
