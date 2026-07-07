@@ -6,19 +6,21 @@ import (
 	"time"
 )
 
-func NewNode(id int, val float64) *Node {
+func NewNode(id int, val float64, interactionInterval time.Duration) *Node {
 	n := &Node{
-		id:  id,
-		val: val,
+		id:                  id,
+		val:                 val,
+		interactionInterval: interactionInterval,
 	}
 	return n
 }
 
 type Node struct {
-	neighbors []*Node
-	id        int
-	val       float64
-	mu        sync.RWMutex
+	neighbors           []*Node
+	id                  int
+	val                 float64
+	mu                  sync.RWMutex
+	interactionInterval time.Duration
 }
 
 func (n *Node) AddNeighbor(ng *Node) {
@@ -36,7 +38,7 @@ func (n *Node) Run(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.After(time.Second):
+		case <-time.After(n.interactionInterval):
 			n.interactWithNeighbors()
 		}
 	}
