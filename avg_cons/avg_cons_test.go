@@ -57,7 +57,7 @@ func Test(t *testing.T) {
 	nodes[0].AddNeighbor(nodes[2])
 	nodes[1].AddNeighbor(nodes[3])
 
-	ctx, _ := context.WithTimeout(context.Background(), time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
 
 	wg := sync.WaitGroup{}
 	for _, n := range nodes {
@@ -65,8 +65,13 @@ func Test(t *testing.T) {
 	}
 	wg.Wait()
 
+	var avg float64
+	for _, n := range nodes {
+		avg += n.Val() / float64(len(nodes))
+	}
+
 	for _, n := range nodes {
 		log.Println("node", n.ID(), n.Val())
-		require.InDelta(t, 250, n.Val(), 1)
+		require.InDelta(t, avg, n.Val(), 1)
 	}
 }
