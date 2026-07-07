@@ -21,11 +21,6 @@ func TestHumanReadable(t *testing.T) {
 	nodes[1].AddNeighbor(nodes[3])
 
 	ctx, cancel := context.WithCancel(context.Background())
-	wg := sync.WaitGroup{}
-	for _, n := range nodes {
-		wg.Go(func() { n.Run(ctx) })
-	}
-
 	go func() {
 		for range 10 {
 			for _, n := range nodes {
@@ -37,5 +32,9 @@ func TestHumanReadable(t *testing.T) {
 		cancel()
 	}()
 
+	wg := sync.WaitGroup{}
+	for _, n := range nodes {
+		wg.Go(func() { n.Run(ctx) })
+	}
 	wg.Wait()
 }
