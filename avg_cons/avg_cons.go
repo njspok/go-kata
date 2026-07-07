@@ -1,6 +1,7 @@
 package avg_cons
 
 import (
+	"context"
 	"sync"
 	"time"
 )
@@ -30,9 +31,14 @@ func (n *Node) Exchange(v float64) float64 {
 	return old
 }
 
-func (n *Node) Run() {
-	for range time.Tick(time.Second) {
-		n.interactWithNeighbors()
+func (n *Node) Run(ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(time.Second):
+			n.interactWithNeighbors()
+		}
 	}
 }
 
