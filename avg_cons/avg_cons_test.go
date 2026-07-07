@@ -1,26 +1,43 @@
 package avg_cons
 
 import (
+	"log"
 	"sync"
 	"testing"
+	"time"
 )
 
 func TestHumanReadable(t *testing.T) {
-	node1 := NewNode(1, 100)
-	node2 := NewNode(2, 200)
-	node3 := NewNode(3, 300)
-	node4 := NewNode(4, 400)
+	nodes := []*Node{
+		NewNode(0, 100),
+		NewNode(1, 200),
+		NewNode(2, 300),
+		NewNode(3, 400),
+	}
 
-	node1.AddNeighbor(node2)
-	node1.AddNeighbor(node3)
-	node2.AddNeighbor(node4)
+	nodes[0].AddNeighbor(nodes[1])
+	nodes[0].AddNeighbor(nodes[2])
+	nodes[1].AddNeighbor(nodes[3])
 
 	wg := sync.WaitGroup{}
+	for _, n := range nodes {
+		wg.Go(n.Run)
+	}
 
-	wg.Go(node1.Run)
-	wg.Go(node2.Run)
-	wg.Go(node3.Run)
-	wg.Go(node4.Run)
+	done := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-done:
+				return
+			case <-time.After(1 * time.Second):
+				for _, n := range nodes {
+					log.Println("node", n.ID(), n.Val())
+				}
+			}
+		}
+	}()
 
 	wg.Wait()
+	close(done)
 }

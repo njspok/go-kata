@@ -5,17 +5,17 @@ import (
 	"time"
 )
 
-func NewNode(number int, val float64) *Node {
+func NewNode(id int, val float64) *Node {
 	n := &Node{
-		number: number,
-		val:    val,
+		id:  id,
+		val: val,
 	}
 	return n
 }
 
 type Node struct {
 	neighbors []*Node
-	number    int
+	id        int
 	val       float64
 	mu        sync.RWMutex
 }
@@ -34,6 +34,14 @@ func (n *Node) Run() {
 	for range time.Tick(time.Second) {
 		n.interactWithNeighbors()
 	}
+}
+
+func (n *Node) ID() int {
+	return n.id
+}
+
+func (n *Node) Val() float64 {
+	return n.getVal()
 }
 
 func (n *Node) interactWithNeighbors() {
