@@ -1,6 +1,8 @@
 package func_shop
 
 import (
+	"maps"
+
 	"github.com/samber/mo"
 )
 
@@ -11,13 +13,18 @@ func NewCart() Cart {
 }
 
 func (c Cart) Add(name string, sid Sid) Cart {
-	item := c.Find(sid)
-	if i, present := item.Get(); present {
-		c[sid] = i.IncQty()
-	} else {
-		c[sid] = NewItem(name, sid)
+	cp := maps.Clone(c)
+	if cp == nil {
+		cp = NewCart()
 	}
-	return c
+
+	item := cp.Find(sid)
+	if i, present := item.Get(); present {
+		cp[sid] = i.IncQty()
+	} else {
+		cp[sid] = NewItem(name, sid)
+	}
+	return cp
 }
 
 func (c Cart) Find(sid Sid) mo.Option[*Item] {

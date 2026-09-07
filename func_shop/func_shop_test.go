@@ -19,12 +19,53 @@ func TestCart_Find(t *testing.T) {
 		cart := NewCart().Add("book", "123456")
 
 		// Act
-		cart.Add("book", "123456")
+		cart = cart.Add("book", "123456")
 
 		// Assert
 		itemInCart, present := cart.Find("123456").Get()
 		require.True(t, present)
 		require.EqualValues(t, 2, itemInCart.Qty())
 		require.Equal(t, 1, cart.Count())
+	})
+}
+
+func TestCart_Add(t *testing.T) {
+	t.Run("new item", func(t *testing.T) {
+		// Arrange
+		cart := NewCart()
+
+		// Act
+		newCart := cart.Add("book", "123456")
+
+		// Assert
+		require.Equal(t, 0, cart.Count())
+		_, present := cart.Find("123456").Get()
+		require.False(t, present)
+
+		require.Equal(t, 1, newCart.Count())
+		item, present := newCart.Find("123456").Get()
+		require.True(t, present)
+		require.Equal(t, "book", item.Name())
+		require.EqualValues(t, "123456", item.Sid())
+		require.EqualValues(t, 1, item.Qty())
+	})
+
+	t.Run("existing item", func(t *testing.T) {
+		// Arrange
+		cart := NewCart().Add("book", "123456")
+
+		// Act
+		newCart := cart.Add("book", "123456")
+
+		// Assert
+		item, present := cart.Find("123456").Get()
+		require.True(t, present)
+		require.EqualValues(t, 1, item.Qty())
+		require.Equal(t, 1, cart.Count())
+
+		newItem, present := newCart.Find("123456").Get()
+		require.True(t, present)
+		require.EqualValues(t, 2, newItem.Qty())
+		require.Equal(t, 1, newCart.Count())
 	})
 }
