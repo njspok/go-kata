@@ -1,8 +1,16 @@
 package func_shop
 
-import "github.com/samber/mo"
+import (
+	"reflect"
+
+	"github.com/samber/mo"
+)
 
 type Cart map[Sid]*Item
+
+func NewCart() Cart {
+	return make(Cart)
+}
 
 func (c Cart) Add(name string, sid Sid) Cart {
 	item := c.Find(sid)
@@ -14,19 +22,25 @@ func (c Cart) Add(name string, sid Sid) Cart {
 	return c
 }
 
-func (c Cart) Find(sid Sid) mo.Option[Item] {
+func (c Cart) Find(sid Sid) mo.Option[*Item] {
 	if i, exist := c[sid]; exist {
-		return mo.Some(*i)
+		return mo.Some(Copy(i))
 	}
-	return mo.None[Item]()
+	return mo.None[*Item]()
+}
+
+func (c Cart) Count() int {
+	return len(c)
 }
 
 type Sid string
 
+type Qty int
+
 type Item struct {
 	name string
 	sid  Sid
-	qty  uint
+	qty  Qty
 }
 
 func (i Item) Name() string {
@@ -37,18 +51,13 @@ func (i Item) Sid() Sid {
 	return i.sid
 }
 
-func (i Item) Qty() uint {
+func (i Item) Qty() Qty {
 	return i.qty
 }
 
-func (i Item) IncQty() *Item {
+func (i *Item) IncQty() *Item {
 	i.qty++
-	return &i
-}
-
-func (i Item) SetQty(q uint) *Item {
-	i.qty = q
-	return &i
+	return i
 }
 
 func NewItem(name string, sid Sid) *Item {
@@ -57,4 +66,18 @@ func NewItem(name string, sid Sid) *Item {
 		sid:  sid,
 		qty:  1,
 	}
+}
+
+func Copy[T any](src T) T {
+	v := reflect.ValueOf(src)
+	if v.Kind() != reflect.Pointer {
+		return src
+	}
+	if v.IsNil() {
+		return src
+	}
+
+	cp := reflect.New(v.Elem().Type())
+	cp.Elem().Set(v.Elem())
+	return cp.Interface().(T)
 }

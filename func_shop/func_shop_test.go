@@ -13,11 +13,80 @@ func TestNewItem(t *testing.T) {
 	require.EqualValues(t, 1, item.qty)
 }
 
-func TestItem_SetQty(t *testing.T) {
-	item := NewItem("book", "123456")
+func TestCart_Find(t *testing.T) {
+	t.Run("already append", func(t *testing.T) {
+		// Arrange
+		cart := NewCart().Add("book", "123456")
 
-	newItem := item.SetQty(99)
+		// Act
+		cart.Add("book", "123456")
 
-	require.EqualValues(t, uint(1), item.Qty())
-	require.EqualValues(t, 99, newItem.Qty())
+		// Assert
+		itemInCart, present := cart.Find("123456").Get()
+		require.True(t, present)
+		require.EqualValues(t, 2, itemInCart.Qty())
+		require.Equal(t, 1, cart.Count())
+	})
+	t.Run("immutable", func(t *testing.T) {
+		// Arrange
+		cart := NewCart().Add("book", "123456")
+
+		item, present := cart.Find("123456").Get()
+		require.True(t, present)
+
+		// Act
+		item.qty = 99
+
+		// Assert
+		itemInCart, stillPresent := cart.Find("123456").Get()
+		require.True(t, stillPresent)
+
+		require.EqualValues(t, 1, itemInCart.Qty())
+	})
+}
+
+func TestCopy(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		require.Nil(t, Copy[*Item](nil))
+	})
+	t.Run("value type", func(t *testing.T) {
+		// Arrange
+		item := Item{
+			name: "book",
+			sid:  "123456",
+			qty:  1,
+		}
+
+		// Act
+		newItem := Copy(item)
+
+		// Assert
+		require.Equal(t, item.Name(), newItem.Name())
+		require.Equal(t, item.Qty(), newItem.Qty())
+		require.Equal(t, item.Sid(), newItem.Sid())
+
+		item.IncQty()
+
+		require.NotEqual(t, item.Qty(), newItem.Qty())
+	})
+	t.Run("pointer type", func(t *testing.T) {
+		// Arrange
+		item := &Item{
+			name: "book",
+			sid:  "123456",
+			qty:  1,
+		}
+
+		// Act
+		newItem := Copy(item)
+
+		// Assert
+		require.Equal(t, item.Name(), newItem.Name())
+		require.Equal(t, item.Qty(), newItem.Qty())
+		require.Equal(t, item.Sid(), newItem.Sid())
+
+		item.IncQty()
+
+		require.NotEqual(t, item.Qty(), newItem.Qty())
+	})
 }
