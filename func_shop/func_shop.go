@@ -1,8 +1,6 @@
 package func_shop
 
 import (
-	"reflect"
-
 	"github.com/samber/mo"
 )
 
@@ -24,7 +22,7 @@ func (c Cart) Add(name string, sid Sid) Cart {
 
 func (c Cart) Find(sid Sid) mo.Option[*Item] {
 	if i, exist := c[sid]; exist {
-		return mo.Some(Copy(i))
+		return mo.Some(i)
 	}
 	return mo.None[*Item]()
 }
@@ -55,9 +53,9 @@ func (i Item) Qty() Qty {
 	return i.qty
 }
 
-func (i *Item) IncQty() *Item {
+func (i Item) IncQty() *Item {
 	i.qty++
-	return i
+	return &i
 }
 
 func NewItem(name string, sid Sid) *Item {
@@ -66,18 +64,4 @@ func NewItem(name string, sid Sid) *Item {
 		sid:  sid,
 		qty:  1,
 	}
-}
-
-func Copy[T any](src T) T {
-	v := reflect.ValueOf(src)
-	if v.Kind() != reflect.Pointer {
-		return src
-	}
-	if v.IsNil() {
-		return src
-	}
-
-	cp := reflect.New(v.Elem().Type())
-	cp.Elem().Set(v.Elem())
-	return cp.Interface().(T)
 }
