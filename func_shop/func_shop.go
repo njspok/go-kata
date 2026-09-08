@@ -12,17 +12,14 @@ func NewCart() Cart {
 	return make(Cart)
 }
 
-func (c Cart) Add(name string, sid Sid) Cart {
+func (c Cart) Add(name string, sid Sid, price Price) Cart {
 	cp := maps.Clone(c)
-	if cp == nil {
-		cp = NewCart()
-	}
-
 	item := cp.Find(sid)
+
 	if i, present := item.Get(); present {
-		cp[sid] = i.IncQty()
+		cp[sid] = i.IncQty().SetPrice(price)
 	} else {
-		cp[sid] = NewItem(name, sid)
+		cp[sid] = NewItem(name, sid, price)
 	}
 	return cp
 }
@@ -42,10 +39,13 @@ type Sid string
 
 type Qty int
 
+type Price int
+
 type Item struct {
-	name string
-	sid  Sid
-	qty  Qty
+	name  string
+	sid   Sid
+	qty   Qty
+	price Price
 }
 
 func (i Item) Name() string {
@@ -64,11 +64,20 @@ func (i Item) IncQty() *Item {
 	i.qty++
 	return &i
 }
+func (i Item) SetPrice(price Price) *Item {
+	i.price = price
+	return &i
+}
 
-func NewItem(name string, sid Sid) *Item {
+func (i Item) Price() Price {
+	return i.price
+}
+
+func NewItem(name string, sid Sid, price Price) *Item {
 	return &Item{
-		name: name,
-		sid:  sid,
-		qty:  1,
+		name:  name,
+		sid:   sid,
+		qty:   1,
+		price: price,
 	}
 }
