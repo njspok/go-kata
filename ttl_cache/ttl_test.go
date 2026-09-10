@@ -116,20 +116,16 @@ func TestTTLCache_Get(t *testing.T) {
 	cache.Set("world", 1, 0)
 
 	wg := sync.WaitGroup{}
-	for i := 0; i < 1000; i++ {
+	for range 1000 {
 		// получаем не существующее значение
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			_, _ = cache.Get("hello")
-			wg.Done()
-		}()
+		})
 
 		// получаем существующее значение
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			_, _ = cache.Get("world")
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 
@@ -142,27 +138,21 @@ func TestTTLCache_DataRace(t *testing.T) {
 		cache := NewTTLCache()
 
 		wg := sync.WaitGroup{}
-		for i := 0; i < 1000; i++ {
+		for range 1000 {
 			// получаем знаение из кшеа
-			wg.Add(1)
-			go func() {
+			wg.Go(func() {
 				_, _ = cache.Get("hello")
-				wg.Done()
-			}()
+			})
 
 			// получаем статистику
-			wg.Add(1)
-			go func() {
+			wg.Go(func() {
 				cache.Stats()
-				wg.Done()
-			}()
+			})
 
 			// сбрасываем статистику
-			wg.Add(1)
-			go func() {
+			wg.Go(func() {
 				cache.ResetStats()
-				wg.Done()
-			}()
+			})
 		}
 		wg.Wait()
 	})
@@ -170,20 +160,16 @@ func TestTTLCache_DataRace(t *testing.T) {
 		cache := NewTTLCache()
 
 		wg := sync.WaitGroup{}
-		for i := 0; i < 10000; i++ {
+		for range 10000 {
 			// читаем значение из кеша
-			wg.Add(1)
-			go func() {
+			wg.Go(func() {
 				_, _ = cache.Get("hello")
-				wg.Done()
-			}()
+			})
 
 			// кладем значение в кеш
-			wg.Add(1)
-			go func() {
+			wg.Go(func() {
 				cache.Set("hello", "world", 0)
-				wg.Done()
-			}()
+			})
 		}
 		wg.Wait()
 	})

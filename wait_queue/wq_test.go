@@ -61,11 +61,11 @@ func TestWaitQueue(t *testing.T) {
 
 		const threads = 7000
 
-		for i := 0; i < threads; i++ {
+		for range threads {
 			go do()
 		}
 
-		for i := 0; i < threads; i++ {
+		for range threads {
 			require.Equal(t, true, <-result)
 		}
 

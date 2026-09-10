@@ -10,7 +10,7 @@ var (
 	Current Node = Root
 )
 
-type Node interface{}
+type Node any
 
 type SolarNode struct {
 	Name        string

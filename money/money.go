@@ -32,7 +32,7 @@ func (m *Money) Currency() string {
 	return m.currency
 }
 
-func (m *Money) Equals(money interface{}) bool {
+func (m *Money) Equals(money any) bool {
 	m2, ok := money.(*Money)
 	if !ok {
 		panic("cant compare objects")

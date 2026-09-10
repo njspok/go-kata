@@ -71,7 +71,7 @@ type SampleData struct {
 func Training(p *Perceptron, samples []SampleData, countIterations int) error {
 	initWeights(p)
 
-	for i := 0; i < countIterations; i++ {
+	for range countIterations {
 		countMatched := 0
 		for n, sample := range samples {
 			matched, actual := lesson(p, sample.input, sample.expected)

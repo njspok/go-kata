@@ -8,7 +8,7 @@ import (
 
 func TestSimpleEquation(t *testing.T) {
 	var initPop []*SimpleEquation
-	for i := 0; i < 20; i++ {
+	for range 20 {
 		initPop = append(initPop, RandomSimpleEquation())
 	}
 

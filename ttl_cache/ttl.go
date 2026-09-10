@@ -14,7 +14,7 @@ type Stats struct {
 }
 
 type cachedItem struct {
-	value     interface{}
+	value     any
 	expiresAt int64
 }
 
@@ -34,7 +34,7 @@ func NewTTLCache() *TTLCache {
 	return c
 }
 
-func (c *TTLCache) Set(key string, value interface{}, ttl time.Duration) {
+func (c *TTLCache) Set(key string, value any, ttl time.Duration) {
 	var expiresAt int64
 	if ttl > 0 {
 		expiresAt = time.Now().Add(ttl).UnixNano()
@@ -49,7 +49,7 @@ func (c *TTLCache) Set(key string, value interface{}, ttl time.Duration) {
 	}
 }
 
-func (c *TTLCache) Get(key string) (interface{}, bool) {
+func (c *TTLCache) Get(key string) (any, bool) {
 	c.mu.RLock()
 
 	item, exists := c.data[key]

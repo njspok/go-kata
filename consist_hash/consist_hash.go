@@ -3,7 +3,7 @@ package consist_hash
 import (
 	"errors"
 	"hash/crc32"
-	"sort"
+	"slices"
 )
 
 type ServerName string
@@ -37,7 +37,7 @@ func (s *ServersRing) Add(name ServerName) error {
 
 	s.servers = append(s.servers, no)
 	s.names[no] = name
-	sort.Slice(s.servers, func(i, j int) bool { return s.servers[i] < s.servers[j] })
+	slices.Sort(s.servers)
 
 	return nil
 }

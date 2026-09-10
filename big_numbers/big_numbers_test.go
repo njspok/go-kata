@@ -39,7 +39,7 @@ func Test(t *testing.T) {
 		aug := uint(rand.Intn(1000000))
 		add := uint(rand.Intn(1000000))
 
-		for i := 0; i < 1000000; i++ {
+		for range 1000000 {
 			require.Equalf(t,
 				NumberFromUint(aug+add),
 				Sum(NumberFromUint(aug), NumberFromUint(add)),

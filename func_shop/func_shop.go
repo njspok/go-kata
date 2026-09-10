@@ -12,6 +12,12 @@ func NewCart() Cart {
 	return make(Cart)
 }
 
+func (c Cart) Del(sid Sid) Cart {
+	cp := maps.Clone(c)
+	delete(cp, sid)
+	return cp
+}
+
 func (c Cart) Add(name string, sid Sid, price Price) Cart {
 	cp := maps.Clone(c)
 	item := cp.Find(sid)

@@ -60,7 +60,7 @@ func (b *Bowling) Frames() *Frames {
 func newClassicFrames() *Frames {
 	f := NewFrames()
 
-	for i := 0; i < 9; i++ {
+	for i := range 9 {
 		f.Add(NewFrame(uint(i) + 1))
 	}
 

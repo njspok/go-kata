@@ -2,6 +2,7 @@ package constraint
 
 import (
 	"errors"
+	"maps"
 
 	"github.com/samber/lo"
 )
@@ -117,8 +118,6 @@ func (c *CSP[V, D]) backtrackingSearch(solution Solution[V, D]) Solution[V, D] {
 
 func copyMap[V comparable, D any](m map[V]D) map[V]D {
 	result := make(map[V]D, len(m))
-	for v, d := range m {
-		result[v] = d
-	}
+	maps.Copy(result, m)
 	return result
 }

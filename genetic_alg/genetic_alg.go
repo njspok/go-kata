@@ -156,7 +156,7 @@ func choices[T any](list []T, weights []float64, k int) []T {
 	}
 
 	result := make([]T, k)
-	for i := 0; i < k; i++ {
+	for i := range k {
 		r := rand.Float64() * sum
 		for j, w := range weights {
 			r -= math.Abs(w)

@@ -15,7 +15,7 @@ func TestNewTask(t *testing.T) {
 
 	results := make(chan int, count)
 
-	for i := 0; i < count; i++ {
+	for range count {
 		go func() {
 			task.Wait()
 			results <- task.Result
@@ -26,7 +26,7 @@ func TestNewTask(t *testing.T) {
 	task.Wait()
 
 	require.Equal(t, 101, task.Result)
-	for i := 0; i < count; i++ {
+	for range count {
 		require.Equal(t, 101, <-results)
 	}
 }

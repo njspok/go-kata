@@ -94,7 +94,7 @@ func (n *Node) SetPrepareErr(err error) {
 	n.prepareErr = err
 }
 
-func (n *Node) addToLog(s string, a ...interface{}) {
+func (n *Node) addToLog(s string, a ...any) {
 	n.log = append(n.log, fmt.Sprintf(s, a...))
 }
 
