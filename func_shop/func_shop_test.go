@@ -140,3 +140,26 @@ func TestItem_SetPrice(t *testing.T) {
 		require.EqualValues(t, 11, item.Price())
 	})
 }
+
+func TestItem_Total(t *testing.T) {
+	t.Run("empty cart", func(t *testing.T) {
+		cart := NewCart()
+		require.Zero(t, cart.Count())
+		require.Zero(t, cart.Total())
+	})
+	t.Run("filled", func(t *testing.T) {
+		// Arrange
+		cart := NewCart()
+
+		cart = cart.Add("book", "123456", 11)
+		cart = cart.Add("book", "123456", 11)
+		cart = cart.Add("shoes", "111222", 100)
+		cart = cart.Add("glasses", "111333", 200)
+
+		// Act
+		total := cart.Total()
+
+		// Assert
+		require.EqualValues(t, 322, total)
+	})
+}

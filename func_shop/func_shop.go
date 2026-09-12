@@ -1,6 +1,7 @@
 package func_shop
 
 import (
+	"cmp"
 	"maps"
 
 	"github.com/samber/mo"
@@ -10,6 +11,12 @@ type Cart map[Sid]*Item
 
 func NewCart() Cart {
 	return make(Cart)
+}
+
+func (c Cart) Total() Price {
+	return Reduce(c, func(agg Price, val *Item, key Sid) Price {
+		return agg + val.Total()
+	}, Price(0))
 }
 
 func (c Cart) Del(sid Sid) Cart {
@@ -47,6 +54,10 @@ type Qty int
 
 type Price int
 
+func (p Price) Mult(v Qty) Price {
+	return Price(v) * p
+}
+
 type Item struct {
 	name  string
 	sid   Sid
@@ -79,6 +90,10 @@ func (i Item) Price() Price {
 	return i.price
 }
 
+func (i Item) Total() Price {
+	return i.Price().Mult(i.Qty())
+}
+
 func NewItem(name string, sid Sid, price Price) *Item {
 	return &Item{
 		name:  name,
@@ -86,4 +101,16 @@ func NewItem(name string, sid Sid, price Price) *Item {
 		qty:   1,
 		price: price,
 	}
+}
+
+func Reduce[K cmp.Ordered, V any, R any](
+	collection map[K]V,
+	accumulator func(agg R, val V, key K) R,
+	initial R,
+) R {
+	for i, item := range collection {
+		initial = accumulator(initial, item, i)
+	}
+
+	return initial
 }
