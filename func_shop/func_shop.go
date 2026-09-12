@@ -14,8 +14,8 @@ func NewCart() Cart {
 }
 
 func (c Cart) Total() Price {
-	return Reduce(c, func(agg Price, val *Item, key Sid) Price {
-		return agg + val.Total()
+	return Reduce(c, func(total Price, item *Item, _ Sid) Price {
+		return total + item.Total()
 	}, Price(0))
 }
 
