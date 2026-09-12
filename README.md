@@ -26,6 +26,7 @@
 - [Консистентное хеширование](/consist_hash/README.md)
 - [Маркерное кольцо](./token_ring/README.md)
 - [Распределенный алгоритм усреднения](./avg_cons/README.md)
+- [Магазин с функциональным подходом](./func_shop/README.md)
 
 # Путь TDD
 
