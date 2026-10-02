@@ -165,26 +165,36 @@ func TestItem_Total(t *testing.T) {
 }
 
 func TestCalcDiscount(t *testing.T) {
-	t.Run("apply big cart coupon", func(t *testing.T) {
-		cart := NewCart()
-		cart = cart.Add("book", "123456", 2000)
+	tests := []struct {
+		name   string
+		cart   Cart
+		coupon CouponName
+		want   Price
+	}{
+		{
+			name:   "apply big cart coupon",
+			cart:   NewCart().Add("book", "123456", 2000),
+			coupon: BigCart,
+			want:   1900,
+		},
+		{
+			name:   "empty cart",
+			cart:   NewCart(),
+			coupon: BigCart,
+			want:   0,
+		},
+		{
+			name:   "unknown coupon",
+			cart:   NewCart().Add("book", "123456", 2000),
+			coupon: "unknown",
+			want:   2000,
+		},
+	}
 
-		total := CalcDiscount(cart, BigCart, Coupons)
-
-		require.EqualValues(t, 1900, total)
-	})
-	t.Run("empty cart", func(t *testing.T) {
-		cart := NewCart()
-
-		total := CalcDiscount(cart, BigCart, Coupons)
-
-		require.EqualValues(t, 0, total)
-	})
-	t.Run("unknown coupon", func(t *testing.T) {
-		cart := NewCart()
-
-		total := CalcDiscount(cart, "unknown", Coupons)
-
-		require.EqualValues(t, 0, total)
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			total := CalcDiscount(tt.cart, tt.coupon, Coupons)
+			require.EqualValues(t, tt.want, total)
+		})
+	}
 }
