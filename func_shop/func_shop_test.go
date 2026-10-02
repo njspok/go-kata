@@ -163,3 +163,21 @@ func TestItem_Total(t *testing.T) {
 		require.EqualValues(t, 322, total)
 	})
 }
+
+func TestCalcDiscount(t *testing.T) {
+	t.Run("apply big cart coupon", func(t *testing.T) {
+		cart := NewCart()
+		cart = cart.Add("book", "123456", 2000)
+
+		total := CalcDiscount(cart, BigCart, Coupons)
+
+		require.EqualValues(t, 1900, total)
+	})
+	t.Run("empty cart", func(t *testing.T) {
+		cart := NewCart()
+
+		total := CalcDiscount(cart, BigCart, Coupons)
+
+		require.EqualValues(t, 0, total)
+	})
+}
