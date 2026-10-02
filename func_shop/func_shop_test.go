@@ -180,4 +180,11 @@ func TestCalcDiscount(t *testing.T) {
 
 		require.EqualValues(t, 0, total)
 	})
+	t.Run("unknown coupon", func(t *testing.T) {
+		cart := NewCart()
+
+		total := CalcDiscount(cart, "unknown", Coupons)
+
+		require.EqualValues(t, 0, total)
+	})
 }
