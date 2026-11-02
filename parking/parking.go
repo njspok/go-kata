@@ -13,7 +13,13 @@ const (
 	Truck Size = "Truck"
 )
 
-var hourlyRates = map[Size]int{
+type Price int
+
+func (p Price) Times(val int) Price {
+	return p * Price(val)
+}
+
+var hourlyRates = map[Size]Price{
 	Moto:  50,
 	Car:   100,
 	Truck: 200,
@@ -23,7 +29,7 @@ type Ticket struct {
 	Size      Size
 	EntryTime time.Time
 	LeaveTime time.Time
-	Price     int
+	Price     Price
 }
 
 type Parking struct{}
@@ -36,13 +42,13 @@ func (p *Parking) Park(size Size, entryTime time.Time) (*Ticket, error) {
 	return &Ticket{Size: size, EntryTime: entryTime}, nil
 }
 
-func (p *Parking) Leave(ticket *Ticket, leaveTime time.Time) (int, error) {
+func (p *Parking) Leave(ticket *Ticket, leaveTime time.Time) (Price, error) {
 	rate, ok := hourlyRates[ticket.Size]
 	if !ok {
 		return 0, fmt.Errorf("no tariff for size %q", ticket.Size)
 	}
 	ticket.LeaveTime = leaveTime
 	hours := int(leaveTime.Sub(ticket.EntryTime)/time.Hour) + 1
-	ticket.Price = hours * rate
+	ticket.Price = rate.Times(hours)
 	return ticket.Price, nil
 }

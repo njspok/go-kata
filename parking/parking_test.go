@@ -31,7 +31,7 @@ func Test(t *testing.T) {
 		table := []struct {
 			size      Size
 			leaveTime string
-			price     int
+			price     Price
 			err       error
 		}{
 			// for Car
