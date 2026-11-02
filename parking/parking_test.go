@@ -9,12 +9,22 @@ import (
 
 func Test(t *testing.T) {
 	t.Run("success create parking", func(t *testing.T) {
-		p := NewParking()
+		slots := Slots{
+			Moto:  3,
+			Car:   10,
+			Truck: 1,
+		}
+		p := NewParking(slots)
 		require.NotNil(t, p)
 	})
 	t.Run("park", func(t *testing.T) {
 		// Arrange
-		p := NewParking()
+		slots := Slots{
+			Moto:  3,
+			Car:   10,
+			Truck: 1,
+		}
+		p := NewParking(slots)
 
 		now := mustParseTime("2026-01-01 01:00:00")
 
@@ -56,7 +66,12 @@ func Test(t *testing.T) {
 		for _, tt := range table {
 			t.Run(tt.leaveTime, func(t *testing.T) {
 				// Arrange
-				p := NewParking()
+				slots := Slots{
+					Moto:  3,
+					Car:   10,
+					Truck: 1,
+				}
+				p := NewParking(slots)
 				parkTime := mustParseTime("2026-01-01 01:00:00")
 				ticket, err := p.Park(tt.size, parkTime)
 
