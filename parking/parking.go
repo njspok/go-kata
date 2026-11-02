@@ -84,14 +84,14 @@ func NewParking(slots Slots) *Parking {
 }
 
 func (p *Parking) Park(size Size, entryTime time.Time) (*Ticket, error) {
-	for _, s := range p.slots {
-		if !s.Match(size) {
+	for _, slot := range p.slots {
+		if !slot.Match(size) {
 			continue
 		}
 
-		s.Park()
+		slot.Park()
 
-		return NewTicket(s.Number, size, entryTime), nil
+		return NewTicket(slot.Number, size, entryTime), nil
 	}
 	return nil, ErrNoFreeSlots
 }
