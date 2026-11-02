@@ -10,9 +10,10 @@ import (
 func Test(t *testing.T) {
 	t.Run("success create parking", func(t *testing.T) {
 		slots := Slots{
-			Moto:  3,
-			Car:   10,
-			Truck: 1,
+			{
+				Number: "01",
+				Size:   Car,
+			},
 		}
 		p := NewParking(slots)
 		require.NotNil(t, p)
@@ -20,9 +21,10 @@ func Test(t *testing.T) {
 	t.Run("park", func(t *testing.T) {
 		// Arrange
 		slots := Slots{
-			Moto:  3,
-			Car:   10,
-			Truck: 1,
+			{
+				Number: "01",
+				Size:   Car,
+			},
 		}
 		p := NewParking(slots)
 
@@ -67,9 +69,9 @@ func Test(t *testing.T) {
 			t.Run(tt.leaveTime, func(t *testing.T) {
 				// Arrange
 				slots := Slots{
-					Moto:  3,
-					Car:   10,
-					Truck: 1,
+					{Number: "C1", Size: Car},
+					{Number: "M1", Size: Moto},
+					{Number: "T1", Size: Truck},
 				}
 				p := NewParking(slots)
 				parkTime := mustParseTime("2026-01-01 01:00:00")

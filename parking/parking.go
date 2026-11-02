@@ -24,36 +24,15 @@ var hourlyRates = map[Size]Price{
 	Truck: 200,
 }
 
-type Slots struct {
-	Moto  int
-	Car   int
-	Truck int
+type Slot struct {
+	Number string
+	Size   Size
 }
 
-func (s *Slots) Of(size Size) (int, bool) {
-	switch size {
-	case Moto:
-		return s.Moto, true
-	case Car:
-		return s.Car, true
-	case Truck:
-		return s.Truck, true
-	}
-	return 0, false
-}
-
-func (s *Slots) Add(size Size, delta int) {
-	switch size {
-	case Moto:
-		s.Moto += delta
-	case Car:
-		s.Car += delta
-	case Truck:
-		s.Truck += delta
-	}
-}
+type Slots []Slot
 
 type Ticket struct {
+	Number    string
 	Size      Size
 	EntryTime time.Time
 	LeaveTime time.Time
@@ -61,25 +40,25 @@ type Ticket struct {
 }
 
 type Parking struct {
-	capacity Slots
-	occupied Slots
+	slots    Slots
+	occupied map[string]bool
 }
 
-func NewParking(capacity Slots) *Parking {
-	return &Parking{capacity: capacity}
+func NewParking(slots Slots) *Parking {
+	return &Parking{slots: slots, occupied: make(map[string]bool)}
 }
 
 func (p *Parking) Park(size Size, entryTime time.Time) (*Ticket, error) {
-	total, ok := p.capacity.Of(size)
-	if !ok {
-		return nil, fmt.Errorf("unknown size %q", size)
+	for _, s := range p.slots {
+		if s.Size != size || p.occupied[s.Number] {
+			continue
+		}
+
+		p.occupied[s.Number] = true
+
+		return &Ticket{Number: s.Number, Size: size, EntryTime: entryTime}, nil
 	}
-	used, _ := p.occupied.Of(size)
-	if used >= total {
-		return nil, ErrNoFreeSlots
-	}
-	p.occupied.Add(size, 1)
-	return &Ticket{Size: size, EntryTime: entryTime}, nil
+	return nil, ErrNoFreeSlots
 }
 
 func (p *Parking) Leave(ticket *Ticket, leaveTime time.Time) (Price, error) {
@@ -87,9 +66,13 @@ func (p *Parking) Leave(ticket *Ticket, leaveTime time.Time) (Price, error) {
 	if !ok {
 		return 0, fmt.Errorf("no tariff for size %q", ticket.Size)
 	}
+
 	ticket.LeaveTime = leaveTime
+
 	hours := int(leaveTime.Sub(ticket.EntryTime)/time.Hour) + 1
 	ticket.Price = Price(hours) * rate
-	p.occupied.Add(ticket.Size, -1)
+
+	delete(p.occupied, ticket.Number)
+
 	return ticket.Price, nil
 }
