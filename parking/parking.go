@@ -57,6 +57,16 @@ func (ss Slots) Find(number string) *Slot {
 	return nil
 }
 
+func NewTicket(number string, size Size, tm time.Time) *Ticket {
+	return &Ticket{
+		Number:    number,
+		Size:      size,
+		EntryTime: tm,
+		LeaveTime: time.Time{},
+		Price:     0,
+	}
+}
+
 type Ticket struct {
 	Number    string
 	Size      Size
@@ -81,7 +91,7 @@ func (p *Parking) Park(size Size, entryTime time.Time) (*Ticket, error) {
 
 		s.Park()
 
-		return &Ticket{Number: s.Number, Size: size, EntryTime: entryTime}, nil
+		return NewTicket(s.Number, size, entryTime), nil
 	}
 	return nil, ErrNoFreeSlots
 }
