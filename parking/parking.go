@@ -18,6 +18,10 @@ var ErrNoFreeSlots = errors.New("no free slots")
 
 type Price int
 
+func (p Price) Times(v int) Price {
+	return Price(v) * p
+}
+
 var hourlyRates = map[Size]Price{
 	Moto:  50,
 	Car:   100,
@@ -25,11 +29,33 @@ var hourlyRates = map[Size]Price{
 }
 
 type Slot struct {
-	Number string
-	Size   Size
+	Number     string
+	Size       Size
+	IsOccupied bool
 }
 
-type Slots []Slot
+func (s *Slot) Match(size Size) bool {
+	return s.Size == size && !s.IsOccupied
+}
+
+func (s *Slot) Park() {
+	s.IsOccupied = true
+}
+
+func (s *Slot) Leave() {
+	s.IsOccupied = false
+}
+
+type Slots []*Slot
+
+func (ss Slots) Find(number string) *Slot {
+	for _, s := range ss {
+		if s.Number == number {
+			return s
+		}
+	}
+	return nil
+}
 
 type Ticket struct {
 	Number    string
@@ -40,21 +66,20 @@ type Ticket struct {
 }
 
 type Parking struct {
-	slots    Slots
-	occupied map[string]bool
+	slots Slots
 }
 
 func NewParking(slots Slots) *Parking {
-	return &Parking{slots: slots, occupied: make(map[string]bool)}
+	return &Parking{slots: slots}
 }
 
 func (p *Parking) Park(size Size, entryTime time.Time) (*Ticket, error) {
 	for _, s := range p.slots {
-		if s.Size != size || p.occupied[s.Number] {
+		if !s.Match(size) {
 			continue
 		}
 
-		p.occupied[s.Number] = true
+		s.Park()
 
 		return &Ticket{Number: s.Number, Size: size, EntryTime: entryTime}, nil
 	}
@@ -67,12 +92,12 @@ func (p *Parking) Leave(ticket *Ticket, leaveTime time.Time) (Price, error) {
 		return 0, fmt.Errorf("no tariff for size %q", ticket.Size)
 	}
 
+	fullHours := int(leaveTime.Sub(ticket.EntryTime)/time.Hour) + 1
+
+	ticket.Price = rate.Times(fullHours)
 	ticket.LeaveTime = leaveTime
 
-	hours := int(leaveTime.Sub(ticket.EntryTime)/time.Hour) + 1
-	ticket.Price = Price(hours) * rate
-
-	delete(p.occupied, ticket.Number)
+	p.slots.Find(ticket.Number).Leave()
 
 	return ticket.Price, nil
 }
