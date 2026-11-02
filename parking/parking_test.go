@@ -19,25 +19,40 @@ func Test(t *testing.T) {
 		require.NotNil(t, p)
 	})
 	t.Run("park", func(t *testing.T) {
-		// Arrange
-		slots := Slots{
-			{
-				Number: "01",
-				Size:   Car,
-			},
-		}
-		p := NewParking(slots)
+		t.Run("success", func(t *testing.T) {
+			// Arrange
+			slots := Slots{
+				{
+					Number: "01",
+					Size:   Car,
+				},
+			}
+			p := NewParking(slots)
 
-		now := mustParseTime("2026-01-01 01:00:00")
+			now := mustParseTime("2026-01-01 01:00:00")
 
-		// Act
-		ticket, err := p.Park(Car, now)
+			// Act
+			ticket, err := p.Park(Car, now)
 
-		// Assert
-		require.NoError(t, err)
-		require.NotNil(t, ticket)
-		require.Equal(t, Car, ticket.Size)
-		require.Equal(t, now, ticket.EntryTime)
+			// Assert
+			require.NoError(t, err)
+			require.NotNil(t, ticket)
+			require.Equal(t, Car, ticket.Size)
+			require.Equal(t, now, ticket.EntryTime)
+		})
+		t.Run("no free slots", func(t *testing.T) {
+			// Arrange
+			slots := Slots{}
+			p := NewParking(slots)
+			now := mustParseTime("2026-01-01 01:00:00")
+
+			// Act
+			ticket, err := p.Park(Car, now)
+
+			// Assert
+			require.ErrorIs(t, err, ErrNoFreeSlots)
+			require.Nil(t, ticket)
+		})
 	})
 	t.Run("leave", func(t *testing.T) {
 		table := []struct {
