@@ -15,7 +15,7 @@ func Test(t *testing.T) {
 				Size:   Car,
 			},
 		}
-		p := NewParking(slots)
+		p := NewParking(slots, NewSimplePriceCalc())
 		require.NotNil(t, p)
 	})
 	t.Run("park", func(t *testing.T) {
@@ -27,7 +27,7 @@ func Test(t *testing.T) {
 					Size:   Car,
 				},
 			}
-			p := NewParking(slots)
+			p := NewParking(slots, nil)
 
 			now := mustParseTime("2026-01-01 01:00:00")
 
@@ -43,7 +43,7 @@ func Test(t *testing.T) {
 		t.Run("no free slots", func(t *testing.T) {
 			// Arrange
 			slots := Slots{}
-			p := NewParking(slots)
+			p := NewParking(slots, NewSimplePriceCalc())
 			now := mustParseTime("2026-01-01 01:00:00")
 
 			// Act
@@ -88,7 +88,7 @@ func Test(t *testing.T) {
 					{Number: "M1", Size: Moto},
 					{Number: "T1", Size: Truck},
 				}
-				p := NewParking(slots)
+				p := NewParking(slots, NewSimplePriceCalc())
 				parkTime := mustParseTime("2026-01-01 01:00:00")
 				ticket, err := p.Park(tt.size, parkTime)
 

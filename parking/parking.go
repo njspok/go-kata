@@ -15,17 +15,16 @@ const (
 )
 
 var ErrNoFreeSlots = errors.New("no free slots")
+var hourlyRates = map[Size]Price{
+	Moto:  50,
+	Car:   100,
+	Truck: 200,
+}
 
 type Price int
 
 func (p Price) Times(v int) Price {
 	return Price(v) * p
-}
-
-var hourlyRates = map[Size]Price{
-	Moto:  50,
-	Car:   100,
-	Truck: 200,
 }
 
 type Slot struct {
@@ -75,12 +74,34 @@ type Ticket struct {
 	Price     Price
 }
 
-type Parking struct {
-	slots Slots
+type PriceCalc interface {
+	Calc(size Size, leave, entry time.Time) (Price, error)
 }
 
-func NewParking(slots Slots) *Parking {
-	return &Parking{slots: slots}
+func NewSimplePriceCalc() *SimplePriceCalc {
+	return &SimplePriceCalc{}
+}
+
+type SimplePriceCalc struct{}
+
+func (s *SimplePriceCalc) Calc(size Size, entry, leave time.Time) (Price, error) {
+	rate, ok := hourlyRates[size]
+	if !ok {
+		return 0, fmt.Errorf("no tariff for size %q", size)
+	}
+
+	fullHours := int(leave.Sub(entry)/time.Hour) + 1
+
+	return rate.Times(fullHours), nil
+}
+
+func NewParking(slots Slots, calc PriceCalc) *Parking {
+	return &Parking{slots: slots, calc: calc}
+}
+
+type Parking struct {
+	slots Slots
+	calc  PriceCalc
 }
 
 func (p *Parking) Park(size Size, entryTime time.Time) (*Ticket, error) {
@@ -97,14 +118,12 @@ func (p *Parking) Park(size Size, entryTime time.Time) (*Ticket, error) {
 }
 
 func (p *Parking) Leave(ticket *Ticket, leaveTime time.Time) (Price, error) {
-	rate, ok := hourlyRates[ticket.Size]
-	if !ok {
-		return 0, fmt.Errorf("no tariff for size %q", ticket.Size)
+	price, err := p.calc.Calc(ticket.Size, ticket.EntryTime, leaveTime)
+	if err != nil {
+		return 0, err
 	}
 
-	fullHours := int(leaveTime.Sub(ticket.EntryTime)/time.Hour) + 1
-
-	ticket.Price = rate.Times(fullHours)
+	ticket.Price = price
 	ticket.LeaveTime = leaveTime
 
 	p.slots.Find(ticket.Number).Leave()
