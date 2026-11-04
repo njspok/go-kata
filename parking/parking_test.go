@@ -8,6 +8,12 @@ import (
 )
 
 func Test(t *testing.T) {
+	calc := NewSimplePriceCalc(map[Size]Price{
+		Moto:  50,
+		Car:   100,
+		Truck: 200,
+	})
+
 	t.Run("success create parking", func(t *testing.T) {
 		slots := Slots{
 			{
@@ -15,7 +21,7 @@ func Test(t *testing.T) {
 				Size:   Car,
 			},
 		}
-		p := NewParking(slots, NewSimplePriceCalc())
+		p := NewParking(slots, calc)
 		require.NotNil(t, p)
 	})
 	t.Run("park", func(t *testing.T) {
@@ -43,7 +49,7 @@ func Test(t *testing.T) {
 		t.Run("no free slots", func(t *testing.T) {
 			// Arrange
 			slots := Slots{}
-			p := NewParking(slots, NewSimplePriceCalc())
+			p := NewParking(slots, calc)
 			now := mustParseTime("2026-01-01 01:00:00")
 
 			// Act
@@ -88,7 +94,7 @@ func Test(t *testing.T) {
 					{Number: "M1", Size: Moto},
 					{Number: "T1", Size: Truck},
 				}
-				p := NewParking(slots, NewSimplePriceCalc())
+				p := NewParking(slots, calc)
 				parkTime := mustParseTime("2026-01-01 01:00:00")
 				ticket, err := p.Park(tt.size, parkTime)
 

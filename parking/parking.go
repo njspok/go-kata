@@ -15,11 +15,6 @@ const (
 )
 
 var ErrNoFreeSlots = errors.New("no free slots")
-var hourlyRates = map[Size]Price{
-	Moto:  50,
-	Car:   100,
-	Truck: 200,
-}
 
 type Price int
 
@@ -78,14 +73,16 @@ type PriceCalc interface {
 	Calc(size Size, leave, entry time.Time) (Price, error)
 }
 
-func NewSimplePriceCalc() *SimplePriceCalc {
-	return &SimplePriceCalc{}
+func NewSimplePriceCalc(hourlyRates map[Size]Price) *SimplePriceCalc {
+	return &SimplePriceCalc{hourlyRates: hourlyRates}
 }
 
-type SimplePriceCalc struct{}
+type SimplePriceCalc struct {
+	hourlyRates map[Size]Price
+}
 
 func (s *SimplePriceCalc) Calc(size Size, entry, leave time.Time) (Price, error) {
-	rate, ok := hourlyRates[size]
+	rate, ok := s.hourlyRates[size]
 	if !ok {
 		return 0, fmt.Errorf("no tariff for size %q", size)
 	}
